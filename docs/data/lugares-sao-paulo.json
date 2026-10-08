@@ -1,0 +1,619 @@
+{
+  "city": "São Paulo",
+  "source": "Borrador local sao-paulo-atlas-trip-planner.html; enlaza fichas de Atlas Obscura",
+  "verification": "Pendiente: Atlas Obscura no fue legible desde la herramienta web en la exploración inicial. El contenido procede del borrador local y debe confirmarse antes de tratar horarios, direcciones, transporte o estado como vigentes.",
+  "places": [
+    {
+      "id": 1,
+      "name": "Crypt of the São Paulo Cathedral",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55035,
+        "lon": -46.63395,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Sé · líneas 1 y 3",
+      "descriptionFromDraft": "Cripta neogótica bajo la Catedral da Sé, con tumbas de figuras destacadas de la historia brasileña.",
+      "addressFromDraft": "Praça da Sé, s/n · Sé",
+      "atlasUrl": "https://www.atlasobscura.com/places/crypt-of-the-sao-paulo-cathedral",
+      "verification": "pendiente"
+    },
+    {
+      "id": 2,
+      "name": "Livraria da Vila",
+      "zone": "Oeste",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55512,
+        "lon": -46.68962,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Faria Lima · línea 4",
+      "descriptionFromDraft": "Librería conocida por su diseño arquitectónico y estanterías integradas al espacio.",
+      "addressFromDraft": "Rua Fradique Coutinho · Vila Madalena (sucursal a confirmar)",
+      "atlasUrl": "https://www.atlasobscura.com/places/livraria-da-vila",
+      "verification": "pendiente"
+    },
+    {
+      "id": 3,
+      "name": "Beco do Batman",
+      "zone": "Oeste",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55628,
+        "lon": -46.69161,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Vila Madalena · línea 2",
+      "descriptionFromDraft": "Pasajes de Vila Madalena cubiertos de murales y grafiti que se renuevan constantemente.",
+      "addressFromDraft": "Ruas Gonçalo Afonso y Medeiros de Albuquerque · Vila Madalena",
+      "atlasUrl": "https://www.atlasobscura.com/places/beco-do-batman",
+      "verification": "pendiente"
+    },
+    {
+      "id": 4,
+      "name": "Jardim Botânico de São Paulo",
+      "zone": "Sur",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.640745,
+        "lon": -46.62294,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Jabaquara / Saúde + autobús",
+      "descriptionFromDraft": "Jardín de 146 hectáreas con remanentes de Mata Atlántica, invernaderos, lagos y senderos.",
+      "addressFromDraft": "Av. Miguel Estefno, 3031 · Água Funda",
+      "atlasUrl": "https://www.atlasobscura.com/places/jardim-botanico-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 5,
+      "name": "La Madone de São Paulo",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54498,
+        "lon": -46.64062,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "República · líneas 3 y 4",
+      "descriptionFromDraft": "Mural monumental de Santa Muerte en el centro; verifica su estado actual antes de desviarte.",
+      "addressFromDraft": "Centro histórico · ubicación del mural sujeta a cambios",
+      "atlasUrl": "https://www.atlasobscura.com/places/la-madone-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 6,
+      "name": "Casa de Pedra",
+      "zone": "Oeste",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.59275,
+        "lon": -46.69703,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Morumbi · línea 9 + autobús",
+      "descriptionFromDraft": "Casa construida por Estevão Silva da Conceição, decorada con piedras, mosaicos y objetos.",
+      "addressFromDraft": "Jardim Colombo · acceso residencial, confirmar visita",
+      "atlasUrl": "https://www.atlasobscura.com/places/casa-de-pedra",
+      "verification": "pendiente"
+    },
+    {
+      "id": 7,
+      "name": "Hotel Unique",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.58128,
+        "lon": -46.66869,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Brigadeiro · línea 2 + caminata",
+      "descriptionFromDraft": "Hotel de arquitectura escultural, conocido por su silueta de barco y su azotea.",
+      "addressFromDraft": "Av. Brigadeiro Luís Antônio, 4700 · Jardim Paulista",
+      "atlasUrl": "https://www.atlasobscura.com/places/hotel-unique",
+      "verification": "pendiente"
+    },
+    {
+      "id": 8,
+      "name": "Museu da Tatuagem de São Paulo",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54091,
+        "lon": -46.63744,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "República · líneas 3 y 4",
+      "descriptionFromDraft": "Colección dedicada a la historia y cultura del tatuaje en Brasil; confirma apertura con el museo.",
+      "addressFromDraft": "Centro de São Paulo · dirección por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/museu-da-tatuagem-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 9,
+      "name": "Museu de Arte de São Paulo (MASP)",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.56142,
+        "lon": -46.65588,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Trianon-Masp · línea 2",
+      "descriptionFromDraft": "Museo de arte de referencia en el edificio suspendido de Lina Bo Bardi.",
+      "addressFromDraft": "Av. Paulista, 1578 · Bela Vista",
+      "atlasUrl": "https://www.atlasobscura.com/places/museu-de-arte-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 10,
+      "name": "Parque Trianon",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.56344,
+        "lon": -46.65691,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Trianon-Masp · línea 2",
+      "descriptionFromDraft": "Parque de Mata Atlántica frente al MASP, con caminos sombreados y vegetación nativa.",
+      "addressFromDraft": "Rua Peixoto Gomide, 949 · Cerqueira César",
+      "atlasUrl": "https://www.atlasobscura.com/places/parque-trianon",
+      "verification": "pendiente"
+    },
+    {
+      "id": 11,
+      "name": "Butantan Snake Institute",
+      "zone": "Oeste",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.56681,
+        "lon": -46.72418,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Butantã · línea 4 + caminata",
+      "descriptionFromDraft": "Instituto y complejo de investigación conocido por su colección de serpientes y museos.",
+      "addressFromDraft": "Av. Vital Brasil, 1500 · Butantã",
+      "atlasUrl": "https://www.atlasobscura.com/places/butantan-snake-institute",
+      "verification": "pendiente"
+    },
+    {
+      "id": 12,
+      "name": "Walter Galera Garden",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54524,
+        "lon": -46.63557,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "São Bento · línea 1",
+      "descriptionFromDraft": "Jardín elevado asociado a uno de los edificios emblemáticos del centro; acceso puede variar.",
+      "addressFromDraft": "Centro histórico · confirmar acceso al edificio",
+      "atlasUrl": "https://www.atlasobscura.com/places/walter-galera-garden",
+      "verification": "pendiente"
+    },
+    {
+      "id": 13,
+      "name": "Museu Afro Brasil",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.58754,
+        "lon": -46.65755,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "AACD-Servidor · línea 5 + caminata",
+      "descriptionFromDraft": "Museo dedicado a las culturas africanas y afrobrasileñas, su historia y sus expresiones artísticas.",
+      "addressFromDraft": "Av. Pedro Álvares Cabral, s/n · Parque Ibirapuera",
+      "atlasUrl": "https://www.atlasobscura.com/places/museu-afro-brasil",
+      "verification": "pendiente"
+    },
+    {
+      "id": 14,
+      "name": "Castelinho da Rua Apa",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.53573,
+        "lon": -46.64508,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Santa Cecília · línea 3",
+      "descriptionFromDraft": "Ruinas de una mansión vinculada a un célebre caso policial de la historia paulistana.",
+      "addressFromDraft": "Rua Apa, 236 · Campos Elíseos",
+      "atlasUrl": "https://www.atlasobscura.com/places/castelinho-da-rua-apa",
+      "verification": "pendiente"
+    },
+    {
+      "id": 15,
+      "name": "Museu Penitenciário Paulista",
+      "zone": "Norte / Este",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.50926,
+        "lon": -46.62424,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Carandiru · línea 1",
+      "descriptionFromDraft": "Colección histórica sobre el sistema penitenciario, dentro del antiguo complejo de Carandiru.",
+      "addressFromDraft": "Av. Cruzeiro do Sul, 2630 · Carandiru",
+      "atlasUrl": "https://www.atlasobscura.com/places/museu-penitenciario-paulista",
+      "verification": "pendiente"
+    },
+    {
+      "id": 16,
+      "name": "Museum of Japanese Immigration in Brazil",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55529,
+        "lon": -46.63412,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Japão-Liberdade · línea 1",
+      "descriptionFromDraft": "Museo sobre la experiencia de la comunidad japonesa más grande fuera de Japón.",
+      "addressFromDraft": "Rua São Joaquim, 381 · Liberdade",
+      "atlasUrl": "https://www.atlasobscura.com/places/museum-of-japanese-immigration-in-brazil",
+      "verification": "pendiente"
+    },
+    {
+      "id": 17,
+      "name": "Cemitério da Consolação",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55005,
+        "lon": -46.65696,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Higienópolis-Mackenzie · línea 4",
+      "descriptionFromDraft": "Cementerio conocido por sus mausoleos y esculturas funerarias, además de personajes históricos.",
+      "addressFromDraft": "Rua da Consolação, 1660 · Consolação",
+      "atlasUrl": "https://www.atlasobscura.com/places/cemiterio-da-consolacao",
+      "verification": "pendiente"
+    },
+    {
+      "id": 18,
+      "name": "Immigration Museum of São Paulo",
+      "zone": "Norte / Este",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.59246,
+        "lon": -46.60378,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Bresser-Mooca · línea 3",
+      "descriptionFromDraft": "Museo en la antigua Hospedaria de Imigrantes, dedicado a las migraciones y sus historias.",
+      "addressFromDraft": "Rua Visconde de Parnaíba, 1316 · Mooca",
+      "atlasUrl": "https://www.atlasobscura.com/places/immigration-museum-of-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 19,
+      "name": "Theatro Municipal de São Paulo",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54542,
+        "lon": -46.63882,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Anhangabaú · línea 3",
+      "descriptionFromDraft": "Teatro histórico de gran riqueza arquitectónica, escenario de artistas y músicos internacionales.",
+      "addressFromDraft": "Praça Ramos de Azevedo · República",
+      "atlasUrl": "https://www.atlasobscura.com/places/theatro-municipal-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 20,
+      "name": "Memorial da Resistência de São Paulo",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.53408,
+        "lon": -46.63946,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Luz · líneas 1, 4 y CPTM",
+      "descriptionFromDraft": "Museo en el antiguo edificio de la policía política, dedicado a la memoria de la represión y la resistencia.",
+      "addressFromDraft": "Largo General Osório, 66 · Santa Ifigênia",
+      "atlasUrl": "https://www.atlasobscura.com/places/memorial-da-resistencia-de-sao-paulo",
+      "verification": "pendiente"
+    },
+    {
+      "id": 21,
+      "name": "Sé Station Mural",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55062,
+        "lon": -46.63386,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Sé · líneas 1 y 3",
+      "descriptionFromDraft": "Mural dentro de la estación Sé; se requiere boleto y el acceso está sujeto a reglas del metro.",
+      "addressFromDraft": "Estación Sé · área de pago",
+      "atlasUrl": "https://www.atlasobscura.com/places/se-station-mural",
+      "verification": "pendiente"
+    },
+    {
+      "id": 22,
+      "name": "São Paulo Pedestrian Signal Lights",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54882,
+        "lon": -46.63826,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Anhangabaú · línea 3",
+      "descriptionFromDraft": "Semáforos peatonales intervenidos con referencias visuales a lugares de la ciudad; paseo urbano.",
+      "addressFromDraft": "Centro · punto aproximado, explorar a pie",
+      "atlasUrl": "https://www.atlasobscura.com/places/sao-paulo-pedestrian-signal-lights",
+      "verification": "pendiente"
+    },
+    {
+      "id": 23,
+      "name": "Igreja Santa Cruz das Almas dos Enforcados",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55165,
+        "lon": -46.63589,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Japão-Liberdade · línea 1",
+      "descriptionFromDraft": "Iglesia vinculada a una leyenda popular sobre Chaguinhas y los milagros atribuidos a su historia.",
+      "addressFromDraft": "Praça da Liberdade, 238 · Liberdade",
+      "atlasUrl": "https://www.atlasobscura.com/places/igreja-santa-cruz-das-almas-dos-enforcados",
+      "verification": "pendiente"
+    },
+    {
+      "id": 24,
+      "name": "'Imprensa' Mural",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54868,
+        "lon": -46.63784,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Anhangabaú · línea 3",
+      "descriptionFromDraft": "Mural modernista de Emiliano Di Cavalcanti en un edificio del centro.",
+      "addressFromDraft": "Centro histórico · edificio de la Imprensa",
+      "atlasUrl": "https://www.atlasobscura.com/places/imprensa-mural",
+      "verification": "pendiente"
+    },
+    {
+      "id": 25,
+      "name": "Vila Maria Zélia",
+      "zone": "Norte / Este",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.51621,
+        "lon": -46.58965,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Belém · línea 3 + autobús",
+      "descriptionFromDraft": "Conjunto de viviendas obreras de 1917, considerado la primera villa obrera planificada de Brasil.",
+      "addressFromDraft": "Rua dos Prazeres · Belenzinho",
+      "atlasUrl": "https://www.atlasobscura.com/places/vila-maria-zelia",
+      "verification": "pendiente"
+    },
+    {
+      "id": 26,
+      "name": "Monumento Mãe Preta",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.5458,
+        "lon": -46.63284,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "São Bento · línea 1",
+      "descriptionFromDraft": "Estatua que recuerda a las mujeres esclavizadas obligadas a amamantar a los hijos de sus propietarios.",
+      "addressFromDraft": "Largo do Paissandu · Centro",
+      "atlasUrl": "https://www.atlasobscura.com/places/monumento-mae-preta",
+      "verification": "pendiente"
+    },
+    {
+      "id": 27,
+      "name": "Puppet Cabinet at Monteiro Lobato Library",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54351,
+        "lon": -46.6462,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Higienópolis-Mackenzie · línea 4",
+      "descriptionFromDraft": "Colección de títeres históricos expuesta en la biblioteca pública Monteiro Lobato.",
+      "addressFromDraft": "Rua General Jardim, 485 · Vila Buarque",
+      "atlasUrl": "https://www.atlasobscura.com/places/puppet-cabinet-at-monteiro-lobato-library",
+      "verification": "pendiente"
+    },
+    {
+      "id": 28,
+      "name": "Martinelli Building",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.54524,
+        "lon": -46.63557,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "São Bento · línea 1",
+      "descriptionFromDraft": "Rascacielos pionero de São Paulo, con historias de revolución, crimen y vida urbana.",
+      "addressFromDraft": "Rua São Bento, 405 · Centro",
+      "atlasUrl": "https://www.atlasobscura.com/places/martinelli-building",
+      "verification": "pendiente"
+    },
+    {
+      "id": 29,
+      "name": "'The Indian and the Anteater' Sculpture",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.53417,
+        "lon": -46.63538,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Luz · líneas 1, 4 y CPTM",
+      "descriptionFromDraft": "Escultura de un niño luchando con un oso hormiguero, referencia a la cultura indígena y biodiversidad.",
+      "addressFromDraft": "Parque Jardim da Luz · Bom Retiro",
+      "atlasUrl": "https://www.atlasobscura.com/places/the-indian-and-the-anteater-sculpture",
+      "verification": "pendiente"
+    },
+    {
+      "id": 30,
+      "name": "Casa de Dona Yayá",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55791,
+        "lon": -46.63452,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "São Joaquim · línea 1",
+      "descriptionFromDraft": "Casa histórica asociada a la vida de Dona Yayá y a su prolongado aislamiento.",
+      "addressFromDraft": "Rua Major Diogo, 353 · Bela Vista",
+      "atlasUrl": "https://www.atlasobscura.com/places/casa-de-dona-yaya",
+      "verification": "pendiente"
+    },
+    {
+      "id": 31,
+      "name": "Loja Monstra",
+      "zone": "Paulista / Jardins",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55626,
+        "lon": -46.65918,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Consolação · líneas 2 y 4",
+      "descriptionFromDraft": "Tienda independiente de cómics y cultura pop; confirma ubicación y horario actuales.",
+      "addressFromDraft": "Rua Augusta · Consolação (verifica dirección antes de ir)",
+      "atlasUrl": "https://www.atlasobscura.com/places/loja-monstra",
+      "verification": "pendiente"
+    },
+    {
+      "id": 32,
+      "name": "Casa Bandeirista do Itaim",
+      "zone": "Oeste",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.58174,
+        "lon": -46.67967,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Faria Lima · línea 4 + caminata",
+      "descriptionFromDraft": "Pequeña casa del siglo XVIII conservada bajo la trama moderna de Itaim Bibi.",
+      "addressFromDraft": "Rua Iguatemi, 263 · Itaim Bibi",
+      "atlasUrl": "https://www.atlasobscura.com/places/casa-bandeirista-do-itaim",
+      "verification": "pendiente"
+    },
+    {
+      "id": 33,
+      "name": "Parque Estadual Cantareira",
+      "zone": "Norte / Este",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.45087,
+        "lon": -46.63367,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Tucuruvi · línea 1 + autobús",
+      "descriptionFromDraft": "Gran reserva de bosque urbano con senderos y vistas de la metrópoli. Requiere medio día y traslado.",
+      "addressFromDraft": "Núcleo Pedra Grande · zona norte",
+      "atlasUrl": "https://www.atlasobscura.com/places/parque-estadual-cantareira",
+      "verification": "pendiente"
+    },
+    {
+      "id": 34,
+      "name": "Caos Bar & Antiguidades",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-cerrado-o-historico",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.55381,
+        "lon": -46.65013,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Higienópolis-Mackenzie · línea 4",
+      "descriptionFromDraft": "Antiguo bar y tienda de curiosidades; listado como cerrado / histórico.",
+      "addressFromDraft": "Rua Augusta · ubicación histórica aproximada",
+      "atlasUrl": "https://www.atlasobscura.com/places/caos-bar-antiguidades",
+      "verification": "pendiente"
+    },
+    {
+      "id": 35,
+      "name": "Former World's Tallest Lego Tower",
+      "zone": "Norte / Este",
+      "statusFromDraft": "marcado-cerrado-o-historico",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.51678,
+        "lon": -46.61037,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Portuguesa-Tietê · línea 1",
+      "descriptionFromDraft": "Sitio de la torre récord de LEGO construida en 2011; el punto corresponde a Shopping Center Norte.",
+      "addressFromDraft": "Shopping Center Norte · ubicación histórica",
+      "atlasUrl": "https://www.atlasobscura.com/places/former-worlds-tallest-lego-tower",
+      "verification": "pendiente"
+    },
+    {
+      "id": 36,
+      "name": "Ao Rei das Mágicas",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-cerrado-o-historico",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.539252,
+        "lon": -46.64668,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Santa Cecília · línea 3",
+      "descriptionFromDraft": "La tienda de magia más antigua de São Paulo; Atlas Obscura la marca permanentemente cerrada.",
+      "addressFromDraft": "Av. São João, 1399 · Centro (histórico)",
+      "atlasUrl": "https://www.atlasobscura.com/places/ao-rei-das-magicas",
+      "verification": "pendiente"
+    }
+  ]
+}

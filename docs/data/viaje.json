@@ -1,0 +1,20 @@
+{
+  "destination": "São Paulo",
+  "country": "Brasil",
+  "travelYear": 2026,
+  "yearIsAssumption": true,
+  "fullTrip": { "start": "2026-12-02", "end": "2026-12-23", "status": "shared-by-traveler-year-provisional" },
+  "activeStage": { "start": "2026-12-02", "end": "2026-12-13", "status": "planning" },
+  "milestones": [
+    { "date": "2026-12-02", "label": "Salida", "detail": "Vuelo por agregar", "status": "shared-date-no-booking" },
+    { "date": "2026-12-03", "label": "Llegada a São Paulo", "detail": "Inicio de la etapa São Paulo", "status": "shared-date-no-booking" },
+    { "start": "2026-12-04", "end": "2026-12-12", "label": "Días para planear São Paulo", "detail": "Lugares y ritmo por decidir", "status": "open-planning" },
+    { "start": "2026-12-13", "end": "2026-12-14", "label": "Encuentro con amigos", "detail": "Día flexible; ciudad pendiente", "status": "tentative" },
+    { "start": "2026-12-14", "end": "2026-12-23", "label": "Resto del viaje", "detail": "Río es una opción por desarrollar; regreso por definir", "status": "unplanned" }
+  ],
+  "people": { "count": null, "status": "not-provided" },
+  "privacy": {
+    "public": ["itinerario", "lugares", "enlaces públicos", "fuentes"],
+    "private": ["boletos con códigos", "reservas", "documentos personales", "archivos privados"]
+  }
+}
