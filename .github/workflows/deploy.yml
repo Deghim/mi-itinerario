@@ -25,6 +25,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - name: Pin npm for lockfile reproducibility
+        run: |
+          npm install --global npm@11.12.1
+          npm --version
       - name: Install dependencies
         run: npm ci
       - name: Lint
