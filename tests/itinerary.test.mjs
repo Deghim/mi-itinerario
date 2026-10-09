@@ -63,6 +63,25 @@ test('aplicar propuesta respeta asignación/horario manual y deja vuelos y filas
   assert.ok(secondApply.skippedManual.length > 0)
 })
 
+test('las ventanas de visitas 4–8 dejan correr y desayunar antes de los traslados estimados', () => {
+  const toMinutes = (value) => {
+    const [hour, minute] = value.split(':').map(Number)
+    return hour * 60 + minute
+  }
+  const morningVisits = itinerary.rows.filter((row) => {
+    const day = Number(row.date.slice(8, 10))
+    return row.placeId !== undefined && row.schedule && row.applyToAgenda === true && day >= 4 && day <= 8
+  })
+  assert.ok(morningVisits.length > 0)
+  for (const row of morningVisits) {
+    const earliestDeparture = toMinutes(row.schedule.startTime) - row.schedule.travelMinutes - row.schedule.bufferMinutes
+    assert.ok(earliestDeparture >= 9 * 60, `${row.id} reserva traslado antes del fin del desayuno`)
+  }
+  assert.equal(morningVisits.find((row) => row.placeId === 33)?.schedule.startTime, '10:30')
+  assert.equal(morningVisits.find((row) => row.placeId === 4)?.schedule.startTime, '10:30')
+  assert.equal(morningVisits.find((row) => row.placeId === 13)?.schedule.startTime, '15:00')
+})
+
 test('los cambios editoriales locales solo aceptan campos y filas conocidas', () => {
   const storage = new Map([
     ['mi-itinerario:sao-paulo:v1', JSON.stringify({ favorites: [2], dayAssignments: { 2: 5 } })],
