@@ -4,7 +4,7 @@ export type Place = {
   zone: string
   statusFromDraft: 'marcado-visitables' | 'marcado-cerrado-o-historico'
   operationalStatus: 'por-confirmar'
-  coordinates: { lat: number; lon: number; confidence: 'por-confirmar' }
+  coordinates: { lat: number; lon: number; confidence: 'por-confirmar' | 'aproximada-fuente-atlas' }
   nearestTransitFromDraft: string
   descriptionFromDraft: string
   addressFromDraft: string

@@ -1,0 +1,82 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFile } from 'node:fs/promises'
+import { itinerary, planAgendaApplication, proposedPlaceRows } from '../lib/itinerary-model.ts'
+import { ITINERARY_OVERRIDES_KEY, readItineraryOverrides, writeItineraryOverrides } from '../lib/itinerary-storage.ts'
+
+test('la tabla conserva vuelos capturados y distingue pago internacional del tramo doméstico', async () => {
+  const raw = JSON.parse(await readFile(new URL('../docs/data/itinerario.json', import.meta.url), 'utf8'))
+  const budget = JSON.parse(await readFile(new URL('../docs/data/presupuesto.json', import.meta.url), 'utf8'))
+  assert.deepEqual(raw.columns, ['Fecha', 'Hora', 'Lugar', 'Actividad', 'Transporte', 'Hospedaje', 'Costo estimado', 'Reserva / boleto', 'Notas'])
+  assert.equal(new Set(raw.rows.map((row) => row.id)).size, raw.rows.length)
+  const flights = raw.rows.filter((row) => row.id.startsWith('flight-'))
+  assert.equal(flights.length, 3)
+  const domestic = raw.rows.find((row) => row.id === 'flight-cuu-mex-2026-12-02')
+  assert.equal(domestic?.budgetId, undefined)
+  assert.equal(domestic?.costLabel, 'Importe por confirmar')
+  assert.match(domestic?.reservation ?? '', /Pago e inclusión.*por confirmar/)
+  const international = raw.rows.filter((row) => ['flight-mex-rdom-2026-12-02', 'flight-rdom-sp-2026-12-03', 'international-return-2026-12-23'].includes(row.id))
+  assert.equal(international.length, 3)
+  assert.ok(international.every((row) => row.budgetId === 'paid:international-round-trip'))
+  assert.ok(international.every((row) => row.costLabel === 'Vuelos internacionales pagados · importe por informar'))
+  assert.ok(international.every((row) => !/mismo boleto|boleto redondo pagado|un registro/i.test(`${row.reservation} ${row.costLabel}`)))
+  const paidFlights = budget.paidItems.find((item) => item.id === 'international-round-trip')
+  assert.equal(paidFlights?.status, 'pagado')
+  assert.equal(paidFlights?.amount, null)
+  assert.equal(budget.paidItems.filter((item) => item.id === 'international-round-trip').length, 1)
+  assert.equal(raw.year, 2026)
+  assert.equal(raw.yearIsAssumption, true)
+  assert.equal(raw.rioNightsPreferred, 5)
+})
+
+test('cobertura conserva 36 referencias únicas: 33 borradores visitables y tres históricas', () => {
+  assert.equal(itinerary.coverage.length, 36)
+  assert.deepEqual(itinerary.coverage.map((item) => item.placeId), Array.from({ length: 36 }, (_, index) => index + 1))
+  assert.equal(itinerary.coverage.filter((item) => item.placeId <= 33 && item.state !== 'historico').length, 33)
+  assert.deepEqual(itinerary.coverage.filter((item) => item.state === 'historico').map((item) => item.placeId), [34, 35, 36])
+  assert.equal(itinerary.coverage.filter((item) => item.placeId === 9).length, 1)
+  const scheduledIds = proposedPlaceRows().map((row) => row.placeId)
+  assert.equal(new Set(scheduledIds).size, scheduledIds.length)
+  assert.ok(!proposedPlaceRows().some((row) => row.id === 'place-09-exterior-day-03'))
+})
+
+test('aplicar propuesta respeta asignación/horario manual y deja vuelos y filas exteriores fuera de la agenda', () => {
+  const manualSchedule = { startTime: '08:45', durationMinutes: 50, travelMinutes: 10, bufferMinutes: 10 }
+  const currentAssignments = { 10: 8 }
+  const currentSchedules = { 10: manualSchedule }
+  const places = Array.from({ length: 36 }, (_, index) => ({ id: index + 1 }))
+  const result = planAgendaApplication(places, itinerary.rows, currentAssignments, currentSchedules)
+
+  assert.ok(result.skippedManual.includes(10))
+  assert.equal(result.dayAssignments[10], 8)
+  assert.deepEqual(result.placeSchedule[10], manualSchedule)
+  assert.ok(result.added.includes(9))
+  assert.equal(result.dayAssignments[9], 4)
+  assert.equal(itinerary.rows.filter((row) => row.placeId === 9 && row.applyToAgenda === true).length, 1)
+  assert.equal(itinerary.rows.find((row) => row.id === 'place-09-exterior-day-03')?.applyToAgenda, false)
+  assert.equal(currentAssignments[10], 8)
+  assert.deepEqual(currentSchedules[10], manualSchedule)
+  assert.ok(result.added.length > 0)
+
+  const secondApply = planAgendaApplication(places, itinerary.rows, result.dayAssignments, result.placeSchedule)
+  assert.equal(secondApply.added.length, 0)
+  assert.ok(secondApply.skippedManual.length > 0)
+})
+
+test('los cambios editoriales locales solo aceptan campos y filas conocidas', () => {
+  const storage = new Map([
+    ['mi-itinerario:sao-paulo:v1', JSON.stringify({ favorites: [2], dayAssignments: { 2: 5 } })],
+    ['mi-itinerario:budget:v1', JSON.stringify({ rioNights: 5, entries: [] })],
+  ])
+  const tripBefore = storage.get('mi-itinerario:sao-paulo:v1')
+  const budgetBefore = storage.get('mi-itinerario:budget:v1')
+  const adapter = { getItem: (key) => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value), removeItem: (key) => storage.delete(key) }
+  const first = itinerary.rows[0]
+  writeItineraryOverrides(adapter, ITINERARY_OVERRIDES_KEY, { [first.id]: { notes: '  Nota local  ', transport: 'Metro', secret: 'no debe guardarse' }, 'unknown-row': { notes: 'Ignorar' } }, itinerary.rows)
+  assert.deepEqual(JSON.parse(storage.get(ITINERARY_OVERRIDES_KEY)), { [first.id]: { transport: 'Metro', notes: 'Nota local' } })
+  assert.deepEqual(readItineraryOverrides(adapter, ITINERARY_OVERRIDES_KEY, itinerary.rows), { [first.id]: { transport: 'Metro', notes: 'Nota local' } })
+  assert.equal(storage.get('mi-itinerario:sao-paulo:v1'), tripBefore)
+  assert.equal(storage.get('mi-itinerario:budget:v1'), budgetBefore)
+  adapter.setItem(ITINERARY_OVERRIDES_KEY, '{broken')
+  assert.deepEqual(readItineraryOverrides(adapter, ITINERARY_OVERRIDES_KEY, itinerary.rows), {})
+})

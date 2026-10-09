@@ -5,9 +5,12 @@ import { useEffect, useMemo, useState } from 'react'
 import placesFile from '@/docs/data/lugares-sao-paulo.json'
 import tripFile from '@/docs/data/viaje.json'
 import { clearTripState, readTripState, supportedTravelYears, writeTripState } from '@/lib/trip-storage'
-import { createMapsRouteSegments } from '@/lib/maps-routes'
+import { itinerary, planAgendaApplication } from '@/lib/itinerary-model'
+import { clearItineraryOverrides, ITINERARY_OVERRIDES_KEY, readItineraryOverrides, writeItineraryOverrides } from '@/lib/itinerary-storage'
+import type { ItineraryOverrides, ItineraryRowOverride } from '@/types/itinerary'
 import BudgetSection from './BudgetSection'
 import DaySchedule from './DaySchedule'
+import ItineraryTable from './ItineraryTable'
 import { DEFAULT_DAILY_ROUTINE } from '@/lib/schedule'
 import type { LocalTripState, Place, SavedPlaceState } from '@/types/place'
 
@@ -18,6 +21,7 @@ const MapView = dynamic(() => import('./MapView'), {
 
 const places = placesFile.places as Place[]
 const STORAGE_KEY = 'mi-itinerario:sao-paulo:v1'
+const TABLE_STORAGE_KEY = ITINERARY_OVERRIDES_KEY
 const tabs = [
   { id: 'itinerario', label: 'Itinerario', icon: '◷' },
   { id: 'lugares', label: 'Lugares', icon: '⌖' },
@@ -43,37 +47,11 @@ function formatWeekday(date: Date) {
   return new Intl.DateTimeFormat('es-MX', { weekday: 'short' }).format(date).replace('.', '')
 }
 
-function createZoneProposal() {
-  const eligible = places.filter((place) => place.statusFromDraft === 'marcado-visitables')
-  const remaining = [...eligible]
-  const groups: Place[][] = []
-  for (let day = 0; day < 3 && remaining.length; day += 1) {
-    const slots = Math.ceil(remaining.length / (3 - day))
-    const seed = remaining.shift()
-    if (!seed) continue
-    const group = [seed]
-    while (group.length < slots && remaining.length) {
-      const center = [group.reduce((sum, place) => sum + place.coordinates.lat, 0) / group.length,
-        group.reduce((sum, place) => sum + place.coordinates.lon, 0) / group.length]
-      let bestIndex = 0
-      let bestDistance = Number.POSITIVE_INFINITY
-      remaining.forEach((place, index) => {
-        const dx = (place.coordinates.lon - center[1]) * Math.cos(center[0] * Math.PI / 180)
-        const dy = place.coordinates.lat - center[0]
-        const distance = dx * dx + dy * dy
-        if (distance < bestDistance) { bestDistance = distance; bestIndex = index }
-      })
-      const nextPlace = remaining.splice(bestIndex, 1)[0]
-      if (nextPlace) group.push(nextPlace)
-    }
-    groups.push(group)
-  }
-  return groups
-}
-
 export default function TripPlanner() {
   const [activeTab, setActiveTab] = useState<TabId>('itinerario')
   const [state, setState] = useState<LocalTripState>(emptyState)
+  const [itineraryOverrides, setItineraryOverrides] = useState<ItineraryOverrides>({})
+  const [tableReady, setTableReady] = useState(false)
   const [ready, setReady] = useState(false)
   const [notice, setNotice] = useState('')
   const [query, setQuery] = useState('')
@@ -90,9 +68,11 @@ export default function TripPlanner() {
       if (!mounted) return
       try {
         setState(readTripState(window.localStorage, STORAGE_KEY, emptyState))
+        setItineraryOverrides(readItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY, itinerary.rows))
       } catch {
         setNotice('No se pudieron recuperar los cambios guardados en este navegador.')
       } finally {
+        setTableReady(true)
         setReady(true)
       }
     })
@@ -108,6 +88,12 @@ export default function TripPlanner() {
     }
   }, [ready, state])
 
+  useEffect(() => {
+    if (!tableReady) return
+    try { writeItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY, itineraryOverrides, itinerary.rows) }
+    catch { window.queueMicrotask(() => setNotice('No se pudieron guardar las notas de la tabla en este dispositivo.')) }
+  }, [tableReady, itineraryOverrides])
+
   const calendar = useMemo(() => daysForYear(state.travelYear), [state.travelYear])
   const filteredPlaces = useMemo(() => places.filter((place) => {
     const searchable = `${place.name} ${place.zone} ${place.addressFromDraft} ${place.descriptionFromDraft}`.toLocaleLowerCase('es')
@@ -117,7 +103,6 @@ export default function TripPlanner() {
     return statusMatches && zoneMatches && favoriteMatches && searchable.includes(query.toLocaleLowerCase('es').trim())
   }), [query, showFavoritesOnly, showHistorical, state.favorites, zone])
 
-  const proposal = useMemo(() => createZoneProposal(), [])
   const favorites = places.filter((place) => state.favorites.includes(place.id))
   const assignedPlaces = places.filter((place) => Number(state.dayAssignments[place.id]) >= 2 && Number(state.dayAssignments[place.id]) <= 14)
 
@@ -150,21 +135,27 @@ export default function TripPlanner() {
     })
   }
 
-  function distributeProposal() {
-    setState((current) => {
-      const dayAssignments = { ...current.dayAssignments }
-      proposal.forEach((group, index) => group.forEach((place) => {
-        if (place.id !== undefined) dayAssignments[place.id] = 4 + index
-      }))
-      return { ...current, dayAssignments }
-    })
-    setNotice('Propuesta aplicada a los días 4, 5 y 6. Puedes cambiar cada lugar.')
+  function saveItineraryOverride(rowId: string, value: ItineraryRowOverride) {
+    setItineraryOverrides((current) => ({ ...current, [rowId]: value }))
+  }
+
+  function applyItineraryProposal() {
+    if (state.travelYear !== itinerary.year) return setNotice(`Esta propuesta corresponde a ${itinerary.year}; no se aplicó a otro año.`)
+    const result = planAgendaApplication(places, itinerary.rows, state.dayAssignments, state.placeSchedule ?? {})
+    setState((current) => ({ ...current, dayAssignments: result.dayAssignments, placeSchedule: result.placeSchedule }))
+    const parts = [`Se añadieron ${result.added.length} visitas con horario sugerido a la agenda.`]
+    const names = (ids: number[]) => ids.map((id) => places.find((place) => place.id === id)?.name ?? String(id)).join(', ')
+    if (result.skippedManual.length) parts.push(`Se conservaron sin cambios tus asignaciones u horarios manuales: ${names(result.skippedManual)}.`)
+    if (result.skippedConflict.length) parts.push(`Se omitieron por solapamiento: ${names(result.skippedConflict)}. Revisa la propuesta antes de volver a aplicarla.`)
+    setNotice(parts.join(' '))
   }
 
   function resetLocalData() {
-    if (!window.confirm('¿Borrar favoritos, estados, días, horarios y rutina guardados en este navegador?')) return
+    if (!window.confirm('¿Borrar favoritos, estados, días, horarios, rutina y notas locales de tabla guardados en este navegador?')) return
     try { clearTripState(window.localStorage, STORAGE_KEY) } catch { /* Se reemplazará por el estado vacío de React. */ }
+    try { clearItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY) } catch { /* Se reemplazarán las notas en React. */ }
     setState(emptyState)
+    setItineraryOverrides({})
     setNotice('Se borraron los cambios locales de este navegador.')
   }
 
@@ -207,7 +198,7 @@ export default function TripPlanner() {
             <div className="eyebrow"><span className="eyebrow-line" /> PRIMERA PARADA <span>·</span> SÃO PAULO</div>
             <h1>Una ciudad para<br /><em>perderse bien.</em></h1>
             <p className="hero-description">Lugares curiosos, días por construir y todo lo útil para empezar a recorrer São Paulo.</p>
-            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ 2–13 dic · etapa actual</span><span>✳ Año {state.travelYear} por confirmar</span></div>
+            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ São Paulo 3–8 · propuesta</span><span>✳ Año 2026 provisional</span></div>
           </div>
           <div className="hero-stamp" aria-label="São Paulo, Brasil">
             <div className="stamp-ring"><span>23°33′ S</span><b>SP</b><span>46°38′ O</span></div>
@@ -218,19 +209,19 @@ export default function TripPlanner() {
 
         <section className="trip-strip" aria-label="Fechas del viaje">
           <div className="strip-intro"><span className="tiny-label">DICIEMBRE · {state.travelYear}</span><b>Tu viaje, a grandes rasgos</b><small>Fechas recibidas; año y planes todavía editables.</small></div>
-          <div className="milestone"><span className="milestone-day">02</span><span><b>Salida</b><small>Vuelo · por agregar</small></span></div>
-          <div className="milestone current"><span className="milestone-day">03</span><span><b>Llegada a São Paulo</b><small>Inicio de esta etapa</small></span></div>
-          <div className="milestone open"><span className="milestone-day">04—12</span><span><b>Días para planear</b><small>Visitas y ritmo por decidir</small></span></div>
-          <div className="milestone"><span className="milestone-day">13 / 14</span><span><b>Encuentro con amigos</b><small>Ciudad y día flexibles</small></span></div>
-          <div className="strip-end"><span>VIAJE COMPLETO</span><b>02—23 DIC</b><small>Río y regreso por definir</small></div>
+          <div className="milestone"><span className="milestone-day">02</span><span><b>Vuelos en captura</b><small>Escalas; datos por confirmar</small></span></div>
+          <div className="milestone current"><span className="milestone-day">03</span><span><b>Llegada a GRU · 09:10</b><small>Según captura compartida</small></span></div>
+          <div className="milestone open"><span className="milestone-day">03—08</span><span><b>São Paulo</b><small>Propuesta de trabajo</small></span></div>
+          <div className="milestone"><span className="milestone-day">09—13</span><span><b>Río · 5 noches</b><small>Preferencia; traslado por decidir</small></span></div>
+          <div className="strip-end"><span>VIAJE COMPLETO</span><b>02—23 DIC</b><small>Encuentro14 tentativo · GRU regreso23</small></div>
         </section>
 
         <div className="content-grid">
           <section className="main-column">
             <div className="section-heading"><div><span className="tiny-label">TU CUADERNO DE RUTA</span><h2>Arma tus días</h2></div><span className="section-mark">PLANEACIÓN</span></div>
-            <div className="planning-note"><span>✳</span><p><b>Sin reservas registradas.</b> Las fechas son una base de trabajo. Elige un día para cada lugar; puedes moverlo cuando tengas más claro el ritmo.</p></div>
+            <div className="planning-note"><span>✳</span><p><b>Vuelos internacionales pagados · importe por informar.</b> La tabla reúne horarios compartidos y propuestas de visitas o ventanas; confirma acceso, horarios operativos y reservas antes de salir. Puedes añadir a tu agenda solo lugares que aún no tengan una asignación manual.</p></div>
             <div className="date-board">
-              <div className="date-board-head"><div><b>Etapa São Paulo</b><span>2–13 diciembre · asigna actividades opcionales en el calendario</span></div><label className="year-select">AÑO <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
+              <div className="date-board-head"><div><b>Etapa São Paulo · ventana actualizada</b><span>3–8 dic · Río 9–13 es preferencia de trabajo, no reserva</span><small>{tripFile.proposedPlan.pacePreference}</small></div><label className="year-select">AÑO DE AGENDA <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
               <div className="date-row">{calendar.map(({ day, date }) => {
                 const isArrival = day === 3
                 const isPlanning = day >= 4 && day <= 12
@@ -245,6 +236,20 @@ export default function TripPlanner() {
               })}</div>
               <div className="date-board-foot"><span>● Fechas compartidas</span><span>○ {assignedPlaces.length} lugares con día elegido</span><span>Ciudad del encuentro pendiente</span></div>
             </div>
+
+          </section>
+
+          <ItineraryTable
+            travelYear={state.travelYear}
+            state={state}
+            overrides={itineraryOverrides}
+            onSaveOverride={saveItineraryOverride}
+            onApply={applyItineraryProposal}
+            onNavigatePlace={navigateToBudgetPlace}
+            onNavigateBudget={() => nav('presupuesto')}
+          />
+
+          <section className="main-column">
 
             <DaySchedule
               places={places}
@@ -265,16 +270,6 @@ export default function TripPlanner() {
             <div className="map-legend"><span><i className="legend-green" /> Marcado visitable en el borrador</span><span><i className="legend-red" /> Marcado histórico/cerrado</span><span>Rutas de transporte ilustrativas</span></div>
             <div className="zone-summary">{Object.entries(places.reduce<Record<string, number>>((counts, place) => { counts[place.zone] = (counts[place.zone] ?? 0) + 1; return counts }, {})).map(([name, count]) => <button key={name} onClick={() => { setZone(name); nav('lugares') }}><b>{String(count).padStart(2, '0')}</b><span>{name}</span><i>↗</i></button>)}</div>
 
-            <section className="suggestion-section">
-              <div className="section-heading"><div><span className="tiny-label">AGRUPACIÓN GEOGRÁFICA</span><h2>Una idea para tres días</h2></div><span className="section-mark">NO SON FECHAS FIJAS</span></div>
-              <p className="section-lede">El borrador agrupa por cercanía. Úsalo como punto de partida; confirma apertura, horarios y trayectos antes de comprometer cada día.</p>
-              <div className="suggestion-grid">{proposal.map((group, index) => <article className="suggestion-card" key={index}>
-                <span className="suggestion-number">0{index + 1}</span><div><span className="tiny-label">RUTA SUGERIDA</span><h3>{group.map((place) => place.zone).filter((value, i, all) => all.indexOf(value) === i).join(' + ')}</h3></div>
-                <p>{group.slice(0, 4).map((place) => place.name).join(' · ')}{group.length > 4 ? ` y ${group.length - 4} más` : ''}</p>
-                <div className="suggestion-links">{createMapsRouteSegments(group.map((place) => place.name)).map((segment, segmentIndex) => <a href={segment.url} key={segmentIndex} target="_blank" rel="noreferrer">Abrir tramo {segmentIndex + 1} · {segment.placeCount} paradas ↗</a>)}</div>
-              </article>)}</div>
-              <button className="outline-button" onClick={distributeProposal}>Usar propuesta en 4, 5 y 6 de diciembre <span>→</span></button>
-            </section>
           </section>
 
           <aside className="side-column">

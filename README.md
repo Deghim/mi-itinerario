@@ -19,8 +19,9 @@ Para probar el export estático ya compilado, ejecuta `npm run build` y luego `n
 
 - La fuente editable de lugares vive en [`docs/data/lugares-sao-paulo.json`](docs/data/lugares-sao-paulo.json); el contexto y calendario del viaje están en [`docs/data/viaje.json`](docs/data/viaje.json).
 - Las referencias y escenarios del presupuesto están en [`docs/data/presupuesto.json`](docs/data/presupuesto.json); las reglas y límites se explican en [`docs/PRESUPUESTO.md`](docs/PRESUPUESTO.md).
-- Favoritos, estados, asignaciones, horarios sugeridos y rutina se guardan en `localStorage` de ese navegador y dispositivo. Las elecciones y gastos del presupuesto usan una clave separada. Nada se sincroniza con el repositorio, Google Docs ni otros dispositivos.
-- El botón **Reiniciar cambios** borra favoritos, estados, días y agenda local tras pedir confirmación; **Borrar mis cambios de presupuesto** solo limpia el presupuesto local.
+- La tabla de nueve columnas, los vuelos transcritos sin códigos y la cobertura de puntos viven en [`docs/data/itinerario.json`](docs/data/itinerario.json). No está conectada ni sincronizada con Google Docs.
+- Favoritos, estados, asignaciones, horarios sugeridos y rutina se guardan en `localStorage` de ese navegador y dispositivo. Las ediciones de transporte, hospedaje, reserva y notas de la tabla usan una clave local propia; las elecciones y gastos del presupuesto usan otra. Nada se sincroniza con el repositorio, Google Docs ni otros dispositivos.
+- El botón **Reiniciar cambios** borra favoritos, estados, días, agenda y notas locales de tabla tras pedir confirmación; **Borrar mis cambios de presupuesto** solo limpia el presupuesto local.
 - La agenda propone horas, duraciones, traslados y márgenes editables; no confirma reservas ni horarios de apertura. Consulta [`docs/HORARIOS.md`](docs/HORARIOS.md).
 - El sitio público contiene el itinerario y enlaces elegidos. No añadas boletos con códigos, datos de pasaporte, localizadores de reserva, direcciones privadas ni documentos personales al repositorio.
 - El mapa usa mosaicos externos de OpenStreetMap y enlaces externos de Google Maps y Atlas Obscura. La primera visita necesita conexión a internet para mostrarlos.

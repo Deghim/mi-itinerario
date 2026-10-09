@@ -3,7 +3,7 @@ import type { BudgetEntry, BudgetLocalState, CalculatedBudgetEntry, LodgingScena
 
 type BudgetData = typeof budgetData
 type Rate = { amount: number; currency: 'BRL'; unit: string; status: 'estimado'; sourceLabel: string; sourceUrl?: string; assumption?: string }
-type TransferItem = { amount: number | null; currency: 'BRL'; status: 'cotizado' | 'sin-importe'; label: string; unit: string; date?: string; sourceAsOf?: string; sourceLabel?: string; sourceUrl?: string; assumption: string; departureTime?: string; arrivalTime?: string }
+type TransferItem = { amount: number | null; currency: 'BRL'; status: 'cotizado' | 'sin-importe'; label: string; unit: string; date?: string; sourceAsOf?: string; sourceLabel?: string; sourceUrl?: string; assumption: string; departureTime?: string; arrivalTime?: string; removesLodgingNight?: boolean; referenceAmount?: number }
 
 const data = budgetData as BudgetData
 
@@ -95,17 +95,24 @@ function transferEntry(nights: RioNights, choice: RioTransferChoice): Calculated
     ...('sourceAsOf' in item && item.sourceAsOf ? { sourceAsOf: item.sourceAsOf } : {}),
     ...('sourceLabel' in item && item.sourceLabel ? { sourceLabel: item.sourceLabel } : {}),
     ...('date' in item && item.date ? { date: item.date } : {}),
+    ...('removesLodgingNight' in item && item.removesLodgingNight ? { removesLodgingNight: true } : {}),
+    ...('referenceAmount' in item && item.referenceAmount ? { referenceAmount: item.referenceAmount } : {}),
     assumption: item.assumption,
     tripLeg: 'Sao Paulo-Rio',
-    sourceScenario: choice === 'autobus' && nights === 4 ? 'escenario' : 'referencia',
+    sourceScenario: item.amount !== null && item.status === 'cotizado' ? 'escenario' : 'referencia',
   }
 }
 
 export function calculateBudgetScenario(state: Omit<BudgetLocalState, 'entries'>): CalculatedBudgetEntry[] {
   const scenario = data.scenarios.find((item) => item.rioNights === state.rioNights)
   if (!scenario) return []
-  const useNightBus = state.rioTransferChoice === 'autobus'
-  const initialSpNights = Math.max(0, scenario.spInitialNights - (useNightBus ? 1 : 0))
+  const selectedTransfer = (state.rioTransferChoice === 'autobus'
+    ? data.transfers.rio.autobus[String(state.rioNights) as '4' | '5']
+    : state.rioTransferChoice === 'avion'
+      ? data.transfers.rio.avion[String(state.rioNights) as '4' | '5']
+      : data.transfers.rio['por-decidir']) as TransferItem
+  const removesLodgingNight = state.rioTransferChoice !== 'por-decidir' && selectedTransfer.removesLodgingNight === true
+  const initialSpNights = Math.max(0, scenario.spInitialNights - (removesLodgingNight ? 1 : 0))
   const friendCity = 'Destino del encuentro (Curitiba solo referencia)'
   const rows: CalculatedBudgetEntry[] = []
 
@@ -113,8 +120,8 @@ export function calculateBudgetScenario(state: Omit<BudgetLocalState, 'entries'>
     const rates = data.lodgingScenarios.mixto.rates
     const initialSpPrivate = Math.ceil(scenario.spInitialNights / 2)
     let initialSpShared = scenario.spInitialNights - initialSpPrivate
-    if (useNightBus && initialSpShared > 0) initialSpShared -= 1
-    else if (useNightBus) {
+    if (removesLodgingNight && initialSpShared > 0) initialSpShared -= 1
+    else if (removesLodgingNight) {
       // The mixed scenario specifies that a bus removes a shared night. Keep the model safe if changed.
       initialSpShared = 0
     }
@@ -124,7 +131,7 @@ export function calculateBudgetScenario(state: Omit<BudgetLocalState, 'entries'>
     const rioShared = Math.max(0, scenario.rioNights - rioPrivate)
     const friendShared = scenario.friendNights - friendPrivate
     rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:sp-initial-private`, 'São Paulo · estancia inicial · privado', rates.saoPauloPrivate as Rate, initialSpPrivate, `3–${scenario.rioNights === 4 ? 9 : 8} dic`, `${initialSpPrivate} noches privadas`))
-    rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:sp-initial-shared`, 'São Paulo · estancia inicial · compartido', rates.saoPauloShared as Rate, initialSpShared, 'Estancia inicial hasta salir a Río', `${initialSpShared} camas/noches compartidas${useNightBus ? ' (una noche menos por bus)' : ''}`))
+    rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:sp-initial-shared`, 'São Paulo · estancia inicial · compartido', rates.saoPauloShared as Rate, initialSpShared, 'Estancia inicial hasta salir a Río', `${initialSpShared} camas/noches compartidas${removesLodgingNight ? ' (una noche menos por autobús nocturno)' : ''}`))
     rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:sp-return`, 'São Paulo · noche propuesta del 22', rates.saoPauloPrivate as Rate, scenario.spReturnNights, '22 dic · propuesta sin confirmar', '1 noche privada'))
     rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:rio-private`, 'Río · privado', rates.rioPrivate as Rate, rioPrivate, `${scenario.arrivalDate.slice(8)}–13 dic`, `${rioPrivate} noches privadas`))
     rows.push(rateEntry(`lodging:${scenario.rioNights}:mixto:rio-shared`, 'Río · compartido', rates.rioShared as Rate, rioShared, `${scenario.arrivalDate.slice(8)}–13 dic`, `${rioShared} camas/noches compartidas`))

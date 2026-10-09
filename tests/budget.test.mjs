@@ -8,13 +8,13 @@ import { calculateEndTime, findScheduleConflicts, parseDailyRoutine, parsePlaceS
 const scenarios = [4, 5]
 const lodgingVariants = ['privado-basico', 'privado-ensuite', 'compartido', 'mixto']
 
-test('cada comparación de alojamiento cubre 20 noches y el bus nocturno reduce solo una noche', () => {
+test('cada comparación cubre 20 noches; solo el autobús nocturno de 4 noches elimina una', () => {
   for (const rioNights of scenarios) {
     for (const lodgingScenario of lodgingVariants) {
       const base = calculateBudgetScenario({ rioNights, lodgingScenario, rioTransferChoice: 'por-decidir' })
       assert.equal(base.filter((row) => row.category === 'alojamiento').reduce((sum, row) => sum + row.quantity, 0), 20)
       const bus = calculateBudgetScenario({ rioNights, lodgingScenario, rioTransferChoice: 'autobus' })
-      assert.equal(bus.filter((row) => row.category === 'alojamiento').reduce((sum, row) => sum + row.quantity, 0), 19)
+      assert.equal(bus.filter((row) => row.category === 'alojamiento').reduce((sum, row) => sum + row.quantity, 0), rioNights === 4 ? 19 : 20)
       assert.equal(bus.filter((row) => row.category === 'alojamiento').length, lodgingScenario === 'mixto' ? 7 : 4)
     }
   }
@@ -32,13 +32,20 @@ test('la alternativa mixta reparte 10 noches privadas y 10 compartidas, sin suma
   }
 })
 
-test('solo el bus del escenario de 4 noches tiene cotización fechada; 5 noches permanece sin importe', () => {
+test('la tarifa de bus del 9 dic es diurna y no descuenta hotel; la del 10 dic sigue nocturna', () => {
   const fourNightBus = calculateBudgetScenario({ rioNights: 4, lodgingScenario: 'privado-basico', rioTransferChoice: 'autobus' }).find((row) => row.category === 'traslados')
   const fiveNightBus = calculateBudgetScenario({ rioNights: 5, lodgingScenario: 'privado-basico', rioTransferChoice: 'autobus' }).find((row) => row.category === 'traslados')
   assert.equal(fourNightBus?.amount, 129.99)
   assert.equal(fourNightBus?.date, '2026-12-10')
-  assert.equal(fiveNightBus?.amount, null)
-  assert.equal(fiveNightBus?.status, 'sin-importe')
+  assert.equal(fiveNightBus?.amount, 98.99)
+  assert.equal(fiveNightBus?.referenceAmount, 109.99)
+  assert.equal(fiveNightBus?.status, 'cotizado')
+  assert.equal(fiveNightBus?.date, '2026-12-09')
+  assert.equal(fiveNightBus?.removesLodgingNight, undefined)
+  const fiveNightFlight = calculateBudgetScenario({ rioNights: 5, lodgingScenario: 'privado-basico', rioTransferChoice: 'avion' }).find((row) => row.category === 'traslados')
+  assert.equal(fiveNightFlight?.amount, 293.65)
+  assert.equal(fiveNightFlight?.date, '2026-12-09')
+  assert.equal(getDefaultBudgetState().rioNights, 5)
 })
 
 test('el vuelo internacional pagado sin importe no se convierte en cero ni se suma al pendiente', () => {

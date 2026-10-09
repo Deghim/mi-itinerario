@@ -24,6 +24,8 @@ export type BudgetEntry = {
   placeId?: number
   tripLeg?: string
   includedInScenario?: boolean
+  removesLodgingNight?: boolean
+  referenceAmount?: number
 }
 
 export type BudgetLocalState = {

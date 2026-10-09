@@ -270,7 +270,7 @@ export default function BudgetSection({ onNavigatePlace }: Props) {
       <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'autobus'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'autobus' }))} /> Autobús</label>
       <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'avion'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'avion' }))} /> Avión</label>
     </div>
-    {state.rioTransferChoice === 'autobus' && <div className="budget-bus-note"><b>Salida nocturna:</b> {state.rioNights === 4 ? 'la referencia sale de Tietê a las 00:05 del 10 dic; implica ir a la terminal la noche del 9 y resta una noche de alojamiento de São Paulo.' : 'se descuenta una noche de São Paulo, pero no se encontró precio para el 9 dic; el pasaje sigue sin importe.'} Es solo comparación de costo, no una reserva.</div>}
+    {state.rioTransferChoice === 'autobus' && <div className="budget-bus-note">{state.rioNights === 4 ? <><b>Salida nocturna · escenario de 4 noches:</b> referencia Tietê 00:05 del 10 dic; ir a la terminal la noche del 9 reduce una noche de hospedaje en São Paulo.</> : <><b>Salida diurna · escenario de 5 noches:</b> consulta del 9 dic: candidato cercano a 08:30–15:00, ClickBus mostró R$98.99 promocional / R$109.99 referencia; no elimina noche de hospedaje.</>} Horario, precio y disponibilidad pueden cambiar. Es una comparación, no una reserva.</div>}
 
     {categoryRows.map((group) => <section className="budget-category" key={group.id}>
       <div className="budget-category-head"><h2>{group.label}</h2><span>{group.rows.length} {group.rows.length === 1 ? 'renglón' : 'renglones'}</span></div>

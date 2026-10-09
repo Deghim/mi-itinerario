@@ -9,7 +9,7 @@
   },
   "planningMarginPercent": 25,
   "default": {
-    "rioNights": 4,
+    "rioNights": 5,
     "lodgingScenario": "privado-basico",
     "rioTransferChoice": "por-decidir"
   },
@@ -84,12 +84,12 @@
     "rio": {
       "por-decidir": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Traslado São Paulo → Río", "unit": "pasaje de ida", "assumption": "Modo y precio por decidir; avión y autobús son alternativas, no se suman." },
       "autobus": {
-        "4": { "amount": 129.99, "currency": "BRL", "status": "cotizado", "label": "Autobús Tietê → Novo Rio · semi-leito", "unit": "pasaje de ida / 1 persona", "date": "2026-12-10", "departureTime": "00:05", "arrivalTime": "06:35", "sourceAsOf": "2026-10-08", "sourceLabel": "ClickBus · consulta fechada; sin reservar", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-10", "assumption": "Sale 00:05 del 10 dic: presentarse en Tietê la noche del 9. La tarifa puede cambiar." },
-        "5": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Autobús a Río · fecha del escenario 5 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "sourceLabel": "ClickBus · sin precio fechado consultado", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-09", "assumption": "Precio y disponibilidad no verificados; no usar la tarifa del día 10." }
+        "4": { "amount": 129.99, "currency": "BRL", "status": "cotizado", "label": "Autobús Tietê → Novo Rio · semi-leito", "unit": "pasaje de ida / 1 persona", "date": "2026-12-10", "departureTime": "00:05", "arrivalTime": "06:35", "removesLodgingNight": true, "sourceAsOf": "2026-10-08", "sourceLabel": "ClickBus · consulta fechada; sin reservar", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-10", "assumption": "Sale 00:05 del 10 dic: presentarse en Tietê la noche del 9. La tarifa puede cambiar; reduce una noche de alojamiento de São Paulo." },
+        "5": { "amount": 98.99, "currency": "BRL", "status": "cotizado", "label": "Autobús diurno Tietê → Novo Rio · 5 noches en Río", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "removesLodgingNight": false, "referenceAmount": 109.99, "sourceAsOf": "2026-10-08", "sourceLabel": "ClickBus · promo R$98.99; referencia R$109.99 · sin reservar", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-09", "assumption": "Consulta fechada para el 9 dic: salida diurna candidata 08:30, duración listada aprox. 6 h 30, llegada cerca de 15:00; validar horario, tarifa y disponibilidad al comprar. Precio promocional observado R$98.99; referencia visible R$109.99. No elimina una noche de alojamiento." }
       },
       "avion": {
         "4": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Vuelo São Paulo → Río · escenario 4 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-10", "sourceLabel": "Sin cotización para la fecha", "sourceUrl": "https://www.voegol.com.br/br/voos-de-sao-paulo-para-rio-de-janeiro", "assumption": "La tarifa del día 10 no fue verificable; no reutilizar precios de otras fechas." },
-        "5": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Vuelo São Paulo → Río · escenario 5 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "sourceLabel": "Sin cotización para la fecha", "sourceUrl": "https://www.voegol.com.br/br/voos-de-sao-paulo-para-rio-de-janeiro", "assumption": "La tarifa del día 9 no fue verificable; no reutilizar precios de otras fechas." }
+        "5": { "amount": 293.65, "currency": "BRL", "status": "cotizado", "label": "Vuelo São Paulo → Río · desde", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "sourceAsOf": "2026-10-08", "sourceLabel": "GOL · precio desde consultado; no reservado", "sourceUrl": "https://www.voegol.com.br/br/voos-de-sao-paulo-para-rio-de-janeiro", "assumption": "Tarifa desde R$293.65 observada para el 9 dic, no precio final. Aeropuerto, hora, familia tarifaria, equipaje y disponibilidad exactos requieren selección antes de comprar." }
       }
     }
   },
@@ -103,6 +103,6 @@
     { "id": "trip-extras", "name": "Otros gastos del viaje", "category": "otros", "unit": "gasto", "assumption": "Agregar aquí cualquier concepto que falte." }
   ],
   "paidItems": [
-    { "id": "international-round-trip", "name": "Vuelos internacionales · ida y regreso · ya pagados", "category": "traslados", "amount": null, "currency": null, "quantity": 1, "unit": "boleto redondo", "status": "pagado", "sourceLabel": "Confirmado por el viajero; importe total no informado", "assumption": "Se excluye del pendiente y no se contabiliza como R$0. No dividir el costo entre ida y vuelta ni almacenar boleto o código de reserva." }
+    { "id": "international-round-trip", "name": "Vuelos internacionales · ida y vuelta · pagados", "category": "traslados", "amount": null, "currency": null, "quantity": 1, "unit": "gasto agregado de vuelos internacionales", "status": "pagado", "sourceLabel": "Confirmado por el viajero; importe total no informado", "assumption": "Es un monto agregado de vuelos internacionales de ida y vuelta; no confirma que sean un mismo boleto o localizador. Se excluye del pendiente, no se contabiliza como $0 y no incluye el tramo doméstico CUU→CDMX sin confirmación." }
   ]
 }

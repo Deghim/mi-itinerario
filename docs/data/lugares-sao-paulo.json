@@ -91,17 +91,17 @@
     {
       "id": 6,
       "name": "Casa de Pedra",
-      "zone": "Oeste",
+      "zone": "Sur",
       "statusFromDraft": "marcado-visitables",
       "operationalStatus": "por-confirmar",
       "coordinates": {
-        "lat": -23.59275,
-        "lon": -46.69703,
-        "confidence": "por-confirmar"
+        "lat": -23.6162,
+        "lon": -46.720104,
+        "confidence": "aproximada-fuente-atlas"
       },
-      "nearestTransitFromDraft": "Morumbi · línea 9 + autobús",
-      "descriptionFromDraft": "Casa construida por Estevão Silva da Conceição, decorada con piedras, mosaicos y objetos.",
-      "addressFromDraft": "Jardim Colombo · acceso residencial, confirmar visita",
+      "nearestTransitFromDraft": "Paraisópolis · traslado y ruta por verificar",
+      "descriptionFromDraft": "Casa construida por Estevão Silva da Conceição en Paraisópolis. Atlas indica que la visita requiere coordinarse mediante un tour local.",
+      "addressFromDraft": "Rua Herbert Spencer, 28 · Paraisópolis · visita guiada por coordinar",
       "atlasUrl": "https://www.atlasobscura.com/places/casa-de-pedra",
       "verification": "pendiente"
     },
@@ -210,7 +210,7 @@
     {
       "id": 13,
       "name": "Museu Afro Brasil",
-      "zone": "Paulista / Jardins",
+      "zone": "Ibirapuera",
       "statusFromDraft": "marcado-visitables",
       "operationalStatus": "por-confirmar",
       "coordinates": {
@@ -533,17 +533,17 @@
     {
       "id": 32,
       "name": "Casa Bandeirista do Itaim",
-      "zone": "Oeste",
+      "zone": "Faria Lima / Itaim",
       "statusFromDraft": "marcado-visitables",
       "operationalStatus": "por-confirmar",
       "coordinates": {
-        "lat": -23.58174,
-        "lon": -46.67967,
-        "confidence": "por-confirmar"
+        "lat": -23.586479,
+        "lon": -46.682078,
+        "confidence": "aproximada-fuente-atlas"
       },
-      "nearestTransitFromDraft": "Faria Lima · línea 4 + caminata",
+      "nearestTransitFromDraft": "Faria Lima · línea 4 + caminata estimada",
       "descriptionFromDraft": "Pequeña casa del siglo XVIII conservada bajo la trama moderna de Itaim Bibi.",
-      "addressFromDraft": "Rua Iguatemi, 263 · Itaim Bibi",
+      "addressFromDraft": "Pátio Victor Malzoni, Av. Brigadeiro Faria Lima, 3477 · Itaim",
       "atlasUrl": "https://www.atlasobscura.com/places/casa-bandeirista-do-itaim",
       "verification": "pendiente"
     },

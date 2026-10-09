@@ -4,14 +4,25 @@
   "travelYear": 2026,
   "yearIsAssumption": true,
   "fullTrip": { "start": "2026-12-02", "end": "2026-12-23", "status": "shared-by-traveler-year-provisional" },
-  "activeStage": { "start": "2026-12-02", "end": "2026-12-13", "status": "planning" },
+  "activeStage": { "start": "2026-12-03", "end": "2026-12-09", "status": "planning" },
   "milestones": [
-    { "date": "2026-12-02", "label": "Salida", "detail": "Vuelo por agregar", "status": "shared-date-no-booking" },
-    { "date": "2026-12-03", "label": "Llegada a São Paulo", "detail": "Inicio de la etapa São Paulo", "status": "shared-date-no-booking" },
-    { "start": "2026-12-04", "end": "2026-12-12", "label": "Días para planear São Paulo", "detail": "Lugares y ritmo por decidir", "status": "open-planning" },
-    { "start": "2026-12-13", "end": "2026-12-14", "label": "Encuentro con amigos", "detail": "Día flexible; ciudad pendiente", "status": "tentative" },
-    { "start": "2026-12-14", "end": "2026-12-23", "label": "Resto del viaje", "detail": "Río es una opción por desarrollar; regreso por definir", "status": "unplanned" }
+    { "date": "2026-12-02", "label": "Salida · vuelos en captura", "detail": "CUU → CDMX → R. DOM; horas locales/husos por confirmar", "status": "shared-screenshot-no-ticket-data" },
+    { "date": "2026-12-03", "label": "Llegada a GRU", "detail": "09:10 según captura; llegada GRU confirmada en conversación", "status": "shared-screenshot-no-ticket-data" },
+    { "start": "2026-12-03", "end": "2026-12-09", "label": "São Paulo · propuesta", "detail": "Días 3–8; horarios editables y accesos por confirmar", "status": "proposed" },
+    { "date": "2026-12-09", "label": "Traslado a Río", "detail": "Cinco noches 9–13 preferidas; modo por decidir", "status": "proposed" },
+    { "start": "2026-12-09", "end": "2026-12-14", "label": "Río · cinco noches", "detail": "Preferencia de trabajo; actividades y alojamiento por definir", "status": "proposed" },
+    { "date": "2026-12-14", "label": "Encuentro con amigos", "detail": "Curitiba probable; Belém alternativa; destino pendiente", "status": "tentative" },
+    { "start": "2026-12-14", "end": "2026-12-22", "label": "Resto del viaje", "detail": "Ciudad y actividades por definir", "status": "unplanned" },
+    { "date": "2026-12-22", "label": "Noche en São Paulo", "detail": "Propuesta para dormir antes del vuelo de regreso", "status": "proposed" },
+    { "date": "2026-12-23", "label": "Regreso internacional desde GRU", "detail": "Pagado según el viajero; horario/importe no informados", "status": "paid-time-unknown" }
   ],
+  "proposedPlan": {
+    "source": "docs/data/itinerario.json",
+    "status": "editable-not-booked",
+    "rioNights": 5,
+    "pacePreference": "Flexible: alternar días intensos y ligeros, con pausas y margen para traslados.",
+    "pacingSummary": "São Paulo: 3 dic ligero por llegada; 4 intenso (museos del Este + MASP); 5 excursión a Cantareira con tarde ligera; 6 intermedio (Liberdade/Centro); 7 intenso (Centro); 8 intermedio (Jardín Botánico/Ibirapuera). Propuesta editable, no agenda confirmada."
+  },
   "people": { "count": null, "status": "not-provided" },
   "privacy": {
     "public": ["itinerario", "lugares", "enlaces públicos", "fuentes"],
