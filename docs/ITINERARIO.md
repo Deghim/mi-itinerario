@@ -20,7 +20,7 @@
 | 2 dic | CUU → CDMX → R. DOM | Horas visibles en captura; husos, aerolínea, aeropuerto e importe por confirmar |
 | 3 dic | R. DOM → São Paulo · GRU | 00:57–09:10 según captura; GRU confirmado en conversación. Día de llegada con margen |
 | 4 dic | Mooca / Vila Maria Zélia / MASP | Museu da Imigração 10:15–12:15; comida 12:15–13:15; Vila Maria Zélia 14:35–15:20; MASP desde 18:00, con acceso/reserva por confirmar |
-| 5 dic | Parque Estadual Cantareira | Excursión condicional 10:30–14:30; traslado y preparación desde 09:00, tarde ligera; confirmar ingreso y corte de sendero |
+| 5 dic | Parque Estadual Cantareira | Excursión condicional 09:00–14:00; preparación desde 07:30 y traslado estimado 08:00–09:00; la caminata sustituye la carrera ese día, que sigue siendo opcional; confirmar ingreso y corte de sendero |
 | 6 dic | Dona Yayá / Liberdade / Sé | Propuesta con límites publicados; acceso interior de cripta e iglesia por verificar |
 | 7 dic | Memorial da Resistência / Centro | Memorial 10:15–11:45; reserva requerida según fuente; walk-bys en bloque flexible, sin ruta exacta |
 | 8 dic | Jardim Botânico / Museu Afro Brasil | Botánico 10:30–12:30; comida 12:30–13:30; Afro Brasil 15:00–16:30; paseo opcional en Ibirapuera desde 16:30 |
@@ -33,7 +33,7 @@
 
 Las horas de los vuelos del 2–3 de diciembre se transcribieron de una captura compartida por el viajero. No se publican la captura ni datos de boleto. “R. DOM” no se expande porque falta el aeropuerto/destino exacto. Las horas locales y los husos no están indicados.
 
-En días de exploración, la rutina propuesta es correr 07:15–08:00 y desayunar/ducharse 08:00–09:00. Las ventanas de visitas de los días 4–8 dejan ese bloque y añaden traslados/márgenes estimados; no son rutas medidas ni reservas. Todos los horarios siguen editables y sujetos a reconfirmar acceso y operación.
+En días de exploración, la rutina opcional propuesta es correr 07:15–08:00 y desayunar/ducharse 08:00–09:00; puedes saltarte la carrera para una excursión o descansar. Cantareira el día 5 tiene preparación y traslado desde 07:30 y reemplaza la carrera por la caminata. Las ventanas de los demás días 4–8 dejan ese bloque y añaden traslados/márgenes estimados; no son rutas medidas ni reservas. Todos los horarios siguen editables y sujetos a reconfirmar acceso y operación.
 
 ## Tabla, agenda y cobertura
 

@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { itinerary, planAgendaApplication, proposedPlaceRows } from '../lib/itinerary-model.ts'
+import { groupItineraryRows, itinerary, itineraryDayTone, planAgendaApplication, proposedPlaceRows } from '../lib/itinerary-model.ts'
 import { ITINERARY_OVERRIDES_KEY, readItineraryOverrides, writeItineraryOverrides } from '../lib/itinerary-storage.ts'
 
 test('la tabla conserva vuelos capturados y distingue pago internacional del tramo doméstico', async () => {
@@ -63,7 +63,7 @@ test('aplicar propuesta respeta asignación/horario manual y deja vuelos y filas
   assert.ok(secondApply.skippedManual.length > 0)
 })
 
-test('las ventanas de visitas 4–8 dejan correr y desayunar antes de los traslados estimados', () => {
+test('las ventanas de visitas 4–8 respetan carrera opcional o desayuno antes de traslados', () => {
   const toMinutes = (value) => {
     const [hour, minute] = value.split(':').map(Number)
     return hour * 60 + minute
@@ -73,13 +73,36 @@ test('las ventanas de visitas 4–8 dejan correr y desayunar antes de los trasla
     return row.placeId !== undefined && row.schedule && row.applyToAgenda === true && day >= 4 && day <= 8
   })
   assert.ok(morningVisits.length > 0)
-  for (const row of morningVisits) {
+  for (const row of morningVisits.filter((item) => item.runMode !== 'skip-proposed')) {
     const earliestDeparture = toMinutes(row.schedule.startTime) - row.schedule.travelMinutes - row.schedule.bufferMinutes
     assert.ok(earliestDeparture >= 9 * 60, `${row.id} reserva traslado antes del fin del desayuno`)
   }
-  assert.equal(morningVisits.find((row) => row.placeId === 33)?.schedule.startTime, '10:30')
+  const cantareira = morningVisits.find((row) => row.placeId === 33)
+  assert.equal(cantareira?.schedule.startTime, '09:00')
+  assert.equal(cantareira?.runMode, 'skip-proposed')
+  assert.equal(toMinutes(cantareira.schedule.startTime) - cantareira.schedule.travelMinutes - cantareira.schedule.bufferMinutes, 7 * 60 + 30)
+  assert.match(cantareira.notes, /sustituye la carrera.*opcional/i)
   assert.equal(morningVisits.find((row) => row.placeId === 4)?.schedule.startTime, '10:30')
   assert.equal(morningVisits.find((row) => row.placeId === 13)?.schedule.startTime, '15:00')
+})
+
+test('la tabla agrupa y filtra por fecha efectiva sin duplicar filas ni reinterpretar otro año', () => {
+  const rows = itinerary.rows
+  const moved = rows.find((row) => row.placeId === 33)
+  assert.ok(moved)
+  const state = { travelYear: 2026, dayAssignments: { 33: 3 } }
+  const groups = groupItineraryRows(rows, state, 2026)
+  const flattened = groups.flatMap((group) => group.rows)
+  assert.equal(flattened.length, rows.length)
+  assert.equal(new Set(flattened.map((row) => row.id)).size, rows.length)
+  assert.deepEqual(groups.map((group) => group.date), [...groups.map((group) => group.date)].sort())
+  const dayThree = groups.find((group) => group.date === '2026-12-03')
+  assert.ok(dayThree?.rows.includes(moved))
+  assert.equal(groupItineraryRows(rows, state, 2026, 3)[0].rows.length, dayThree.rows.length)
+  assert.equal(groupItineraryRows(rows, state, 2026, 5).some((group) => group.rows.includes(moved)), false)
+  assert.equal(groupItineraryRows(rows, { ...state, travelYear: 2027 }, 2026).find((group) => group.date === '2026-12-05')?.rows.includes(moved), true)
+  assert.equal(itineraryDayTone('2026-12-03'), itineraryDayTone('2026-12-03'))
+  assert.notEqual(itineraryDayTone('2026-12-03'), itineraryDayTone('2026-12-04'))
 })
 
 test('los cambios editoriales locales solo aceptan campos y filas conocidas', () => {
