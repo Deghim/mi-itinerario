@@ -102,7 +102,7 @@ test('la tabla agrupa y filtra por fecha efectiva sin duplicar filas ni reinterp
   assert.equal(groupItineraryRows(rows, state, 2026, 5).some((group) => group.rows.includes(moved)), false)
   assert.equal(groupItineraryRows(rows, { ...state, travelYear: 2027 }, 2026).find((group) => group.date === '2026-12-05')?.rows.includes(moved), true)
   assert.equal(itineraryDayTone('2026-12-03'), itineraryDayTone('2026-12-03'))
-  assert.notEqual(itineraryDayTone('2026-12-03'), itineraryDayTone('2026-12-04'))
+  assert.equal(new Set(Array.from({ length: 7 }, (_, index) => itineraryDayTone(`2026-12-${String(index + 2).padStart(2, '0')}`))).size, 7)
 })
 
 test('los cambios editoriales locales solo aceptan campos y filas conocidas', () => {

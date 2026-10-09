@@ -37,8 +37,9 @@ export function groupItineraryRows(
     .map(([date, dayRows]) => ({ date, rows: dayRows }))
 }
 
-export function itineraryDayTone(iso: string): 'par' | 'impar' {
-  return Number(iso.slice(8, 10)) % 2 === 0 ? 'par' : 'impar'
+export function itineraryDayTone(iso: string): string {
+  const day = Number(iso.slice(8, 10))
+  return String(((day - 2) % 7 + 7) % 7)
 }
 
 export function proposedPlaceRows(): ItineraryRow[] {
