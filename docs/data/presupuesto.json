@@ -1,0 +1,108 @@
+{
+  "currency": {
+    "base": "BRL",
+    "display": "MXN",
+    "mxnPerBrl": 3.63,
+    "asOf": "2026-10-08",
+    "sourceUrl": "https://ptax.bcb.gov.br/ptax_internet/consultarTodasAsMoedas.do?method=consultaTodasMoedas",
+    "note": "Referencia fija consultada el 8 oct 2026; no es tipo de cambio en vivo. Revisa la tasa y comisiones de tu forma de pago."
+  },
+  "planningMarginPercent": 25,
+  "default": {
+    "rioNights": 4,
+    "lodgingScenario": "privado-basico",
+    "rioTransferChoice": "por-decidir"
+  },
+  "comparisonOnly": true,
+  "scenarioNote": "Comparaciones de costo solamente. No cambian las fechas ni el itinerario guardado.",
+  "scenarios": [
+    {
+      "rioNights": 4,
+      "label": "4 noches en Río",
+      "arrivalDate": "2026-12-10",
+      "departureDate": "2026-12-14",
+      "spInitialNights": 7,
+      "rioNights": 4,
+      "friendNights": 8,
+      "spReturnNights": 1,
+      "note": "Escenario para comparar: llegada a Río el 10 dic y salida el 14 dic; encuentro el 14 provisional. São Paulo incluye noches 3–9 y 22."
+    },
+    {
+      "rioNights": 5,
+      "label": "5 noches en Río",
+      "arrivalDate": "2026-12-09",
+      "departureDate": "2026-12-14",
+      "spInitialNights": 6,
+      "rioNights": 5,
+      "friendNights": 8,
+      "spReturnNights": 1,
+      "note": "Escenario para comparar: llegada a Río el 9 dic y salida el 14 dic; encuentro el 14 provisional. São Paulo incluye noches 3–8 y 22."
+    }
+  ],
+  "lodgingScenarios": {
+    "privado-basico": {
+      "label": "Cuarto privado · baño fuera del cuarto",
+      "note": "Alternativa de privacidad económica; no es una tarifa fechada. En Río, la descripción de baño privado fuera del cuarto requiere confirmación con el alojamiento.",
+      "rates": {
+        "saoPaulo": { "amount": 135, "currency": "BRL", "unit": "cuarto/noche", "status": "estimado", "sourceLabel": "Hostel Vergueiro · desde R$135, baño compartido", "sourceUrl": "https://hostelvergueiro.com/quartos/", "assumption": "Tarifa pública desde, no cotizada para diciembre." },
+        "rio": { "amount": 200, "currency": "BRL", "unit": "cuarto/noche", "status": "estimado", "sourceLabel": "Hospedaria Rio · cuarto privado, baño privado en el pasillo", "sourceUrl": "https://www.hospedariario.com.br/nossos-quartos", "assumption": "Configuración descrita en portugués; confirmar con el alojamiento. Tarifa desde, no cotizada para diciembre." },
+        "friendCity": { "amount": 150, "currency": "BRL", "unit": "suite/noche", "status": "estimado", "sourceLabel": "Hostel Kaizen · referencia de Curitiba", "sourceUrl": "https://hostelkaizen.com/", "assumption": "Curitiba solo referencia de precio; R$150 sin cotización fechada. Ciudad de estas noches aún no definida." }
+      }
+    },
+    "privado-ensuite": {
+      "label": "Cuarto privado · baño dentro del cuarto",
+      "note": "Alternativa privada ensuite; tarifas públicas desde, no cotización para fechas ni disponibilidad.",
+      "rates": {
+        "saoPaulo": { "amount": 165, "currency": "BRL", "unit": "cuarto/noche", "status": "estimado", "sourceLabel": "Hostel Vergueiro · desde R$165, baño privado", "sourceUrl": "https://hostelvergueiro.com/quartos/", "assumption": "Tarifa pública desde, no cotizada para diciembre." },
+        "rio": { "amount": 220, "currency": "BRL", "unit": "suite/noche", "status": "estimado", "sourceLabel": "Hospedaria Rio · suite", "sourceUrl": "https://www.hospedariario.com.br/nossos-quartos", "assumption": "Tarifa desde, no cotizada para diciembre." },
+        "friendCity": { "amount": 150, "currency": "BRL", "unit": "suite/noche", "status": "estimado", "sourceLabel": "Hostel Kaizen · referencia de Curitiba", "sourceUrl": "https://hostelkaizen.com/", "assumption": "Curitiba solo referencia de precio; R$150 sin cotización fechada. Ciudad de estas noches aún no definida." }
+      }
+    },
+    "compartido": {
+      "label": "Cama en dormitorio compartido",
+      "note": "Alternativa de menor costo; referencias no cotizadas para fechas.",
+      "rates": {
+        "saoPaulo": { "amount": 80, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "São Paulo · supuesto de planeación", "assumption": "R$80 es un supuesto, no una tarifa vigente cotizada." },
+        "rio": { "amount": 80, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "Hospedaria Rio · cama desde R$80", "sourceUrl": "https://www.hospedariario.com.br/nossos-quartos", "assumption": "Tarifa desde, no cotizada para diciembre." },
+        "friendCity": { "amount": 57, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "Hostel Kaizen · referencia de Curitiba", "sourceUrl": "https://hostelkaizen.com/", "assumption": "Curitiba solo referencia; dato indexado antiguo, verificar precio y disponibilidad. Ciudad aún pendiente." }
+      }
+    },
+    "mixto": {
+      "label": "Mixto · cuartos privados y camas compartidas",
+      "note": "Alternativa combinada de 10 noches privadas y 10 camas compartidas. La noche que se descuenta por autobús se modela como compartida.",
+      "rates": {
+        "saoPauloPrivate": { "amount": 165, "currency": "BRL", "unit": "cuarto/noche", "status": "estimado", "sourceLabel": "Hostel Vergueiro · desde R$165, baño privado", "sourceUrl": "https://hostelvergueiro.com/quartos/", "assumption": "Tarifa pública desde, no cotizada para diciembre." },
+        "saoPauloShared": { "amount": 80, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "São Paulo · supuesto de planeación", "assumption": "R$80 es un supuesto, no una tarifa vigente cotizada." },
+        "rioPrivate": { "amount": 220, "currency": "BRL", "unit": "suite/noche", "status": "estimado", "sourceLabel": "Hospedaria Rio · suite", "sourceUrl": "https://www.hospedariario.com.br/nossos-quartos", "assumption": "Tarifa desde, no cotizada para diciembre." },
+        "rioShared": { "amount": 80, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "Hospedaria Rio · cama desde R$80", "sourceUrl": "https://www.hospedariario.com.br/nossos-quartos", "assumption": "Tarifa desde, no cotizada para diciembre." },
+        "friendPrivate": { "amount": 150, "currency": "BRL", "unit": "suite/noche", "status": "estimado", "sourceLabel": "Hostel Kaizen · referencia de Curitiba", "sourceUrl": "https://hostelkaizen.com/", "assumption": "Curitiba solo referencia; dato antiguo sin cotizar fechas. Ciudad pendiente." },
+        "friendShared": { "amount": 57, "currency": "BRL", "unit": "cama/persona/noche", "status": "estimado", "sourceLabel": "Hostel Kaizen · referencia de Curitiba", "sourceUrl": "https://hostelkaizen.com/", "assumption": "Curitiba solo referencia; dato antiguo sin cotizar fechas. Ciudad pendiente." }
+      }
+    }
+  },
+  "transfers": {
+    "rio": {
+      "por-decidir": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Traslado São Paulo → Río", "unit": "pasaje de ida", "assumption": "Modo y precio por decidir; avión y autobús son alternativas, no se suman." },
+      "autobus": {
+        "4": { "amount": 129.99, "currency": "BRL", "status": "cotizado", "label": "Autobús Tietê → Novo Rio · semi-leito", "unit": "pasaje de ida / 1 persona", "date": "2026-12-10", "departureTime": "00:05", "arrivalTime": "06:35", "sourceAsOf": "2026-10-08", "sourceLabel": "ClickBus · consulta fechada; sin reservar", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-10", "assumption": "Sale 00:05 del 10 dic: presentarse en Tietê la noche del 9. La tarifa puede cambiar." },
+        "5": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Autobús a Río · fecha del escenario 5 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "sourceLabel": "ClickBus · sin precio fechado consultado", "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-09", "assumption": "Precio y disponibilidad no verificados; no usar la tarifa del día 10." }
+      },
+      "avion": {
+        "4": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Vuelo São Paulo → Río · escenario 4 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-10", "sourceLabel": "Sin cotización para la fecha", "sourceUrl": "https://www.voegol.com.br/br/voos-de-sao-paulo-para-rio-de-janeiro", "assumption": "La tarifa del día 10 no fue verificable; no reutilizar precios de otras fechas." },
+        "5": { "amount": null, "currency": "BRL", "status": "sin-importe", "label": "Vuelo São Paulo → Río · escenario 5 noches", "unit": "pasaje de ida / 1 persona", "date": "2026-12-09", "sourceLabel": "Sin cotización para la fecha", "sourceUrl": "https://www.voegol.com.br/br/voos-de-sao-paulo-para-rio-de-janeiro", "assumption": "La tarifa del día 9 no fue verificable; no reutilizar precios de otras fechas." }
+      }
+    }
+  },
+  "unknownCosts": [
+    { "id": "local-transport", "name": "Transporte local", "category": "traslados", "unit": "viaje", "assumption": "Importe y trayectos por definir." },
+    { "id": "food", "name": "Comidas y bebidas", "category": "comida", "unit": "día/persona", "assumption": "Sin presupuesto diario proporcionado; no se estima en cero." },
+    { "id": "activities", "name": "Entradas y actividades", "category": "actividades", "unit": "entrada/actividad", "assumption": "No se asigna importe a lugares sin tarifa verificada." },
+    { "id": "friend-leg", "name": "Traslado a la ciudad del encuentro", "category": "traslados", "unit": "pasaje", "assumption": "Curitiba es probable; Belém es alternativa. Ciudad y tramo no confirmados." },
+    { "id": "return-leg", "name": "Regreso a São Paulo para dormir el 22", "category": "traslados", "unit": "pasaje", "assumption": "Propuesta sin aprobar; origen, modo y tarifa desconocidos." },
+    { "id": "gru-transfer", "name": "Traslado al aeropuerto GRU · 23 dic", "category": "traslados", "unit": "viaje", "assumption": "Vuelo internacional ya pagado; costo del traslado al aeropuerto no informado." },
+    { "id": "trip-extras", "name": "Otros gastos del viaje", "category": "otros", "unit": "gasto", "assumption": "Agregar aquí cualquier concepto que falte." }
+  ],
+  "paidItems": [
+    { "id": "international-round-trip", "name": "Vuelos internacionales · ida y regreso · ya pagados", "category": "traslados", "amount": null, "currency": null, "quantity": 1, "unit": "boleto redondo", "status": "pagado", "sourceLabel": "Confirmado por el viajero; importe total no informado", "assumption": "Se excluye del pendiente y no se contabiliza como R$0. No dividir el costo entre ida y vuelta ni almacenar boleto o código de reserva." }
+  ]
+}

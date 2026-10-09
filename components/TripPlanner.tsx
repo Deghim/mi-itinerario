@@ -6,6 +6,9 @@ import placesFile from '@/docs/data/lugares-sao-paulo.json'
 import tripFile from '@/docs/data/viaje.json'
 import { clearTripState, readTripState, supportedTravelYears, writeTripState } from '@/lib/trip-storage'
 import { createMapsRouteSegments } from '@/lib/maps-routes'
+import BudgetSection from './BudgetSection'
+import DaySchedule from './DaySchedule'
+import { DEFAULT_DAILY_ROUTINE } from '@/lib/schedule'
 import type { LocalTripState, Place, SavedPlaceState } from '@/types/place'
 
 const MapView = dynamic(() => import('./MapView'), {
@@ -18,6 +21,7 @@ const STORAGE_KEY = 'mi-itinerario:sao-paulo:v1'
 const tabs = [
   { id: 'itinerario', label: 'Itinerario', icon: '◷' },
   { id: 'lugares', label: 'Lugares', icon: '⌖' },
+  { id: 'presupuesto', label: 'Presupuesto', icon: '＄' },
   { id: 'documentos', label: 'Documentos', icon: '▤' },
 ] as const
 type TabId = (typeof tabs)[number]['id']
@@ -78,6 +82,7 @@ export default function TripPlanner() {
   const [selectedMapPlace, setSelectedMapPlace] = useState<number>()
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [selectedPlanningDay, setSelectedPlanningDay] = useState<number | null>(null)
+  const [selectedAgendaDay, setSelectedAgendaDay] = useState(4)
 
   useEffect(() => {
     let mounted = true
@@ -114,7 +119,7 @@ export default function TripPlanner() {
 
   const proposal = useMemo(() => createZoneProposal(), [])
   const favorites = places.filter((place) => state.favorites.includes(place.id))
-  const assignedPlaces = places.filter((place) => Number(state.dayAssignments[place.id]) >= 2 && Number(state.dayAssignments[place.id]) <= 13)
+  const assignedPlaces = places.filter((place) => Number(state.dayAssignments[place.id]) >= 2 && Number(state.dayAssignments[place.id]) <= 14)
 
   function toggleFavorite(id: number) {
     setState((current) => ({ ...current, favorites: current.favorites.includes(id) ? current.favorites.filter((item) => item !== id) : [...current.favorites, id] }))
@@ -133,6 +138,18 @@ export default function TripPlanner() {
     })
   }
 
+  function savePlaceSchedule(placeId: number, schedule: NonNullable<LocalTripState['placeSchedule']>[number]) {
+    setState((current) => ({ ...current, placeSchedule: { ...current.placeSchedule, [placeId]: schedule } }))
+  }
+
+  function removePlaceSchedule(placeId: number) {
+    setState((current) => {
+      const placeSchedule = { ...current.placeSchedule }
+      delete placeSchedule[placeId]
+      return { ...current, placeSchedule }
+    })
+  }
+
   function distributeProposal() {
     setState((current) => {
       const dayAssignments = { ...current.dayAssignments }
@@ -145,7 +162,7 @@ export default function TripPlanner() {
   }
 
   function resetLocalData() {
-    if (!window.confirm('¿Borrar favoritos, estados y días guardados en este navegador?')) return
+    if (!window.confirm('¿Borrar favoritos, estados, días, horarios y rutina guardados en este navegador?')) return
     try { clearTripState(window.localStorage, STORAGE_KEY) } catch { /* Se reemplazará por el estado vacío de React. */ }
     setState(emptyState)
     setNotice('Se borraron los cambios locales de este navegador.')
@@ -154,6 +171,11 @@ export default function TripPlanner() {
   function nav(tab: TabId) {
     setActiveTab(tab)
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  function navigateToBudgetPlace(placeId: number) {
+    setSelectedMapPlace(placeId)
+    nav('lugares')
   }
 
   return (
@@ -208,14 +230,14 @@ export default function TripPlanner() {
             <div className="section-heading"><div><span className="tiny-label">TU CUADERNO DE RUTA</span><h2>Arma tus días</h2></div><span className="section-mark">PLANEACIÓN</span></div>
             <div className="planning-note"><span>✳</span><p><b>Sin reservas registradas.</b> Las fechas son una base de trabajo. Elige un día para cada lugar; puedes moverlo cuando tengas más claro el ritmo.</p></div>
             <div className="date-board">
-              <div className="date-board-head"><div><b>Etapa São Paulo</b><span>2–13 diciembre · días 4–12 abiertos para planear</span></div><label className="year-select">AÑO <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
+              <div className="date-board-head"><div><b>Etapa São Paulo</b><span>2–13 diciembre · asigna actividades opcionales en el calendario</span></div><label className="year-select">AÑO <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
               <div className="date-row">{calendar.map(({ day, date }) => {
                 const isArrival = day === 3
                 const isPlanning = day >= 4 && day <= 12
                 const hasAssignment = Object.values(state.dayAssignments).includes(day)
                 return <button key={day} className={`date-tile ${isArrival ? 'arrive' : ''} ${isPlanning ? 'planning' : ''} ${hasAssignment ? 'has-plan' : ''}`} onClick={() => {
-                  setActiveTab(day >= 4 && day <= 12 ? 'lugares' : 'documentos')
-                  if (day >= 4 && day <= 12) { setSelectedPlanningDay(day); setNotice(`Día seleccionado: ${day} de diciembre. Asigna los lugares que quieras.`) }
+                  setActiveTab(day >= 2 && day <= 14 ? 'lugares' : 'documentos')
+                  if (day >= 2 && day <= 14) { setSelectedPlanningDay(day); setSelectedAgendaDay(day); setNotice(day >= 4 && day <= 12 ? `Día seleccionado: ${day} de diciembre. Asigna los lugares que quieras.` : `Día ${day} seleccionado para una actividad opcional; la fecha sigue como ${day === 2 ? 'salida' : day === 3 ? 'llegada a São Paulo' : 'encuentro flexible'}.`) }
                   else setNotice(day >= 13 ? 'El encuentro con amigos puede ser el 13 o 14; la ciudad sigue pendiente.' : `El ${day} de diciembre está anotado como ${day === 2 ? 'salida' : 'llegada'}.`)
                 }}>
                   <small>{formatWeekday(date)}</small><b>{String(day).padStart(2, '0')}</b><i>{isArrival ? 'llegada' : day === 2 ? 'salida' : day >= 13 ? 'encuentro' : isPlanning ? (hasAssignment ? 'con plan' : 'por planear') : '—'}</i>
@@ -223,6 +245,20 @@ export default function TripPlanner() {
               })}</div>
               <div className="date-board-foot"><span>● Fechas compartidas</span><span>○ {assignedPlaces.length} lugares con día elegido</span><span>Ciudad del encuentro pendiente</span></div>
             </div>
+
+            <DaySchedule
+              places={places}
+              dayAssignments={state.dayAssignments}
+              placeSchedule={state.placeSchedule ?? {}}
+              routine={state.dailyRoutine ?? DEFAULT_DAILY_ROUTINE}
+              selectedDay={selectedAgendaDay}
+              days={calendar.filter(({ day }) => day >= 2 && day <= 14).map(({ day, date }) => ({ day, weekday: formatWeekday(date) }))}
+              onSelectDay={setSelectedAgendaDay}
+              onSavePlaceSchedule={savePlaceSchedule}
+              onRemovePlaceSchedule={removePlaceSchedule}
+              onSaveRoutine={(dailyRoutine) => setState((current) => ({ ...current, dailyRoutine }))}
+              onChoosePlaces={(day) => { setSelectedPlanningDay(day); nav('lugares') }}
+            />
 
             <div className="section-heading map-heading"><div><span className="tiny-label">36 HALLAZGOS · 5 ZONAS</span><h2>El mapa de la ciudad</h2></div><button className="text-link" onClick={() => nav('lugares')}>Ver lugares <span>↗</span></button></div>
             <MapView places={places} selectedId={selectedMapPlace} onSelect={setSelectedMapPlace} />
@@ -263,7 +299,7 @@ export default function TripPlanner() {
               <div className="place-card-top"><span className="place-number">{String(place.id).padStart(2, '0')}</span><span className="place-zone">{place.zone}</span><button className={state.favorites.includes(place.id) ? 'favorite-button on' : 'favorite-button'} onClick={() => toggleFavorite(place.id)} aria-label={state.favorites.includes(place.id) ? 'Quitar de guardados' : 'Guardar lugar'}>{state.favorites.includes(place.id) ? '♥' : '♡'}</button></div>
               <h2>{place.name}</h2><p className="place-description">{place.descriptionFromDraft}</p>
               <div className="place-facts"><span>⌖ {place.addressFromDraft}</span><span>🚇 {place.nearestTransitFromDraft}</span><span className="verification">◌ Datos del borrador · por confirmar</span></div>
-              <div className="place-card-bottom"><label>Mi estado <select value={savedState} onChange={(event) => setPlaceStatus(place.id, event.target.value as SavedPlaceState)}><option value="pendiente">Pendiente</option><option value="guardado">En mi lista</option><option value="visitado">Visitado</option><option value="descartado">Descartado</option></select></label><label>Mi día <select value={state.dayAssignments[place.id] ?? ''} onChange={(event) => assignPlace(place.id, event.target.value ? Number(event.target.value) : null)}><option value="">Sin asignar</option>{calendar.filter((date) => date.day >= 4 && date.day <= 12).map(({ day, date }) => <option key={day} value={day}>{formatWeekday(date)} {day} dic</option>)}</select></label></div>
+              <div className="place-card-bottom"><label>Mi estado <select value={savedState} onChange={(event) => setPlaceStatus(place.id, event.target.value as SavedPlaceState)}><option value="pendiente">Pendiente</option><option value="guardado">En mi lista</option><option value="visitado">Visitado</option><option value="descartado">Descartado</option></select></label><label>Mi día <select value={state.dayAssignments[place.id] ?? ''} onChange={(event) => assignPlace(place.id, event.target.value ? Number(event.target.value) : null)}><option value="">Sin asignar</option>{calendar.filter((date) => date.day >= 2 && date.day <= 14).map(({ day, date }) => <option key={day} value={day}>{formatWeekday(date)} {day} dic</option>)}</select></label></div>
               <div className="place-links"><a href={place.atlasUrl} target="_blank" rel="noreferrer">Ficha Atlas Obscura ↗</a><a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${place.name}, São Paulo, Brasil`)}&travelmode=transit`} target="_blank" rel="noreferrer">Ruta en Maps ↗</a><button onClick={() => setSelectedMapPlace(place.id)}>Ver en mapa ↓</button>{selectedPlanningDay !== null && <button className="assign-link" onClick={() => { assignPlace(place.id, selectedPlanningDay); setNotice(`${place.name} asignado al ${selectedPlanningDay} de diciembre.`) }}>Asignar al {selectedPlanningDay} dic +</button>}</div>
               {place.statusFromDraft === 'marcado-cerrado-o-historico' && <span className="historical-tag">EL BORRADOR LO MARCA HISTÓRICO / CERRADO</span>}
             </article>
@@ -280,6 +316,8 @@ export default function TripPlanner() {
         <div className="privacy-panel"><span>▣</span><div><b>Los archivos personales no se publican desde aquí.</b><p>Boletos con códigos, pasaportes, localizadores de reserva, direcciones privadas y documentos se mantienen fuera del repositorio y del sitio público. Añade solo enlaces o detalles que quieras compartir.</p></div></div>
         <div className="source-list"><span className="tiny-label">FUENTES DEL MAPA</span><p><a href="https://www.metro.sp.gov.br/wp-content/uploads/2025/02/mapaderede.pdf" target="_blank" rel="noreferrer">Mapa oficial de transporte metropolitano ↗</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap · atribución ↗</a></p></div>
       </section>}
+
+      {activeTab === 'presupuesto' && <BudgetSection onNavigatePlace={navigateToBudgetPlace} />}
 
       <footer className="footer"><a className="wordmark small-mark" href="#inicio" onClick={(event) => { event.preventDefault(); nav('itinerario') }}><span className="wordmark-icon">✳</span><span><b>mi itinerario</b><small>BRASIL · DICIEMBRE {state.travelYear}</small></span></a><p>Un plan hecho para cambiar de idea.<br /><span>Los datos prácticos se confirman antes de salir.</span></p><div className="footer-tools"><span>CAMBIOS GUARDADOS EN TU NAVEGADOR</span><button onClick={resetLocalData}>Borrar mis cambios</button></div></footer>
       <div className="mobile-nav" aria-label="Navegación móvil">{tabs.map((tab) => <button key={tab.id} className={activeTab === tab.id ? 'active' : ''} onClick={() => nav(tab.id)}><span>{tab.icon}</span>{tab.label}</button>)}</div>

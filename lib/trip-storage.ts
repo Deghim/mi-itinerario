@@ -1,4 +1,5 @@
 import type { LocalTripState, SavedPlaceState } from '@/types/place'
+import { parseDailyRoutine, parsePlaceScheduleMap } from './schedule.ts'
 
 export interface StorageLike {
   getItem(key: string): string | null
@@ -33,14 +34,21 @@ export function readTripState(storage: StorageLike, key: string, fallback: Local
     for (const [id, value] of Object.entries(record.dayAssignments)) {
       const numericId = Number(id)
       const day = Number(value)
-      if (knownPlaceIds.has(numericId) && Number.isInteger(day) && day >= 4 && day <= 12) dayAssignments[numericId] = day
+      if (knownPlaceIds.has(numericId) && Number.isInteger(day) && day >= 2 && day <= 14) dayAssignments[numericId] = day
     }
   }
   const travelYear = typeof record.travelYear === 'number' && Number.isInteger(record.travelYear)
     && supportedTravelYears.includes(record.travelYear as (typeof supportedTravelYears)[number])
     ? record.travelYear
     : fallback.travelYear
-  return { favorites, placeStates, dayAssignments, travelYear, updatedAt: typeof record.updatedAt === 'string' ? record.updatedAt : '' }
+  const placeSchedule = parsePlaceScheduleMap(record.placeSchedule)
+  const dailyRoutine = parseDailyRoutine(record.dailyRoutine)
+  return {
+    favorites, placeStates, dayAssignments, travelYear,
+    updatedAt: typeof record.updatedAt === 'string' ? record.updatedAt : '',
+    ...(placeSchedule ? { placeSchedule } : {}),
+    ...(dailyRoutine ? { dailyRoutine } : {}),
+  }
 }
 
 export function writeTripState(storage: StorageLike, key: string, state: LocalTripState, now = new Date()): void {
