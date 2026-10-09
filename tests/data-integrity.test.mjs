@@ -57,11 +57,3 @@ test('las rutas de Google Maps se fraccionan al máximo seguro para móvil', () 
   assert.equal(new URL(segments[0].url).searchParams.get('destination'), new URL(segments[1].url).searchParams.get('origin'))
   assert.equal(new URL(segments[1].url).searchParams.get('destination'), new URL(segments[2].url).searchParams.get('origin'))
 })
-
-test('la exportación de Pages incluye la base del repo y recursos estáticos', async () => {
-  const html = await readFile(new URL('../out/index.html', import.meta.url), 'utf8')
-  assert.match(html, /\/mi-itinerario\/_next\/static\//)
-  assert.match(html, /Llegada a São Paulo|São Paulo/)
-  const notFound = await readFile(new URL('../out/404.html', import.meta.url), 'utf8')
-  assert.ok(notFound.length > 100)
-})

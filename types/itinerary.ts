@@ -34,6 +34,7 @@ export type ItineraryData = {
   rioNightsPreferred: number
   rows: ItineraryRow[]
   coverage: ItineraryCoverage[]
+  sync?: { source: 'Google Docs · Itinerario web'; syncedAt: string }
 }
 
 export type AgendaApplyResult = {

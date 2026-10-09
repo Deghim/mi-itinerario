@@ -89,7 +89,7 @@ export default function TripPlanner() {
   }, [ready, state])
 
   useEffect(() => {
-    if (!tableReady) return
+    if (!tableReady || itinerary.sync) return
     try { writeItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY, itineraryOverrides, itinerary.rows) }
     catch { window.queueMicrotask(() => setNotice('No se pudieron guardar las notas de la tabla en este dispositivo.')) }
   }, [tableReady, itineraryOverrides])

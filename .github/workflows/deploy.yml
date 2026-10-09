@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
 
 permissions:
   contents: read
@@ -16,6 +18,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'schedule' || vars.GOOGLE_DOC_SYNC_URL != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,15 +36,24 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Type check
+      - name: Run data and static export checks
+        run: npm run test:data
+      - name: Read approved itinerary tab from Google Docs
+        if: vars.GOOGLE_DOC_SYNC_URL != ''
+        run: node scripts/google-doc-sync.mjs
+        env:
+          GOOGLE_DOC_SYNC_URL: ${{ vars.GOOGLE_DOC_SYNC_URL }}
+      - name: Type check source and synchronized data
         run: npm run typecheck
       - name: Build static export for this Pages repository
         run: npm run build
         env:
           GITHUB_ACTIONS: 'true'
           GITHUB_REPOSITORY: Deghim/mi-itinerario
-      - name: Run data and static export checks
-        run: npm test
+      - name: Verify built Pages artifact
+        run: npm run test:export
+        env:
+          EXPECT_PAGES_BASE_PATH: 'true'
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static export

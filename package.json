@@ -8,7 +8,9 @@
     "start": "node scripts/serve-static.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test": "npm run test:data && npm run test:export",
+    "test:data": "node --experimental-strip-types --test tests/*.test.mjs",
+    "test:export": "node --experimental-strip-types --test tests/export/static-export.test.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

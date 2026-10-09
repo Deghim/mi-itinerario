@@ -26,6 +26,8 @@ Para probar el export estático ya compilado, ejecuta `npm run build` y luego `n
 - El sitio público contiene el itinerario y enlaces elegidos. No añadas boletos con códigos, datos de pasaporte, localizadores de reserva, direcciones privadas ni documentos personales al repositorio.
 - El mapa usa mosaicos externos de OpenStreetMap y enlaces externos de Google Maps y Atlas Obscura. La primera visita necesita conexión a internet para mostrarlos.
 
+La fuente editorial podría conectarse más adelante mediante una pestaña pública de solo lectura dentro del Google Doc privado. Esa conexión aún no está activa. Consulta [la guía de conexión](docs/GOOGLE_DOC_SYNC.md): solo la pestaña aprobada se mostraría en el sitio.
+
 ## Publicar en GitHub Pages
 
 La rama `main` activa el workflow de GitHub Actions. El workflow instala con `npm ci`, ejecuta lint, TypeScript, pruebas, exporta el sitio estático y publica `out/` en Pages. Para habilitarlo en GitHub, en **Settings → Pages → Build and deployment** selecciona **GitHub Actions**.
