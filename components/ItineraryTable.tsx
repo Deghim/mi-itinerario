@@ -12,6 +12,8 @@ import { buildGoogleDocsTableCopy } from '@/lib/itinerary-copy'
 
 type Props = {
   travelYear: number
+  selectedDay: number | null
+  onDaySelect: (day: number | null) => void
   state: LocalTripState
   overrides: ItineraryOverrides
   onSaveOverride: (rowId: string, value: ItineraryRowOverride) => void
@@ -90,14 +92,13 @@ function statusClass(status: ItineraryStatus) {
   return `itinerary-status status-${status.replaceAll('-', '_')}`
 }
 
-export default function ItineraryTable({ travelYear, state, overrides, onSaveOverride, onApply, onNavigatePlace, onNavigateBudget }: Props) {
-  const [dayFilter, setDayFilter] = useState('all')
+export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, state, overrides, onSaveOverride, onApply, onNavigatePlace, onNavigateBudget }: Props) {
   const [copyNotice, setCopyNotice] = useState('')
   const [copyFallback, setCopyFallback] = useState('')
   const fallbackRef = useRef<HTMLTextAreaElement>(null)
   const syncedSource = itinerary.sync
   const groupingState = syncedSource ? { travelYear: itinerary.year, dayAssignments: {} } : state
-  const groups = groupItineraryRows(itinerary.rows, groupingState, itinerary.year, dayFilter === 'all' ? 'all' : Number(dayFilter))
+  const groups = groupItineraryRows(itinerary.rows, groupingState, itinerary.year, selectedDay ?? 'all')
   const candidates = itinerary.rows.filter((row) => row.placeId !== undefined && row.schedule && row.applyToAgenda === true)
   const coverage = itinerary.coverage
   const visitables = coverage.filter((item) => item.placeId <= 33)
@@ -166,7 +167,7 @@ export default function ItineraryTable({ travelYear, state, overrides, onSaveOve
   }
 
   return <section className="itinerary-table-section" aria-labelledby="itinerary-table-title">
-    <div className="itinerary-table-heading"><div><span className="tiny-label">{syncedSource ? 'FUENTE OFICIAL · GOOGLE DOCS' : 'VISTA DE TRABAJO · FUENTE LOCAL'}</span><h2 id="itinerary-table-title">Itinerario en tabla</h2><p>Fechas de {itinerary.year}{itinerary.yearIsAssumption ? ', todavía provisionales' : ''}. Las horas son las del itinerario; accesos y horarios operativos se verifican por separado.</p></div><label>Ver fecha<select value={dayFilter} onChange={(event) => setDayFilter(event.target.value)}><option value="all">Todo el itinerario</option>{[...new Set([...itinerary.rows.map((row) => Number(row.date.slice(8, 10))), ...(syncedSource ? [] : Object.values(state.dayAssignments))])].sort((a, b) => a - b).map((day) => <option key={day} value={day}>{displayDate(`${itinerary.year}-12-${String(day).padStart(2, '0')}`)} · {itinerary.year}</option>)}</select></label></div>
+    <div className="itinerary-table-heading"><div><span className="tiny-label">{syncedSource ? 'FUENTE OFICIAL · GOOGLE DOCS' : 'VISTA DE TRABAJO · FUENTE LOCAL'}</span><h2 id="itinerary-table-title">Itinerario en tabla</h2><p>Fechas de {itinerary.year}{itinerary.yearIsAssumption ? ', todavía provisionales' : ''}. Las horas son las del itinerario; accesos y horarios operativos se verifican por separado.</p></div><label>Ver fecha<select value={selectedDay ?? 'all'} onChange={(event) => onDaySelect(event.target.value === 'all' ? null : Number(event.target.value))}><option value="all">Todo el itinerario</option>{[...new Set([...itinerary.rows.map((row) => Number(row.date.slice(8, 10))), ...(syncedSource ? [] : Object.values(state.dayAssignments))])].sort((a, b) => a - b).map((day) => <option key={day} value={day}>{displayDate(`${itinerary.year}-12-${String(day).padStart(2, '0')}`)} · {itinerary.year}</option>)}</select></label></div>
     {syncedSource ? <div className="itinerary-table-note"><b>Sincronizado desde Google Docs · Itinerario web.</b> Última actualización: {new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Chihuahua' }).format(new Date(syncedSource.syncedAt))}. Los cambios oficiales se hacen en el documento; tu agenda personal y favoritos de este navegador se conservan aparte. Los costos escritos aquí no se suman automáticamente al presupuesto.</div> : <div className="itinerary-table-note"><b>Fuente local de la página.</b> Google Docs todavía no está sincronizado. Esta tabla no cambia tu documento; tu agenda personal y favoritos se guardan en este navegador.</div>}
     {!syncedSource && <div className="itinerary-proposal-controls"><div><b>{candidates.length} visitas con horario sugerido</b><span>Añade los horarios sugeridos sin cambiar los lugares que ya organizaste.</span></div><button type="button" className="budget-primary-button" disabled={travelYear !== itinerary.year} onClick={onApply}>{travelYear !== itinerary.year ? `Propuesta de ${itinerary.year}; vuelve a ese año para aplicarla` : 'Aplicar propuesta a mi agenda'}</button></div>}
     <div className="itinerary-copy-controls"><div><b>Copia la tabla completa</b><span>Incluye las nueve columnas y todas las fechas. No copia cambios personales guardados en este navegador ni actualiza Google Docs.</span></div><button type="button" onClick={copyCanonicalTable}>Copiar para pegar en Google Docs</button></div>

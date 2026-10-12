@@ -25,7 +25,7 @@ test('la tabla conserva vuelos capturados y distingue pago internacional del tra
   assert.equal(paidFlights?.amount, null)
   assert.equal(budget.paidItems.filter((item) => item.id === 'international-round-trip').length, 1)
   assert.equal(raw.year, 2026)
-  assert.equal(raw.yearIsAssumption, true)
+  assert.equal(raw.yearIsAssumption, false)
   assert.equal(raw.rioNightsPreferred, 5)
 })
 

@@ -21,6 +21,7 @@ export type ItineraryRow = {
   schedule?: PlaceSchedule
   applyToAgenda?: boolean
   runMode?: 'skip-proposed'
+  mapBase?: boolean
 }
 
 export type ItineraryRowOverride = Partial<Pick<ItineraryRow, 'transport' | 'lodging' | 'reservation' | 'notes'>>

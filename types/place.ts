@@ -4,11 +4,14 @@ export type Place = {
   zone: string
   statusFromDraft: 'marcado-visitables' | 'marcado-cerrado-o-historico'
   operationalStatus: 'por-confirmar'
-  coordinates: { lat: number; lon: number; confidence: 'por-confirmar' | 'aproximada-fuente-atlas' }
+  coordinates: { lat: number; lon: number; confidence: 'por-confirmar' | 'aproximada-fuente-atlas' | 'aproximada-fuente-oficial' }
   nearestTransitFromDraft: string
   descriptionFromDraft: string
   addressFromDraft: string
   atlasUrl: string
+  sourceUrl?: string
+  sourceLabel?: string
+  catalogType?: 'atlas' | 'complemento'
   verification: 'pendiente'
 }
 
