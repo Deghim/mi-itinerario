@@ -7,6 +7,7 @@ export type RioTransferChoice = 'por-decidir' | 'autobus' | 'avion'
 
 export type BudgetEntry = {
   id: string
+  city?: 'sao-paulo' | 'rio' | 'general'
   recordKind: 'override' | 'custom'
   name: string
   category: BudgetCategory
@@ -17,6 +18,8 @@ export type BudgetEntry = {
   unit: string
   status: BudgetStatus
   date?: string
+  departureTime?: string
+  arrivalTime?: string
   sourceUrl?: string
   sourceLabel?: string
   sourceAsOf?: string

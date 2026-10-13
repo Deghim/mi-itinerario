@@ -8,10 +8,11 @@ export interface StorageLike {
 }
 
 const states = new Set<SavedPlaceState>(['pendiente', 'guardado', 'visitado', 'descartado'])
-const knownPlaceIds = new Set(Array.from({ length: 36 }, (_, index) => index + 1))
+const defaultPlaceIds = new Set(Array.from({ length: 40 }, (_, index) => index + 1))
 export const supportedTravelYears = [2026, 2027, 2028, 2029, 2030] as const
 
-export function readTripState(storage: StorageLike, key: string, fallback: LocalTripState): LocalTripState {
+export function readTripState(storage: StorageLike, key: string, fallback: LocalTripState, placeIds: readonly number[] = [...defaultPlaceIds]): LocalTripState {
+  const knownPlaceIds = new Set(placeIds)
   const raw = storage.getItem(key)
   if (!raw) return fallback
   const parsed: unknown = JSON.parse(raw)
@@ -34,14 +35,14 @@ export function readTripState(storage: StorageLike, key: string, fallback: Local
     for (const [id, value] of Object.entries(record.dayAssignments)) {
       const numericId = Number(id)
       const day = Number(value)
-      if (knownPlaceIds.has(numericId) && Number.isInteger(day) && day >= 2 && day <= 14) dayAssignments[numericId] = day
+      if (knownPlaceIds.has(numericId) && Number.isInteger(day) && day >= 2 && day <= 23) dayAssignments[numericId] = day
     }
   }
   const travelYear = typeof record.travelYear === 'number' && Number.isInteger(record.travelYear)
     && supportedTravelYears.includes(record.travelYear as (typeof supportedTravelYears)[number])
     ? record.travelYear
     : fallback.travelYear
-  const placeSchedule = parsePlaceScheduleMap(record.placeSchedule)
+  const placeSchedule = parsePlaceScheduleMap(record.placeSchedule, [...knownPlaceIds])
   const dailyRoutine = parseDailyRoutine(record.dailyRoutine)
   return {
     favorites, placeStates, dayAssignments, travelYear,

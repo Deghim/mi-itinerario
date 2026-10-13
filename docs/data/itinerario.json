@@ -94,7 +94,7 @@
     {
       "id": "place-17-day-03",
       "date": "2026-12-03",
-      "time": "15:00 · condicional",
+      "time": "Sin hora · condicional",
       "status": "condicional",
       "placeId": 17,
       "activity": "Visita breve si los trámites y el traslado dejan margen",
@@ -105,13 +105,7 @@
       "notes": "No anclar la visita a la llegada. Horario publicado del cementerio no garantiza visita guiada libre.",
       "sourceLabel": "Consolare · horario de referencia",
       "sourceUrl": "https://cemiteriodaconsolacao.consolare.com.br/",
-      "schedule": {
-        "startTime": "15:00",
-        "durationMinutes": 45,
-        "travelMinutes": 15,
-        "bufferMinutes": 15
-      },
-      "applyToAgenda": true,
+      "applyToAgenda": false,
       "mapBase": false
     },
     {

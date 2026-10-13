@@ -15,6 +15,15 @@ export interface MapsRouteSegment {
 export type MapsTravelMode = 'walking' | 'transit' | 'driving'
 export type RouteStop = { label: string; coordinates?: { lat: number; lon: number } }
 
+export function createDirectMapsRouteUrl(origin: string, destination: string, mode: MapsTravelMode): string {
+  const url = new URL('https://www.google.com/maps/dir/')
+  url.searchParams.set('api', '1')
+  url.searchParams.set('origin', origin)
+  url.searchParams.set('destination', destination)
+  url.searchParams.set('travelmode', mode)
+  return url.toString()
+}
+
 export function createMapsRouteSegments(placeNames: string[], mode: MapsTravelMode = 'transit'): MapsRouteSegment[] {
   if (placeNames.length < 2) return []
   const segments: MapsRouteSegment[] = []

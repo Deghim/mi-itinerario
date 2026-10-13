@@ -45,3 +45,5 @@ export type LocalTripState = {
   placeSchedule?: Record<number, PlaceSchedule>
   dailyRoutine?: DailyRoutine
 }
+
+export type CityId = 'sao-paulo' | 'rio'

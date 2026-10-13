@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import placesData from '@/docs/data/lugares-sao-paulo.json'
-import { applyBudgetOverrides, calculateBudgetScenario, calculateBudgetTotals, getBudgetExchangeRate, getBudgetScenario, getDefaultBudgetState, planningMarginPercent } from '@/lib/budget-model'
+import { applyBudgetOverrides, calculateBudgetScenario, calculateBudgetTotals, filterBudgetEntriesByCity, filterBudgetEntriesWithoutCity, getBudgetExchangeRate, getBudgetScenario, getDefaultBudgetState, planningMarginPercent, resolveBudgetEntryCity } from '@/lib/budget-model'
 import { BUDGET_STORAGE_KEY, clearBudgetState, readBudgetState, writeBudgetState } from '@/lib/budget-storage'
 import type { BudgetCategory, BudgetEntry, BudgetLocalState, BudgetStatus, CalculatedBudgetEntry, LodgingScenario } from '@/types/budget'
-import type { Place } from '@/types/place'
+import type { CityId } from '@/types/place'
+import { tripCities } from '@/lib/trip-cities'
 
 const categories: { id: BudgetCategory; label: string }[] = [
   { id: 'alojamiento', label: 'Alojamiento' },
@@ -27,10 +27,9 @@ const lodgingOptions: { id: LodgingScenario; label: string }[] = [
   { id: 'compartido', label: 'Compartido' },
   { id: 'mixto', label: 'Mixto' },
 ]
-const places = (placesData.places as Place[]).map((place) => ({ id: place.id, name: place.name }))
 const initialBudgetState = getDefaultBudgetState()
 
-type Props = { onNavigatePlace: (placeId: number) => void }
+type Props = { city: CityId; onNavigatePlace: (placeId: number) => void }
 type EditorForm = {
   name: string
   category: BudgetCategory
@@ -75,10 +74,11 @@ function expenseId() {
   return `custom:${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
-function BudgetEditor({ entry, isNew, onSave, onCancel, onRestore }: {
+function BudgetEditor({ entry, isNew, places, onSave, onCancel, onRestore }: {
   entry: CalculatedBudgetEntry | BudgetEntry
   isNew: boolean
-  onSave: (entry: BudgetEntry) => void
+  places: { id: number; name: string }[]
+  onSave: (entry: BudgetEntry, isNew: boolean) => void
   onCancel: () => void
   onRestore?: () => void
 }) {
@@ -106,8 +106,9 @@ function BudgetEditor({ entry, isNew, onSave, onCancel, onRestore }: {
       ...(form.sourceLabel.trim() ? { sourceLabel: form.sourceLabel.trim() } : {}),
       ...(form.placeId ? { placeId: Number(form.placeId) } : {}),
       ...(form.assumption.trim() ? { assumption: form.assumption.trim() } : {}),
+      ...('city' in entry && entry.city ? { city: entry.city } : {}),
     }
-    onSave(saved)
+    onSave(saved, isNew)
   }
 
   return <form className="budget-editor" onSubmit={save}>
@@ -161,7 +162,8 @@ function BudgetRow({ row, edited, onEdit, onRemove, onNavigatePlace }: {
   </article>
 }
 
-export default function BudgetSection({ onNavigatePlace }: Props) {
+export default function BudgetSection({ city, onNavigatePlace }: Props) {
+  const places = tripCities[city].places.map((place) => ({ id: place.id, name: place.name }))
   const [state, setState] = useState<BudgetLocalState>(initialBudgetState)
   const [ready, setReady] = useState(false)
   const [newExpenseOpen, setNewExpenseOpen] = useState(false)
@@ -187,17 +189,26 @@ export default function BudgetSection({ onNavigatePlace }: Props) {
   }, [ready, state])
 
   const baseRows = useMemo(() => calculateBudgetScenario({ rioNights: state.rioNights, lodgingScenario: state.lodgingScenario, rioTransferChoice: state.rioTransferChoice }), [state.rioNights, state.lodgingScenario, state.rioTransferChoice])
-  const rows = useMemo(() => applyBudgetOverrides(baseRows, state.entries), [baseRows, state.entries])
+  const allRows = useMemo(() => applyBudgetOverrides(baseRows, state.entries), [baseRows, state.entries])
+  const rows = useMemo(() => filterBudgetEntriesByCity(allRows, city), [allRows, city])
+  const unassignedRows = useMemo(() => filterBudgetEntriesWithoutCity(allRows), [allRows])
   const fx = getBudgetExchangeRate()
   const totals = calculateBudgetTotals(rows, fx.rate)
+  const tripTotals = calculateBudgetTotals(allRows, fx.rate)
+  const unassignedTotals = calculateBudgetTotals(unassignedRows, fx.rate)
   const reserveMxn = totals.pendingKnownMxn * (planningMarginPercent / 100)
   const scenario = getBudgetScenario(state.rioNights)
   const lodgingRows = rows.filter((row) => row.category === 'alojamiento')
   const categoryRows = categories.map((category) => ({ ...category, rows: rows.filter((row) => row.category === category.id) })).filter((group) => group.rows.length)
   const edited = new Set(state.entries.map((entry) => entry.id))
+  const activeTransfer = rows.find((row) => row.tripLeg === 'Sao Paulo-Rio')
 
-  function saveEntry(entry: BudgetEntry) {
-    setState((current) => ({ ...current, entries: [...current.entries.filter((item) => item.id !== entry.id), entry] }))
+  function saveEntry(entry: BudgetEntry, isNew = false) {
+    const resolvedCity = resolveBudgetEntryCity(entry.id, baseRows, state.entries, city, isNew)
+    const scopedEntry: BudgetEntry = { ...entry }
+    if (resolvedCity) scopedEntry.city = resolvedCity
+    else delete scopedEntry.city
+    setState((current) => ({ ...current, entries: [...current.entries.filter((item) => item.id !== scopedEntry.id), scopedEntry] }))
     setEditingId(null)
     setNewExpenseOpen(false)
     setNotice('Gasto guardado solo en este dispositivo.')
@@ -219,11 +230,11 @@ export default function BudgetSection({ onNavigatePlace }: Props) {
 
   return <section className="page-section budget-page">
     <div className="page-title-row budget-title-row">
-      <div><span className="tiny-label">PLAN DE GASTOS · ESCENARIO 2026 PROVISIONAL</span><h1>Presupuesto del viaje</h1><p>Compara opciones de costo sin cambiar las fechas del itinerario ni el selector de año del calendario.</p></div>
-      <div className="budget-total-badge"><span>IMPORTE CONOCIDO · PARCIAL</span><b>{fmtMxn(totals.pendingKnownMxn)}</b><small>{currencyAmount(totals.pendingKnownBrl, 'BRL')} aprox.</small></div>
+      <div><span className="tiny-label">PLAN DE GASTOS · {city === 'rio' ? 'RÍO DE JANEIRO' : 'SÃO PAULO'} · 2026 PROVISIONAL</span><h1>Presupuesto · {city === 'rio' ? 'Río' : 'São Paulo'}</h1><p>Este desglose muestra gastos de la etapa seleccionada y conserva tus anotaciones en este dispositivo.</p></div>
+      <div className="budget-total-badge"><span>SUBTOTAL DE {city === 'rio' ? 'RÍO' : 'SÃO PAULO'} · PENDIENTE CONOCIDO</span><b>{fmtMxn(totals.pendingKnownMxn)}</b><small>{currencyAmount(totals.pendingKnownBrl, 'BRL')} aprox.</small><small>Viaje completo: {fmtMxn(tripTotals.pendingKnownMxn)} pendiente · {fmtMxn(tripTotals.paidTotalMxn)} pagado conocido</small></div>
     </div>
 
-    <div className="budget-notice-card"><span>◷</span><div><b>Escenario para comparar; no cambia el itinerario.</b><p>El regreso a São Paulo el 22 es una propuesta. El encuentro del 14 es provisional y la ciudad de las ocho noches siguientes sigue por definir. No hay reservas agregadas aquí.</p></div></div>
+    <div className="budget-notice-card"><span>◷</span><div><b>Escenario para comparar; no cambia el itinerario.</b><p>{city === 'rio' ? 'La cotización Injoy de cinco noches y la referencia del traslado se mantienen como alternativas no reservadas; el encuentro del 14 sigue provisional.' : 'La estancia en São Paulo y los vuelos internacionales pagados conservan el importe pendiente de informar.'} No hay reservas agregadas aquí.</p></div></div>
 
     <div className="budget-summary-grid">
       <article className="budget-summary-card"><span className="tiny-label">IMPORTE CONOCIDO SIN PAGAR</span><b>{fmtMxn(totals.pendingKnownMxn)}</b><small>{currencyAmount(totals.pendingKnownBrl, 'BRL')} · alojamiento y opciones con precio</small></article>
@@ -243,7 +254,7 @@ export default function BudgetSection({ onNavigatePlace }: Props) {
     </div>
     <p className="budget-partial-banner" role="status">Presupuesto parcial: {totals.unpricedPending} gastos pendientes sin importe. La comida, entradas, transporte local y varios trayectos aún no tienen precio.</p>
 
-    <div className="budget-controls-grid">
+    {city === 'rio' && <div className="budget-controls-grid">
       <fieldset className="budget-selector-card">
         <legend>¿Cuántas noches comparar en Río?</legend>
         <p>La salida el 14 y el encuentro de ese día siguen provisionales.</p>
@@ -258,32 +269,40 @@ export default function BudgetSection({ onNavigatePlace }: Props) {
         <p>Las cuatro alternativas son excluyentes; se calcula solo la seleccionada.</p>
         <div className="lodging-choice-grid">{lodgingOptions.map((option) => <label key={option.id} className={state.lodgingScenario === option.id ? 'lodging-choice selected' : 'lodging-choice'}><input type="radio" name="lodging-scenario" checked={state.lodgingScenario === option.id} onChange={() => setState((current) => ({ ...current, lodgingScenario: option.id }))} />{option.label}</label>)}</div>
       </fieldset>
-    </div>
+    </div>}
 
     <div className="budget-breakdown-heading"><div><span className="tiny-label">DESGLOSE DE LA OPCIÓN ACTIVA</span><h2>Qué compone este importe</h2><p>{lodgingRows.reduce((sum, row) => sum + row.quantity, 0)} noches de alojamiento representadas en la alternativa actual.</p></div><button type="button" className="budget-secondary-button" onClick={clearLocalBudget}>Borrar mis cambios de presupuesto</button></div>
     {storageWarning && <p className="budget-form-error" role="alert">{storageWarning}</p>}
     {notice && <p className="budget-local-notice" role="status">{notice}</p>}
 
-    <div className="budget-transfer-selector">
+    {city === 'rio' && <div className="budget-transfer-selector">
       <div><span className="tiny-label">TRASLADO A RÍO</span><h3>Elige qué alternativa incluir</h3><p>Autobús y avión no se suman. La opción sin elegir conserva el trayecto pendiente.</p></div>
       <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'por-decidir'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'por-decidir' }))} /> Por decidir</label>
-      <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'autobus'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'autobus' }))} /> Autobús</label>
+      <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'autobus'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'autobus' }))} /> Autobús · leito</label>
       <label><input type="radio" name="rio-transfer" checked={state.rioTransferChoice === 'avion'} onChange={() => setState((current) => ({ ...current, rioTransferChoice: 'avion' }))} /> Avión</label>
-    </div>
-    {state.rioTransferChoice === 'autobus' && <div className="budget-bus-note">{state.rioNights === 4 ? <><b>Salida nocturna · escenario de 4 noches:</b> referencia Tietê 00:05 del 10 dic; ir a la terminal la noche del 9 reduce una noche de hospedaje en São Paulo.</> : <><b>Salida diurna · escenario de 5 noches:</b> consulta del 9 dic: candidato cercano a 08:30–15:00, ClickBus mostró R$98.99 promocional / R$109.99 referencia; no elimina noche de hospedaje.</>} Horario, precio y disponibilidad pueden cambiar. Es una comparación, no una reserva.</div>}
+    </div>}
+    {city === 'rio' && state.rioTransferChoice === 'autobus' && activeTransfer && <div className="budget-bus-note"><b>Referencia de autobús · {activeTransfer.date ? `${Number(activeTransfer.date.slice(8, 10))} dic` : 'fecha por definir'}:</b> {activeTransfer.departureTime ?? 'hora por confirmar'} → {activeTransfer.arrivalTime ?? 'hora por confirmar'}. {activeTransfer.name}: {activeTransfer.amount === null ? 'importe por informar' : currencyAmount(activeTransfer.amount, activeTransfer.currency ?? 'BRL')}. {activeTransfer.assumption}</div>}
 
     {categoryRows.map((group) => <section className="budget-category" key={group.id}>
       <div className="budget-category-head"><h2>{group.label}</h2><span>{group.rows.length} {group.rows.length === 1 ? 'renglón' : 'renglones'}</span></div>
       <div className="budget-line-list">{group.rows.map((row) => <div key={row.id}>
         <BudgetRow row={row} edited={edited.has(row.id)} onEdit={() => { setNewExpenseOpen(false); setEditingId(row.id) }} onRemove={() => removeEntry(row)} onNavigatePlace={onNavigatePlace} />
-        {editingId === row.id && <BudgetEditor entry={row} isNew={false} onSave={saveEntry} onCancel={() => setEditingId(null)} onRestore={edited.has(row.id) ? () => removeEntry(row) : undefined} />}
+        {editingId === row.id && <BudgetEditor entry={row} isNew={false} places={places} onSave={saveEntry} onCancel={() => setEditingId(null)} onRestore={edited.has(row.id) ? () => removeEntry(row) : undefined} />}
       </div>)}</div>
     </section>)}
 
-    <div className="budget-add-section"><div><span className="tiny-label">TU REGISTRO LOCAL</span><h2>Agregar otro gasto</h2><p>Solo tú lo verás en este navegador. Verifica antes que no duplique un renglón anterior.</p></div><button className="budget-primary-button" type="button" onClick={() => { setEditingId(null); setNewExpenseOpen((open) => !open) }}>{newExpenseOpen ? 'Cerrar formulario' : '＋ Añadir gasto'}</button></div>
-    {newExpenseOpen && <BudgetEditor entry={{ id: expenseId(), recordKind: 'custom', name: '', category: 'otros', amount: null, unitAmount: null, currency: null, quantity: 1, unit: 'gasto', status: 'sin-importe' }} isNew onSave={saveEntry} onCancel={() => setNewExpenseOpen(false)} />}
+    {!!unassignedRows.length && <section className="budget-category" aria-label="Gastos sin ciudad asignada">
+      <div className="budget-category-head"><div><h2>Sin ciudad / viaje</h2><small>{currencyAmount(unassignedTotals.pendingKnownBrl, 'BRL')} de importe conocido pendiente · se cuenta solo en el total del viaje</small></div><span>{unassignedRows.length} {unassignedRows.length === 1 ? 'renglón' : 'renglones'}</span></div>
+      <div className="budget-line-list">{unassignedRows.map((row) => <div key={row.id}>
+        <BudgetRow row={row} edited={edited.has(row.id)} onEdit={() => { setNewExpenseOpen(false); setEditingId(row.id) }} onRemove={() => removeEntry(row)} onNavigatePlace={onNavigatePlace} />
+        {editingId === row.id && <BudgetEditor entry={row} isNew={false} places={places} onSave={saveEntry} onCancel={() => setEditingId(null)} onRestore={edited.has(row.id) ? () => removeEntry(row) : undefined} />}
+      </div>)}</div>
+    </section>}
 
-    <aside className="budget-method-note"><b>Cómo leer las cifras</b><p>Las tarifas de alojamiento son referencias “desde”, no cotizaciones para tus fechas. Curitiba solo sirve como referencia de precio para las ocho noches cuyo destino no está definido. El cambio fijo de R$1 = MXN$3,63 se consultó el {fx.asOf}; la reserva de {planningMarginPercent}% se calcula solo sobre importes pendientes conocidos. Las filas sin importe no entran al subtotal. Este presupuesto se guarda localmente y no se sincroniza con la página pública.</p><a href={fx.sourceUrl} target="_blank" rel="noreferrer">Ver fuente del tipo de cambio ↗</a></aside>
+    <div className="budget-add-section"><div><span className="tiny-label">TU REGISTRO LOCAL</span><h2>Agregar otro gasto</h2><p>Solo tú lo verás en este navegador. Verifica antes que no duplique un renglón anterior.</p></div><button className="budget-primary-button" type="button" onClick={() => { setEditingId(null); setNewExpenseOpen((open) => !open) }}>{newExpenseOpen ? 'Cerrar formulario' : '＋ Añadir gasto'}</button></div>
+    {newExpenseOpen && <BudgetEditor entry={{ id: expenseId(), recordKind: 'custom', name: '', category: 'otros', amount: null, unitAmount: null, currency: null, quantity: 1, unit: 'gasto', status: 'sin-importe', city }} isNew places={places} onSave={saveEntry} onCancel={() => setNewExpenseOpen(false)} />}
+
+    <aside className="budget-method-note"><b>Cómo leer las cifras</b><p>La habitación privada del Injoy para cinco noches se cotizó en R$1.822 no reembolsable; también se observó R$2.013 cancelable hasta el 6 dic. Son alternativas excluyentes y no hay reserva registrada. En el escenario Río 9–13 se mantienen seis noches en São Paulo (3–8); bajar a cinco (3–7) depende de checkout el 8 y de confirmar custodia de equipaje y traslado nocturno a Tietê, así que ese ahorro no se aplica automáticamente. Curitiba solo sirve como referencia para las ocho noches cuyo destino no está definido. El cruce referencial fijo de R$1 = MXN$3,6304 se consultó el {fx.asOf}; la reserva de {planningMarginPercent}% se calcula solo sobre importes pendientes conocidos. Las filas sin importe no entran al subtotal. Este presupuesto se guarda localmente y no se sincroniza con la página pública.</p><a href={fx.sourceUrl} target="_blank" rel="noreferrer">Ver fuente del tipo de cambio ↗</a></aside>
     <div className="budget-source-footnote">Fuente de escenarios: tarifas públicas de alojamientos y consulta ClickBus; cada importe conserva su enlace y supuesto. Cambiar esta comparación no modifica los días asignados ni los favoritos.</div>
     {!ready && <span className="sr-only" role="status">Cargando presupuesto guardado en este dispositivo…</span>}
   </section>

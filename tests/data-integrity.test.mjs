@@ -11,12 +11,12 @@ const tripFile = new URL('../docs/data/viaje.json', import.meta.url)
 
 test('el catálogo conserva 36 fichas Atlas y tres complementos con fuente', async () => {
   const data = JSON.parse(await readFile(placesFile, 'utf8'))
-  assert.equal(data.places.length, 39)
-  assert.deepEqual(new Set(data.places.map((place) => place.id)).size, 39)
+  assert.equal(data.places.length, 40)
+  assert.deepEqual(new Set(data.places.map((place) => place.id)).size, 40)
   const atlas = data.places.filter((place) => place.catalogType === 'atlas')
   const extras = data.places.filter((place) => place.catalogType === 'complemento')
   assert.equal(atlas.length, 36)
-  assert.equal(extras.length, 3)
+  assert.equal(extras.length, 4)
   assert.ok(atlas.every((place) => place.atlasUrl.startsWith('https://www.atlasobscura.com/places/')))
   assert.ok(extras.every((place) => place.sourceLabel && /^https:\/\//.test(place.atlasUrl)))
   assert.ok(data.places.every((place) => place.verification === 'pendiente'))
@@ -27,7 +27,17 @@ test('el catálogo conserva 36 fichas Atlas y tres complementos con fuente', asy
   assert.deepEqual(data.places.find((place) => place.id === 32).coordinates, { lat: -23.586479, lon: -46.682078, confidence: 'aproximada-fuente-atlas' })
   assert.equal(atlas.filter((place) => place.statusFromDraft === 'marcado-visitables').length, 33)
   assert.equal(atlas.filter((place) => place.statusFromDraft === 'marcado-cerrado-o-historico').length, 3)
-  assert.deepEqual(extras.map((place) => place.name), ['Museu de Arte Moderna de São Paulo (MAM)', 'Planetário do Ibirapuera', 'Monumento às Bandeiras'])
+  assert.deepEqual(extras.map((place) => place.name), ['Museu de Arte Moderna de São Paulo (MAM)', 'Planetário do Ibirapuera', 'Monumento às Bandeiras', 'LEGO Store Moema'])
+})
+
+test('los catálogos por ciudad conservan 18 fichas Atlas de Río y no mezclan las tiendas LEGO', async () => {
+  const sp = JSON.parse(await readFile(placesFile, 'utf8')).places
+  const rio = JSON.parse(await readFile(new URL('../docs/data/lugares-rio.json', import.meta.url), 'utf8')).places
+  assert.equal(rio.filter((place) => place.catalogType === 'atlas').length, 18)
+  assert.equal(rio.length, 20)
+  assert.deepEqual(rio.filter((place) => place.name.startsWith('LEGO')).map((place) => place.id), [120])
+  assert.equal(sp.find((place) => place.id === 40).name, 'LEGO Store Moema')
+  assert.ok(!rio.some((place) => place.id === 121))
 })
 
 test('el calendario conserva las fechas recibidas sin convertir las propuestas en reservas', async () => {
@@ -90,9 +100,9 @@ test('horarios y asignaciones manuales ordenan paradas efectivas e invalidan geo
   const routeData = JSON.parse(await readFile(new URL('../docs/data/map-routes.json', import.meta.url), 'utf8'))
   const schedule = { 16: { startTime: '09:00', durationMinutes: 80, travelMinutes: 0, bufferMinutes: 0 } }
   const reordered = getMapStopRows(trip.rows, 6, {}, 2026, 2026, schedule)
-  assert.deepEqual(reordered.map((row) => row.placeId), [16, 30, 23, 1, 21])
-  assert.equal(getMapSequenceChanged(trip.rows, 6, {}, 2026, 2026, schedule), true)
-  assert.equal(getMatchingCachedRoutes(routeData.routes, 6, reordered.map((row) => row.placeId), 2026, 2026).length, 0)
+  assert.deepEqual(reordered.map((row) => row.placeId), [30, 23, 16, 1, 21], 'si el día tiene horas sin definir, se mantiene el orden fuente')
+  assert.equal(getMapSequenceChanged(trip.rows, 6, {}, 2026, 2026, schedule), false)
+  assert.equal(getMatchingCachedRoutes(routeData.routes, 6, reordered.map((row) => row.placeId), 2026, 2026).length, 1)
   assert.deepEqual(getMapDirections(6, reordered.map((row) => ({ id: row.placeId, label: row.placeLabel ?? String(row.placeId) })), 'Hostel Vergueiro', { cantareira: 'Portão 1', botanicGarden: 'Jardim Botânico', afroGate: 'Portão 10', park: 'Ibirapuera' }).at(-1)?.mode, 'transit')
   const moved = getMapStopRows(trip.rows, 7, { 16: 7 }, 2026, 2026)
   assert.ok(moved.some((row) => row.placeId === 16))
@@ -116,6 +126,55 @@ test('horarios y asignaciones manuales ordenan paradas efectivas e invalidan geo
   const staleAfroPark = routeData.routes.filter((route) => route.day === 8 && route.subroute)
   assert.equal(getMatchingCachedRoutes(staleAfroPark, 8, dayEightStops.map((row) => row.placeId), 2026, 2026, ['park-ibirapuera']).length, 1,
     'la geometría coincidente de una parte del día aún existe, por eso MapView debe ocultar todas las rutas cuando cambia la secuencia')
+  const sameOrderTimeChange = { 4: { startTime: '17:00', durationMinutes: 60, travelMinutes: 30, bufferMinutes: 15 } }
+  assert.deepEqual(getMapStopRows(trip.rows, 8, {}, 2026, 2026, sameOrderTimeChange).map((row) => row.placeId), [13, 4])
+  assert.equal(getMapRouteNeedsReview(trip.rows, {}, {}, 2026, 2026, 8, sameOrderTimeChange), true, 'el cambio de hora invalida la ruta aunque conserve el orden')
+  assert.equal(getMapRouteNeedsReview(trip.rows, { 'place-04-day-08': { transport: 'Uber' } }, {}, 2026, 2026, 8, {}), true, 'el cambio de transporte invalida la ruta')
+
+  const motherPreta = trip.rows.find((row) => row.date === '2026-12-07' && /Mãe Preta/.test(row.activity))
+  assert.ok(motherPreta?.placeId)
+  assert.match(motherPreta.time, /Sin hora/)
+  const manualTimeForUnscheduledStop = { [motherPreta.placeId]: { startTime: '14:00', durationMinutes: 30, travelMinutes: 0, bufferMinutes: 0 } }
+  assert.equal(getMapDirectionChanges(trip.rows, {}, {}, 2026, 2026, 7, manualTimeForUnscheduledStop), true,
+    'añadir hora a una parada que estaba Sin hora invalida la geometría y exige revisión')
+  assert.equal(getMapRouteNeedsReview(trip.rows, {}, {}, 2026, 2026, 7, manualTimeForUnscheduledStop), true)
+
+  const dayThreeCemetery = trip.rows.find((row) => row.id === 'place-17-day-03')
+  assert.equal(dayThreeCemetery.time, 'Sin hora · condicional')
+  assert.equal(dayThreeCemetery.schedule, undefined)
+  assert.equal(dayThreeCemetery.applyToAgenda, false)
+  const cemeteryIndex = trip.rows.indexOf(dayThreeCemetery)
+  assert.equal(trip.rows[cemeteryIndex - 1].id, 'arrival-meal-checkin-2026-12-03')
+  assert.equal(trip.rows[cemeteryIndex + 1].id, 'place-10-day-03')
+
+  const rioTrip = JSON.parse(await readFile(new URL('../docs/data/itinerario-rio.json', import.meta.url), 'utf8'))
+  const friday = rioTrip.rows.filter((row) => row.date === '2026-12-11')
+  const lunch = friday.find((row) => row.id === 'rio-lunch-2026-12-11')
+  assert.match(lunch.activity, /traslado al puerto y comida/i)
+  assert.equal(lunch.time, '12:00–13:15 · margen')
+  assert.equal(friday.find((row) => row.placeId === 106).time, '13:15–13:45 · propuesta')
+  const fridayDirections = rioTrip.mapDirections.find((item) => item.day === 11).legs
+  assert.ok(fridayDirections.some((leg) => leg.to.includes('Espaço Cultural da Marinha, Praça XV')))
+  assert.ok(fridayDirections.some((leg) => leg.from.includes('Espaço Cultural da Marinha, Praça XV') && leg.to.includes('Injoy Botafogo')))
+  const rioArrival = rioTrip.rows.find((row) => row.id === 'rio-arrival-2026-12-09')
+  assert.match(rioArrival.notes, /Con Río 9–13 \(5 noches\).*escenario conserva 6 noches en São Paulo \(3–8\)/)
+  assert.match(rioArrival.notes, /Solo serían 5 \(3–7\).*checkout el 8.*custodia.*confirmados; ahorro condicional, no asumido/)
+  assert.match(rioArrival.notes, /VLT con Jaé físico.*caução R\$5.*bilhete unitário en estación/)
+  assert.match(rioArrival.notes, /MetrôRio publica que Jaé se acepta en sus estaciones; no asumir medio universal/)
+  assert.equal(rioArrival.sourceUrl, 'https://www.metrorio.com.br/como-pagar/meios-e-tarifas')
+
+  const rioRoutes = JSON.parse(await readFile(new URL('../docs/data/map-routes-rio.json', import.meta.url), 'utf8')).routes
+  assert.equal(rioRoutes.length, 8)
+  assert.ok(rioRoutes.every((route) => route.subroute && route.coordinates.length > 20 && route.coordinates.every(([lat, lon]) => Number.isFinite(lat) && Number.isFinite(lon))))
+  assert.ok(rioRoutes.some((route) => route.day === 13 && route.placeIds.join(',') === '115,120' && route.mode === 'car'))
+  assert.ok(rioRoutes.some((route) => route.day === 11 && route.placeIds.join(',') === '104,108' && route.mode === 'foot'))
+  assert.ok(rioRoutes.some((route) => route.day === 10 && route.mode === 'car' && route.landmarkIds?.includes('cosme-velho-station') && /no se representan como carretera/.test(route.endpointNote)))
+  const hortoRoad = rioRoutes.find((route) => route.day === 13 && route.mode === 'car' && route.landmarkIds?.includes('horto-dropoff-915'))
+  assert.ok(hortoRoad?.endpointNote.includes('no en una entrada oficial'))
+  assert.ok(hortoRoad?.endpointNote.includes('estacionamiento confirmado'))
+  assert.ok(Math.abs(hortoRoad.coordinates.at(-1)[0] - (-22.9654627)) < 0.001)
+  const rioItineraryLinks = rioTrip.mapDirections
+  for (const day of [9, 10, 11, 12, 13]) assert.ok(rioItineraryLinks.find((item) => item.day === day).legs.some((leg) => leg.to.includes('Injoy Botafogo') && leg.from !== leg.to))
 
   const memory = new Map()
   const storage = { getItem: (key) => memory.get(key) ?? null, setItem: (key, value) => memory.set(key, value), removeItem: (key) => memory.delete(key) }
@@ -124,13 +183,20 @@ test('horarios y asignaciones manuales ordenan paradas efectivas e invalidan geo
   const actualUiOverride = readItineraryOverrides(storage, ITINERARY_OVERRIDES_KEY, trip.rows)
   assert.equal(actualUiOverride[row.id].transport, 'Uber hasta Casa Dona Yayá')
   assert.equal(getMapDirectionChanges(trip.rows, actualUiOverride, {}, 2026, 2026, 6), true)
+
+  const sameNamedRow = [{ id: 'shared-row', transport: 'walk' }]
+  const rioOverridesKey = 'mi-itinerario:itinerary:rio-de-janeiro:v1'
+  writeItineraryOverrides(storage, ITINERARY_OVERRIDES_KEY, { 'shared-row': { transport: 'SP custom' } }, sameNamedRow)
+  writeItineraryOverrides(storage, rioOverridesKey, { 'shared-row': { transport: 'Rio custom' } }, sameNamedRow)
+  assert.equal(readItineraryOverrides(storage, ITINERARY_OVERRIDES_KEY, sameNamedRow)['shared-row'].transport, 'SP custom')
+  assert.equal(readItineraryOverrides(storage, rioOverridesKey, sameNamedRow)['shared-row'].transport, 'Rio custom')
 })
 
-test('Todos muestra las 39 referencias sin paradas numeradas ni líneas', async () => {
+test('Todos muestra las 40 referencias sin paradas numeradas ni líneas', async () => {
   const catalog = JSON.parse(await readFile(placesFile, 'utf8')).places
   const routeData = JSON.parse(await readFile(new URL('../docs/data/map-routes.json', import.meta.url), 'utf8'))
-  assert.equal(getMapCatalogPlaces(catalog, null).length, 39)
-  assert.equal(new Set(getMapCatalogPlaces(catalog, null).map((place) => place.id)).size, 39)
+  assert.equal(getMapCatalogPlaces(catalog, null).length, 40)
+  assert.equal(new Set(getMapCatalogPlaces(catalog, null).map((place) => place.id)).size, 40)
   assert.equal(getMapCatalogPlaces(catalog, 6).length, 0)
   assert.equal(getMatchingCachedRoutes(routeData.routes, null, catalog.map((place) => place.id), 2026, 2026).length, 0)
 })

@@ -2,15 +2,16 @@
 
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
-import itineraryData from '@/docs/data/itinerario.json'
-import placesData from '@/docs/data/lugares-sao-paulo.json'
-import { groupItineraryRows, itinerary, itineraryDayTone } from '@/lib/itinerary-model'
-import type { ItineraryOverrides, ItineraryRow, ItineraryRowOverride, ItineraryStatus } from '@/types/itinerary'
-import type { LocalTripState, Place } from '@/types/place'
+import { groupItineraryRows, itineraryDayTone } from '@/lib/itinerary-model'
+import type { ItineraryData, ItineraryOverrides, ItineraryRow, ItineraryRowOverride, ItineraryStatus } from '@/types/itinerary'
+import type { CityId, LocalTripState, Place } from '@/types/place'
 import { calculateEndTime } from '@/lib/schedule'
 import { buildGoogleDocsTableCopy } from '@/lib/itinerary-copy'
 
 type Props = {
+  city: CityId
+  data: ItineraryData
+  places: Place[]
   travelYear: number
   selectedDay: number | null
   onDaySelect: (day: number | null) => void
@@ -22,7 +23,6 @@ type Props = {
   onNavigateBudget: () => void
 }
 
-const places = placesData.places as Place[]
 const statuses: Record<ItineraryStatus, string> = {
   'captura-compartida': 'Captura compartida',
   'confirmado-por-viajero': 'Confirmado por el viajero',
@@ -48,11 +48,11 @@ function displayDate(iso: string) {
   return `${weekdays[date.getDay()]} ${day} dic`
 }
 
-function rowPlaceLabel(row: ItineraryRow) {
+function rowPlaceLabel(row: ItineraryRow, places: Place[]) {
   return row.placeLabel ?? (row.placeId ? places.find((place) => place.id === row.placeId)?.name ?? `Lugar ${row.placeId}` : '—')
 }
 
-function effectiveTime(row: ItineraryRow, state: LocalTripState, useOfficialTime: boolean) {
+function effectiveTime(row: ItineraryRow, state: LocalTripState, useOfficialTime: boolean, planningYear: number) {
   if (useOfficialTime) return { value: row.time, label: statuses[row.status] }
   if (!row.placeId || row.applyToAgenda === false) return { value: row.time, label: statuses[row.status] }
   const assignedDay = state.dayAssignments[row.placeId]
@@ -60,7 +60,7 @@ function effectiveTime(row: ItineraryRow, state: LocalTripState, useOfficialTime
   const schedule = state.placeSchedule?.[row.placeId]
   if (assignedDay !== Number(row.date.slice(8, 10))) {
     const when = schedule?.startTime ? ` · ${schedule.startTime}–${calculateEndTime(schedule.startTime, schedule.durationMinutes) ?? 'fin por corregir'}` : ' · sin hora'
-    return { value: `${displayDate(`2026-12-${String(assignedDay).padStart(2, '0')}`)}${when}`, label: 'Mi agenda · movido' }
+    return { value: `${displayDate(`${planningYear}-12-${String(assignedDay).padStart(2, '0')}`)}${when}`, label: 'Mi agenda · movido' }
   }
   if (!schedule?.startTime) return { value: 'Sin hora en mi agenda', label: 'Mi asignación · horario pendiente' }
   return { value: `${schedule.startTime}–${calculateEndTime(schedule.startTime, schedule.durationMinutes) ?? 'fin por corregir'}`, label: 'Horario de mi agenda' }
@@ -92,7 +92,7 @@ function statusClass(status: ItineraryStatus) {
   return `itinerary-status status-${status.replaceAll('-', '_')}`
 }
 
-export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, state, overrides, onSaveOverride, onApply, onNavigatePlace, onNavigateBudget }: Props) {
+export default function ItineraryTable({ city, data: itinerary, places, travelYear, selectedDay, onDaySelect, state, overrides, onSaveOverride, onApply, onNavigatePlace, onNavigateBudget }: Props) {
   const [copyNotice, setCopyNotice] = useState('')
   const [copyFallback, setCopyFallback] = useState('')
   const fallbackRef = useRef<HTMLTextAreaElement>(null)
@@ -101,7 +101,7 @@ export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, s
   const groups = groupItineraryRows(itinerary.rows, groupingState, itinerary.year, selectedDay ?? 'all')
   const candidates = itinerary.rows.filter((row) => row.placeId !== undefined && row.schedule && row.applyToAgenda === true)
   const coverage = itinerary.coverage
-  const visitables = coverage.filter((item) => item.placeId <= 33)
+  const visitables = coverage.filter((item) => item.state !== 'historico')
   const historical = coverage.filter((item) => item.state === 'historico').length
   const counts = {
     propuesta: visitables.filter((item) => item.state === 'propuesta').length,
@@ -139,11 +139,11 @@ export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, s
       reservation: override.reservation ?? row.reservation,
       notes: override.notes ?? row.notes,
     }
-    const time = effectiveTime(row, state, Boolean(syncedSource))
+    const time = effectiveTime(row, state, Boolean(syncedSource), itinerary.year)
     const sharedBudget = row.budgetId === 'paid:international-round-trip'
     const tone = itineraryDayTone(effectiveDate)
     return mobile ? <article className={`itinerary-mobile-card day-tone-${tone}`} key={row.id}>
-        <div className="itinerary-mobile-place"><b>{rowPlaceLabel(row)}</b><span>{time.value}</span>{time.label !== statuses[row.status] && <small>{time.label}</small>}</div>
+        <div className="itinerary-mobile-place"><b>{rowPlaceLabel(row, places)}</b><span>{time.value}</span>{time.label !== statuses[row.status] && <small>{time.label}</small>}</div>
         <dl>
           <div><dt>Actividad</dt><dd>{row.activity} <span className={statusClass(row.status)}>{shortStatuses[row.status]}</span></dd></div>
           <div><dt>Transporte</dt><dd>{cell.transport}</dd></div>
@@ -158,7 +158,7 @@ export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, s
       </article> : <tr key={row.id} className={`itinerary-table-row day-tone-${tone}${firstInGroup ? ' day-group-start' : ''}`}>
         {firstInGroup && <th scope="rowgroup" rowSpan={groups.find((group) => group.date === effectiveDate)?.rows.length ?? 1} className={`itinerary-group-date day-tone-${tone}`}>{displayDate(effectiveDate)}</th>}
         <td>{time.value}{time.label !== statuses[row.status] && <small>{time.label}</small>}</td>
-        <td>{row.placeId ? <button className="itinerary-inline-link" type="button" onClick={() => onNavigatePlace(row.placeId!)}>{rowPlaceLabel(row)}</button> : rowPlaceLabel(row)}</td>
+        <td>{row.placeId ? <button className="itinerary-inline-link" type="button" onClick={() => onNavigatePlace(row.placeId!)}>{rowPlaceLabel(row, places)}</button> : rowPlaceLabel(row, places)}</td>
         <td>{row.activity}<small><span className={statusClass(row.status)}>{shortStatuses[row.status]}</span></small>{row.sourceUrl && <small><a href={row.sourceUrl} target="_blank" rel="noreferrer">Fuente ↗</a></small>}</td>
         <td>{cell.transport}</td><td>{cell.lodging}</td>
         <td>{row.costLabel}<button className="itinerary-budget-link" type="button" onClick={onNavigateBudget}>{sharedBudget ? 'Ver vuelos en Presupuesto ↗' : 'Ver Presupuesto ↗'}</button></td>
@@ -166,7 +166,7 @@ export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, s
       </tr>
   }
 
-  return <section className="itinerary-table-section" aria-labelledby="itinerary-table-title">
+  return <section className={`itinerary-table-section itinerary-${city}`} aria-labelledby="itinerary-table-title">
     <div className="itinerary-table-heading"><div><span className="tiny-label">{syncedSource ? 'FUENTE OFICIAL · GOOGLE DOCS' : 'VISTA DE TRABAJO · FUENTE LOCAL'}</span><h2 id="itinerary-table-title">Itinerario en tabla</h2><p>Fechas de {itinerary.year}{itinerary.yearIsAssumption ? ', todavía provisionales' : ''}. Las horas son las del itinerario; accesos y horarios operativos se verifican por separado.</p></div><label>Ver fecha<select value={selectedDay ?? 'all'} onChange={(event) => onDaySelect(event.target.value === 'all' ? null : Number(event.target.value))}><option value="all">Todo el itinerario</option>{[...new Set([...itinerary.rows.map((row) => Number(row.date.slice(8, 10))), ...(syncedSource ? [] : Object.values(state.dayAssignments))])].sort((a, b) => a - b).map((day) => <option key={day} value={day}>{displayDate(`${itinerary.year}-12-${String(day).padStart(2, '0')}`)} · {itinerary.year}</option>)}</select></label></div>
     {syncedSource ? <div className="itinerary-table-note"><b>Sincronizado desde Google Docs · Itinerario web.</b> Última actualización: {new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Chihuahua' }).format(new Date(syncedSource.syncedAt))}. Los cambios oficiales se hacen en el documento; tu agenda personal y favoritos de este navegador se conservan aparte. Los costos escritos aquí no se suman automáticamente al presupuesto.</div> : <div className="itinerary-table-note"><b>Fuente local de la página.</b> Google Docs todavía no está sincronizado. Esta tabla no cambia tu documento; tu agenda personal y favoritos se guardan en este navegador.</div>}
     {!syncedSource && <div className="itinerary-proposal-controls"><div><b>{candidates.length} visitas con horario sugerido</b><span>Añade los horarios sugeridos sin cambiar los lugares que ya organizaste.</span></div><button type="button" className="budget-primary-button" disabled={travelYear !== itinerary.year} onClick={onApply}>{travelYear !== itinerary.year ? `Propuesta de ${itinerary.year}; vuelve a ese año para aplicarla` : 'Aplicar propuesta a mi agenda'}</button></div>}
@@ -175,8 +175,8 @@ export default function ItineraryTable({ travelYear, selectedDay, onDaySelect, s
     {copyFallback && <label className="itinerary-copy-fallback">Texto de la tabla<textarea ref={fallbackRef} readOnly value={copyFallback} onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => { fallbackRef.current?.focus(); fallbackRef.current?.select() }}>Seleccionar texto</button></label>}
     <p className="itinerary-scroll-note">Desplázate horizontalmente para ver todas las columnas.</p>
     <div className="itinerary-mobile-list">{groups.map((group) => <section key={group.date} className={`itinerary-mobile-day-group day-tone-${itineraryDayTone(group.date)}`} aria-label={displayDate(group.date)}><h3>{displayDate(group.date)}</h3>{group.rows.map((row) => renderRow(row, group.date, true))}</section>)}</div>
-    <div className="itinerary-desktop-table-wrap" role="region" aria-label="Tabla del itinerario, desplazable horizontalmente" tabIndex={0}><table className="itinerary-desktop-table"><colgroup>{columnWidths.map((width, index) => <col key={index} style={{ width }} />)}</colgroup><thead><tr>{itineraryData.columns.map((column) => <th key={column} scope="col">{column}</th>)}</tr></thead>{groups.map((group) => <tbody key={group.date} className={`day-tone-${itineraryDayTone(group.date)}`}>{group.rows.map((row, index) => renderRow(row, group.date, false, index === 0))}</tbody>)}</table></div>
-    <section className="itinerary-coverage" aria-labelledby="coverage-title"><div><span className="tiny-label">LISTA DE COBERTURA DEL BORRADOR ATLAS</span><h3 id="coverage-title">36 referencias · {counts.propuesta} propuestas · {counts.condicional} condicionales · {counts.pendiente} pendientes · {historical} históricas</h3><p>“Propuesta” y “condicional” no significan reservado, abierto ni visitado. El catálogo conserva las tres referencias históricas fuera del conteo de sitios visitables.</p></div><details><summary>Ver estado de los 36 puntos</summary><ul>{coverage.map((item) => {
+    <div className="itinerary-desktop-table-wrap" role="region" aria-label="Tabla del itinerario, desplazable horizontalmente" tabIndex={0}><table className="itinerary-desktop-table"><colgroup>{columnWidths.map((width, index) => <col key={index} style={{ width }} />)}</colgroup><thead><tr>{(itinerary.columns ?? []).map((column) => <th key={column} scope="col">{column}</th>)}</tr></thead>{groups.map((group) => <tbody key={group.date} className={`day-tone-${itineraryDayTone(group.date)}`}>{group.rows.map((row, index) => renderRow(row, group.date, false, index === 0))}</tbody>)}</table></div>
+    <section className="itinerary-coverage" aria-labelledby="coverage-title"><div><span className="tiny-label">COBERTURA DEL CATÁLOGO</span><h3 id="coverage-title">{coverage.length} referencias Atlas · {counts.propuesta} propuestas · {counts.condicional} condicionales · {counts.pendiente} pendientes · {historical} históricas</h3><p>“Propuesta” y “condicional” no significan reservado, abierto ni visitado. El estado de acceso requiere verificación individual.</p></div><details><summary>Ver estado de las {coverage.length} referencias</summary><ul>{coverage.map((item) => {
       const place = places.find((candidate) => candidate.id === item.placeId)
       const stateLabel = item.state === 'historico' ? 'Histórico' : item.state === 'propuesta' ? 'Propuesto' : item.state === 'condicional' ? 'Condicional' : 'Pendiente'
       return <li key={item.placeId}><b>{String(item.placeId).padStart(2, '0')} · {place?.name ?? `Lugar ${item.placeId}`}</b><span>{stateLabel} · {item.note}</span></li>

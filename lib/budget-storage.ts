@@ -43,13 +43,14 @@ function parseEntry(value: unknown): BudgetEntry | null {
     unit: value.unit.trim(),
     status: value.status as BudgetStatus,
   }
+  if (value.city === 'sao-paulo' || value.city === 'rio' || value.city === 'general') entry.city = value.city
   if (typeof value.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.date)) entry.date = value.date
   if (typeof value.sourceUrl === 'string' && /^https:\/\//i.test(value.sourceUrl)) entry.sourceUrl = value.sourceUrl.slice(0, 500)
   if (typeof value.sourceLabel === 'string') entry.sourceLabel = value.sourceLabel.slice(0, 160)
   if (typeof value.sourceAsOf === 'string') entry.sourceAsOf = value.sourceAsOf.slice(0, 40)
   if (typeof value.assumption === 'string') entry.assumption = value.assumption.slice(0, 600)
   if (typeof value.tripLeg === 'string') entry.tripLeg = value.tripLeg.slice(0, 120)
-  if (typeof value.placeId === 'number' && Number.isInteger(value.placeId) && value.placeId >= 1 && value.placeId <= 36) entry.placeId = value.placeId
+  if (typeof value.placeId === 'number' && Number.isInteger(value.placeId) && value.placeId >= 1 && value.placeId <= 121) entry.placeId = value.placeId
   if (typeof value.includedInScenario === 'boolean') entry.includedInScenario = value.includedInScenario
   return entry
 }

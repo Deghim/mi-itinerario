@@ -1,0 +1,388 @@
+{
+  "city": "Rio de Janeiro",
+  "country": "Brasil",
+  "source": "Atlas Obscura y fuentes oficiales enlazadas por ficha; estado actual y coordenadas deben verificarse antes de visita.",
+  "verification": "18 fichas Atlas Obscura del catálogo consultado; el estado de cada sitio no equivale a acceso confirmado. Cristo y LEGO son complementos, no Atlas.",
+  "places": [
+    {
+      "id": 101,
+      "name": "The Royal Portuguese Cabinet of Reading",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.905508,
+        "lon": -43.182075,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Biblioteca histórica de arquitectura neomanuelina.",
+      "addressFromDraft": "Rua Luís de Camões, 30 · Centro",
+      "atlasUrl": "https://www.atlasobscura.com/places/the-royal-portuguese-cabinet-of-reading-rio-de-janeiro-brazil",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 102,
+      "name": "Largo do Boticário",
+      "zone": "Cosme Velho",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.93953,
+        "lon": -43.201409,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Plaza de casas históricas; acceso exterior por confirmar.",
+      "addressFromDraft": "Rua Cosme Velho, 900",
+      "atlasUrl": "https://www.atlasobscura.com/places/largo-do-boticario",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 103,
+      "name": "Parque Lage",
+      "zone": "Jardim Botânico",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.961229,
+        "lon": -43.213186,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Parque público al pie del Corcovado; horarios sujetos a fuente oficial.",
+      "addressFromDraft": "Rua Jardim Botânico, 414",
+      "atlasUrl": "https://www.atlasobscura.com/places/parque-lage",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 104,
+      "name": "Rio de Janeiro Cathedral",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.910702,
+        "lon": -43.180797,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Catedral Metropolitana de São Sebastião; culto y acceso interior pueden alterar la visita.",
+      "addressFromDraft": "Avenida Chile, 245 · Centro",
+      "atlasUrl": "https://www.atlasobscura.com/places/rio-de-janeiro-cathedral",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 105,
+      "name": "Biblioteca Nacional do Brasil",
+      "zone": "Centro / Cinelândia",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.90974,
+        "lon": -43.175408,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Visita guiada gratuita en días hábiles; agenda de diciembre por confirmar.",
+      "addressFromDraft": "Avenida Rio Branco, 219",
+      "atlasUrl": "https://www.atlasobscura.com/places/biblioteca-nacional-do-brasil",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 106,
+      "name": "Largest Street Art Mural in the World · Mural Etnias",
+      "zone": "Porto Maravilha",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.8972,
+        "lon": -43.1808,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Mural exterior de Eduardo Kobra; ubicación aproximada a lo largo del Boulevard Olímpico.",
+      "addressFromDraft": "Boulevard Olímpico · Praça Mauá",
+      "atlasUrl": "https://www.atlasobscura.com/places/largest-street-art-mural-in-the-world",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 107,
+      "name": "Images of the Unconscious Museum · MII",
+      "zone": "Engenho de Dentro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.900927,
+        "lon": -43.300657,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Museo gratuito; martes–sábado 10:00–16:00 según fuente oficial.",
+      "addressFromDraft": "Rua Ramiro Magalhães, 521",
+      "atlasUrl": "https://www.atlasobscura.com/places/images-of-the-unconscious-museum",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 108,
+      "name": "Escadaria Selarón Mosaic Steps",
+      "zone": "Lapa / Santa Teresa",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.915304,
+        "lon": -43.179196,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Escalinata pública entre Rua Joaquim Silva y Rua Pinto Martins.",
+      "addressFromDraft": "Rua Manuel Carneiro, 2",
+      "atlasUrl": "https://www.atlasobscura.com/places/escadaria-selaron-mosaic-steps",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 109,
+      "name": "Cemitério São João Batista",
+      "zone": "Botafogo",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.959302,
+        "lon": -43.188486,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Cementerio histórico; horario/acceso de visita por confirmar.",
+      "addressFromDraft": "Rua General Polidoro · acceso por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/cemiterio-sao-joao-batista",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 110,
+      "name": "Museum of Astronomy and Related Sciences · MAST",
+      "zone": "São Cristóvão",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.895939,
+        "lon": -43.222776,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Entrada gratuita; horario sábado publicado 14:00–19:00, reconfirmar.",
+      "addressFromDraft": "Rua General Bruce, 586",
+      "atlasUrl": "https://www.atlasobscura.com/places/museum-of-astronomy-and-related-sciences",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 111,
+      "name": "Ilha Fiscal",
+      "zone": "Centro / Baía de Guanabara",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.9021,
+        "lon": -43.1713,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "La visita embarca en Praça XV; el mapa no sugiere llegada en auto a la isla.",
+      "addressFromDraft": "Embarque en Espaço Cultural da Marinha · Praça XV",
+      "atlasUrl": "https://www.atlasobscura.com/places/ilha-fiscal",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 112,
+      "name": "Dedo de Deus",
+      "zone": "Teresópolis / Guapimirim · fuera del circuito urbano",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.483,
+        "lon": -43.002,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Excursión aparte. Ascenso requiere planificación y autorización/TCRN; no es una parada urbana casual.",
+      "addressFromDraft": "Parque Nacional da Serra dos Órgãos · acceso de escalada por autorizar",
+      "atlasUrl": "https://www.atlasobscura.com/places/dedo-de-deus",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 113,
+      "name": "Bangu Statue of Liberty",
+      "zone": "Bangu",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.879,
+        "lon": -43.464,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Opción separada; considerar solo con horario de salida tardío y acceso confirmado.",
+      "addressFromDraft": "Bangu Shopping · acceso de plaza/centro por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/bangu-statue-of-liberty",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 114,
+      "name": "Zeppelin Hangar at Santa Cruz Air Force Base",
+      "zone": "Santa Cruz · base militar",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.932,
+        "lon": -43.711,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Ficha Atlas dentro de base aérea militar; no programar sin autorización oficial.",
+      "addressFromDraft": "Base Aérea de Santa Cruz · acceso público no verificado",
+      "atlasUrl": "https://www.atlasobscura.com/places/zeppelin-hangar-at-santa-cruz-air-force-base",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 115,
+      "name": "Cachoeiras do Horto",
+      "zone": "Horto / Parque Nacional da Tijuca",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.9654,
+        "lon": -43.2382,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "El parque describe aproximaciones por Rua Pacheco Leão / Estrada Dona Castorina; punto de entrada y acceso al sendero por confirmar antes de ir.",
+      "addressFromDraft": "Horto · aproximación por Rua Pacheco Leão o Estrada Dona Castorina; entrada exacta por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/cachoeiras-do-horto",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 116,
+      "name": "Cascata Diamantina",
+      "zone": "Horto",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.966,
+        "lon": -43.239,
+        "confidence": "por-confirmar"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Alternativa a Cachoeiras do Horto, no se programan ambos senderos sin confirmar acceso.",
+      "addressFromDraft": "Parque Nacional da Tijuca · acceso/sendero por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/cascata-diamantina",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 117,
+      "name": "Hans Klussmann Square · Praça Hans Klussmann",
+      "zone": "Tijuca",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.93,
+        "lon": -43.236,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Parada exterior breve; acceso y secuencia de transporte por confirmar.",
+      "addressFromDraft": "Praça Hans Klussmann · ubicación exterior por confirmar",
+      "atlasUrl": "https://www.atlasobscura.com/places/hans-klussmann-square",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 118,
+      "name": "Terra Encantada",
+      "zone": "Barra da Tijuca · histórica",
+      "statusFromDraft": "marcado-cerrado-o-historico",
+      "operationalStatus": "cerrado-segun-fuentes",
+      "coordinates": {
+        "lat": -22.987,
+        "lon": -43.369,
+        "confidence": "aproximada-fuente-atlas"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Parque demolido/cerrado; ficha histórica, no es una visita actual.",
+      "addressFromDraft": "Avenida Ayrton Senna, antigo parque",
+      "atlasUrl": "https://www.atlasobscura.com/places/terra-encantada",
+      "verification": "pendiente",
+      "catalogType": "atlas",
+      "sourceLabel": "Atlas Obscura"
+    },
+    {
+      "id": 119,
+      "name": "Cristo Redentor",
+      "zone": "Alto do Corcovado",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.9519,
+        "lon": -43.2105,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Complemento, no Atlas. Acceso con franja de tren/vans; tarifa y venta para diciembre deben reconfirmarse.",
+      "addressFromDraft": "Parque Nacional da Tijuca · Trem do Corcovado desde Cosme Velho",
+      "atlasUrl": "https://www.tremdocorcovado.rio/institucional/informacoes-uteis",
+      "verification": "pendiente",
+      "catalogType": "complemento",
+      "sourceLabel": "Fuente oficial"
+    },
+    {
+      "id": 120,
+      "name": "LEGO Store · Shopping Leblon",
+      "zone": "Leblon",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -22.983,
+        "lon": -43.218,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Complemento. Sello de pasaporte LEGO no confirmado para esta tienda.",
+      "addressFromDraft": "Av. Afrânio de Melo Franco, 290 · loja 108 I/J",
+      "atlasUrl": "https://www.lego.com/en-us/stores/store/shopping-lebion",
+      "verification": "pendiente",
+      "catalogType": "complemento",
+      "sourceLabel": "Fuente oficial"
+    }
+  ]
+}

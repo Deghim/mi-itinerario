@@ -5,6 +5,7 @@ export type ItineraryRow = {
   id: string
   date: string
   time: string
+  city?: 'sao-paulo' | 'rio'
   status: ItineraryStatus
   placeId?: number
   placeLabel?: string
@@ -33,9 +34,16 @@ export type ItineraryData = {
   year: number
   yearIsAssumption: boolean
   rioNightsPreferred: number
+  city?: 'sao-paulo' | 'rio'
+  columns?: string[]
   rows: ItineraryRow[]
   coverage: ItineraryCoverage[]
   sync?: { source: 'Google Docs · Itinerario web'; syncedAt: string }
+  mapBase?: { id: string; name: string; address: string; coordinates: { lat: number; lon: number; confidence: string }; status: string; bookingUrl: string; sourceUrl?: string }
+  mapDirections?: { day: number; legs: { from: string; to: string; mode: 'walking' | 'transit' | 'driving'; label: string }[]; note?: string }[]
+  optionalStops?: { placeId: number; suggestedDay: number; title: string; reason: string; status: string }[]
+  mapLandmarks?: { id: string; day: number; label: string; coordinates: { lat: number; lon: number; confidence: string }; sourceUrl: string; note: string }[]
+  mapEndpoints?: Record<string, unknown>
 }
 
 export type AgendaApplyResult = {

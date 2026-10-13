@@ -2,26 +2,24 @@
 
 import dynamic from 'next/dynamic'
 import { useEffect, useMemo, useState } from 'react'
-import placesFile from '@/docs/data/lugares-sao-paulo.json'
-import tripFile from '@/docs/data/viaje.json'
 import { clearTripState, readTripState, supportedTravelYears, writeTripState } from '@/lib/trip-storage'
-import { itinerary, planAgendaApplication } from '@/lib/itinerary-model'
-import { clearItineraryOverrides, ITINERARY_OVERRIDES_KEY, readItineraryOverrides, writeItineraryOverrides } from '@/lib/itinerary-storage'
+import { planAgendaApplication } from '@/lib/itinerary-model'
+import { clearItineraryOverrides, readItineraryOverrides, writeItineraryOverrides } from '@/lib/itinerary-storage'
 import type { ItineraryOverrides, ItineraryRowOverride } from '@/types/itinerary'
 import BudgetSection from './BudgetSection'
 import DaySchedule from './DaySchedule'
 import ItineraryTable from './ItineraryTable'
 import { DEFAULT_DAILY_ROUTINE } from '@/lib/schedule'
-import type { LocalTripState, Place, SavedPlaceState } from '@/types/place'
+import type { LocalTripState, SavedPlaceState } from '@/types/place'
+import type { CityId } from '@/types/place'
+import { tripCities } from '@/lib/trip-cities'
 
 const MapView = dynamic(() => import('./MapView'), {
   ssr: false,
-  loading: () => <div className="map-loading">Preparando el mapa de São Paulo…</div>,
+  loading: () => <div className="map-loading">Preparando el mapa…</div>,
 })
 
-const places = placesFile.places as Place[]
-const STORAGE_KEY = 'mi-itinerario:sao-paulo:v1'
-const TABLE_STORAGE_KEY = ITINERARY_OVERRIDES_KEY
+const EMPTY_STATE: LocalTripState = { favorites: [], placeStates: {}, dayAssignments: {}, travelYear: 2026, updatedAt: '' }
 const tabs = [
   { id: 'itinerario', label: 'Itinerario', icon: '◷' },
   { id: 'lugares', label: 'Lugares', icon: '⌖' },
@@ -30,12 +28,8 @@ const tabs = [
 ] as const
 type TabId = (typeof tabs)[number]['id']
 
-const emptyState: LocalTripState = { favorites: [], placeStates: {}, dayAssignments: {}, travelYear: tripFile.travelYear, updatedAt: '' }
-const atlasPlaces = places.filter((place) => place.catalogType !== 'complemento')
-const draftPlaceCount = atlasPlaces.filter((place) => place.statusFromDraft === 'marcado-visitables').length
-const draftHistoricCount = atlasPlaces.length - draftPlaceCount
 const startDate = 2
-const endDate = 14
+const endDate = 23
 
 function daysForYear(year: number) {
   return Array.from({ length: endDate - startDate + 1 }, (_, index) => {
@@ -49,11 +43,23 @@ function formatWeekday(date: Date) {
 }
 
 export default function TripPlanner() {
+  const [activeCity, setActiveCity] = useState<CityId>('sao-paulo')
+  const city = tripCities[activeCity]
+  const places = city.places
+  const itineraryData = city.itinerary
+  const tripFile = city.tripFile
+  const itinerary = city.itinerary
+  const TABLE_STORAGE_KEY = city.itineraryOverridesKey
+  const emptyState = useMemo(() => ({ ...EMPTY_STATE, travelYear: city.tripFile.travelYear }), [city])
+  const atlasPlaces = places.filter((place) => place.catalogType !== 'complemento')
+  const draftPlaceCount = atlasPlaces.filter((place) => place.statusFromDraft === 'marcado-visitables').length
+  const draftHistoricCount = atlasPlaces.filter((place) => place.statusFromDraft === 'marcado-cerrado-o-historico').length
   const [activeTab, setActiveTab] = useState<TabId>('itinerario')
-  const [state, setState] = useState<LocalTripState>(emptyState)
+  const [state, setState] = useState<LocalTripState>({ ...EMPTY_STATE, travelYear: tripCities['sao-paulo'].tripFile.travelYear })
   const [itineraryOverrides, setItineraryOverrides] = useState<ItineraryOverrides>({})
   const [tableReady, setTableReady] = useState(false)
   const [ready, setReady] = useState(false)
+  const [loadedCity, setLoadedCity] = useState<CityId | null>(null)
   const [notice, setNotice] = useState('')
   const [query, setQuery] = useState('')
   const [zone, setZone] = useState('Todas las zonas')
@@ -68,32 +74,33 @@ export default function TripPlanner() {
     window.queueMicrotask(() => {
       if (!mounted) return
       try {
-        setState(readTripState(window.localStorage, STORAGE_KEY, emptyState))
+        setState(readTripState(window.localStorage, city.storageKey, emptyState, places.map((place) => place.id)))
         setItineraryOverrides(readItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY, itinerary.rows))
       } catch {
         setNotice('No se pudieron recuperar los cambios guardados en este navegador.')
       } finally {
         setTableReady(true)
         setReady(true)
+        setLoadedCity(activeCity)
       }
     })
     return () => { mounted = false }
-  }, [])
+  }, [activeCity, city, emptyState, itinerary.rows, places, TABLE_STORAGE_KEY])
 
   useEffect(() => {
-    if (!ready) return
+    if (!ready || loadedCity !== activeCity) return
     try {
-      writeTripState(window.localStorage, STORAGE_KEY, state)
+      writeTripState(window.localStorage, city.storageKey, state)
     } catch {
       window.queueMicrotask(() => setNotice('El navegador no pudo guardar los cambios locales. Revisa el espacio disponible.'))
     }
-  }, [ready, state])
+  }, [activeCity, city.storageKey, loadedCity, ready, state])
 
   useEffect(() => {
-    if (!tableReady || itinerary.sync) return
+    if (!tableReady || loadedCity !== activeCity || itinerary.sync) return
     try { writeItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY, itineraryOverrides, itinerary.rows) }
     catch { window.queueMicrotask(() => setNotice('No se pudieron guardar las notas de la tabla en este dispositivo.')) }
-  }, [tableReady, itineraryOverrides])
+  }, [activeCity, itinerary.sync, itinerary.rows, loadedCity, tableReady, TABLE_STORAGE_KEY, itineraryOverrides])
 
   const calendar = useMemo(() => daysForYear(state.travelYear), [state.travelYear])
   const filteredPlaces = useMemo(() => places.filter((place) => {
@@ -102,10 +109,10 @@ export default function TripPlanner() {
     const zoneMatches = zone === 'Todas las zonas' || place.zone === zone
     const favoriteMatches = !showFavoritesOnly || state.favorites.includes(place.id)
     return statusMatches && zoneMatches && favoriteMatches && searchable.includes(query.toLocaleLowerCase('es').trim())
-  }), [query, showFavoritesOnly, showHistorical, state.favorites, zone])
+  }), [places, query, showFavoritesOnly, showHistorical, state.favorites, zone])
 
   const favorites = places.filter((place) => state.favorites.includes(place.id))
-  const assignedPlaces = places.filter((place) => Number(state.dayAssignments[place.id]) >= 2 && Number(state.dayAssignments[place.id]) <= 14)
+  const assignedPlaces = places.filter((place) => Number(state.dayAssignments[place.id]) >= 2 && Number(state.dayAssignments[place.id]) <= 23)
 
   function toggleFavorite(id: number) {
     setState((current) => ({ ...current, favorites: current.favorites.includes(id) ? current.favorites.filter((item) => item !== id) : [...current.favorites, id] }))
@@ -153,7 +160,7 @@ export default function TripPlanner() {
 
   function resetLocalData() {
     if (!window.confirm('¿Borrar favoritos, estados, días, horarios, rutina y notas locales de tabla guardados en este navegador?')) return
-    try { clearTripState(window.localStorage, STORAGE_KEY) } catch { /* Se reemplazará por el estado vacío de React. */ }
+    try { clearTripState(window.localStorage, city.storageKey) } catch { /* Se reemplazará por el estado vacío de React. */ }
     try { clearItineraryOverrides(window.localStorage, TABLE_STORAGE_KEY) } catch { /* Se reemplazarán las notas en React. */ }
     setState(emptyState)
     setItineraryOverrides({})
@@ -170,6 +177,34 @@ export default function TripPlanner() {
     nav('lugares')
   }
 
+  function changeCity(nextCity: CityId) {
+    if (nextCity === activeCity) return
+    setActiveCity(nextCity)
+    setSelectedPlanningDay(null)
+    setSelectedAgendaDay(tripCities[nextCity].startDay)
+    setSelectedMapPlace(undefined)
+    setQuery('')
+    setZone('Todas las zonas')
+    setShowFavoritesOnly(false)
+    setNotice(`Ahora estás viendo ${tripCities[nextCity].label}. Sus favoritos y agenda se guardan por separado en este dispositivo.`)
+  }
+
+  const mapProps = {
+    city: city.id,
+    cityLabel: city.label,
+    places,
+    itinerary: itineraryData,
+    routeData: city.mapRoutes,
+    selectedId: selectedMapPlace,
+    onSelect: setSelectedMapPlace,
+    selectedDay: selectedPlanningDay,
+    onDayChange: (day: number | null) => { setSelectedPlanningDay(day); if (day !== null) setSelectedAgendaDay(day) },
+    dayAssignments: state.dayAssignments,
+    placeSchedule: state.placeSchedule,
+    itineraryOverrides,
+    travelYear: state.travelYear,
+  }
+
   return (
     <main className="shell">
       <header className="topbar">
@@ -178,7 +213,8 @@ export default function TripPlanner() {
           <span><b>mi itinerario</b><small>ATLAS DE VIAJE · BRASIL</small></span>
         </a>
         <div className="top-actions">
-          <span className="sync-state"><i className={ready ? 'sync-dot ready' : 'sync-dot'} />{ready ? 'Guardado en este dispositivo' : 'Cargando tus cambios'}</span>
+          <span className="sync-state"><i className={ready && loadedCity === activeCity ? 'sync-dot ready' : 'sync-dot'} />{ready && loadedCity === activeCity ? 'Guardado en este dispositivo' : 'Cargando tus cambios'}</span>
+          <label className="city-selector">Ciudad<select aria-label="Elegir ciudad" value={activeCity} onChange={(event) => changeCity(event.target.value as CityId)}><option value="sao-paulo">São Paulo</option><option value="rio">Río de Janeiro</option></select></label>
           <button className="quiet-button" onClick={resetLocalData}>Reiniciar cambios</button>
         </div>
       </header>
@@ -194,15 +230,15 @@ export default function TripPlanner() {
       {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Cerrar aviso">×</button></div>}
 
       {activeTab === 'itinerario' && <>
-        <section className="hero" id="inicio">
+        <section className={`hero ${activeCity === 'rio' ? 'hero-rio' : ''}`} id="inicio">
           <div className="hero-copy">
-            <div className="eyebrow"><span className="eyebrow-line" /> PRIMERA PARADA <span>·</span> SÃO PAULO</div>
-            <h1>Una ciudad para<br /><em>perderse bien.</em></h1>
-            <p className="hero-description">Lugares curiosos, días por construir y todo lo útil para empezar a recorrer São Paulo.</p>
-            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ São Paulo 3–8 · propuesta</span><span>✳ Año 2026</span></div>
+            <div className="eyebrow"><span className="eyebrow-line" /> {city.stage.toUpperCase()} <span>·</span> {city.label.toUpperCase()}</div>
+            <h1>{activeCity === 'rio' ? <>Montañas, mar y<br /><em>una ciudad viva.</em></> : <>Una ciudad para<br /><em>perderse bien.</em></>}</h1>
+            <p className="hero-description">{activeCity === 'rio' ? 'Cristo Redentor, barrios históricos y días flexibles; entradas y traslados siguen por confirmar.' : 'Lugares curiosos, días por construir y todo lo útil para empezar a recorrer São Paulo.'}</p>
+            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ {city.label} · {city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · propuesta</span><span>✳ Año {state.travelYear}</span></div>
           </div>
-          <div className="hero-stamp" aria-label="São Paulo, Brasil">
-            <div className="stamp-ring"><span>23°33′ S</span><b>SP</b><span>46°38′ O</span></div>
+          <div className="hero-stamp" aria-label={`${city.label}, Brasil`}>
+            <div className="stamp-ring"><span>{activeCity === 'rio' ? '22°54′ S' : '23°33′ S'}</span><b>{activeCity === 'rio' ? 'RJ' : 'SP'}</b><span>{activeCity === 'rio' ? '43°12′ O' : '46°38′ O'}</span></div>
             <small>EST. PARA EXPLORAR</small>
           </div>
           <div className="hero-index"><span>ETAPA 01</span><i /></div>
@@ -212,26 +248,28 @@ export default function TripPlanner() {
           <div className="strip-intro"><span className="tiny-label">DICIEMBRE · {state.travelYear}</span><b>Tu viaje, a grandes rasgos</b><small>Fechas recibidas; año y planes todavía editables.</small></div>
           <div className="milestone"><span className="milestone-day">02</span><span><b>Vuelos en captura</b><small>Escalas; datos por confirmar</small></span></div>
           <div className="milestone current"><span className="milestone-day">03</span><span><b>Llegada a GRU · 09:10</b><small>Según captura compartida</small></span></div>
-          <div className="milestone open"><span className="milestone-day">03—08</span><span><b>São Paulo</b><small>Propuesta de trabajo</small></span></div>
-          <div className="milestone"><span className="milestone-day">09—13</span><span><b>Río · 5 noches</b><small>Preferencia; traslado por decidir</small></span></div>
+          <div className={`milestone ${activeCity === 'sao-paulo' ? 'open' : ''}`}><span className="milestone-day">03—08</span><span><b>São Paulo</b><small>{activeCity === 'sao-paulo' ? 'Etapa seleccionada' : 'Propuesta'}</small></span></div>
+          <div className={`milestone ${activeCity === 'rio' ? 'open' : ''}`}><span className="milestone-day">09—13</span><span><b>Río · 5 noches</b><small>{activeCity === 'rio' ? 'Etapa seleccionada · no reservada' : 'Preferencia; traslado por decidir'}</small></span></div>
           <div className="strip-end"><span>VIAJE COMPLETO</span><b>02—23 DIC</b><small>Encuentro14 tentativo · GRU regreso23</small></div>
         </section>
 
         <div className="content-grid">
           <section className="main-column">
             <div className="section-heading"><div><span className="tiny-label">TU CUADERNO DE RUTA</span><h2>Arma tus días</h2></div><span className="section-mark">PLANEACIÓN</span></div>
-            <div className="planning-note"><span>✳</span><p><b>Vuelos internacionales pagados · importe por informar.</b> La tabla reúne horarios compartidos y propuestas de visitas o ventanas; confirma acceso, horarios operativos y reservas antes de salir. Puedes añadir a tu agenda solo lugares que aún no tengan una asignación manual.</p></div>
+            <div className="planning-note"><span>✳</span><p>{activeCity === 'sao-paulo' && <><b>Vuelos internacionales pagados · importe por informar.</b> </>}La tabla reúne horarios compartidos y propuestas de visitas o ventanas; confirma acceso, horarios operativos y reservas antes de salir. Puedes añadir a tu agenda solo lugares que aún no tengan una asignación manual.</p></div>
             <div className="date-board">
-              <div className="date-board-head"><div><b>Etapa São Paulo · ventana actualizada</b><span>3–8 dic · Río 9–13 es preferencia de trabajo, no reserva</span><small>{tripFile.proposedPlan.pacePreference}</small></div><label className="year-select">AÑO DE AGENDA <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
+              <div className="date-board-head"><div><b>Etapa {city.label} · propuesta</b><span>{city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · las reservas siguen pendientes</span><small>{tripFile.proposedPlan.pacePreference}</small></div><label className="year-select">AÑO DE AGENDA <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
               <div className="date-row">{calendar.map(({ day, date }) => {
-                const isArrival = day === 3
-                const isPlanning = day >= 4 && day <= 12
+                const isArrival = activeCity === 'sao-paulo' && day === 3
+                const isPlanning = day >= city.startDay && day <= city.endDay
                 const hasAssignment = Object.values(state.dayAssignments).includes(day)
                 return <button key={day} className={`date-tile ${isArrival ? 'arrive' : ''} ${isPlanning ? 'planning' : ''} ${hasAssignment ? 'has-plan' : ''}`} onClick={() => {
-                  if (day >= 2 && day <= 14) { setSelectedPlanningDay(day); setSelectedAgendaDay(day); setNotice(day >= 4 && day <= 12 ? `Día seleccionado: ${day} de diciembre. El mapa y la tabla muestran ese día.` : `Día ${day} seleccionado; ${day === 2 ? 'hay vuelos, no una ruta local' : day === 3 ? 'la llegada es a São Paulo y el traslado al hostal está por confirmar' : 'la ciudad sigue pendiente'}.`) }
-                  else setNotice(day >= 13 ? 'El encuentro con amigos puede ser el 13 o 14; la ciudad sigue pendiente.' : `El ${day} de diciembre está anotado como ${day === 2 ? 'salida' : 'llegada'}.`)
+                  setSelectedPlanningDay(day)
+                  setSelectedAgendaDay(day)
+                  const hasRows = itinerary.rows.some((row) => Number(row.date.slice(8, 10)) === day)
+                  setNotice(hasRows ? `Día ${day} seleccionado. El mapa y la tabla muestran ${city.label}.` : `El ${day} dic no tiene paradas locales en esta etapa de ${city.label}; el resto del viaje sigue en construcción.`)
                 }}>
-                  <small>{formatWeekday(date)}</small><b>{String(day).padStart(2, '0')}</b><i>{isArrival ? 'llegada' : day === 2 ? 'salida' : day >= 13 ? 'encuentro' : isPlanning ? (hasAssignment ? 'con plan' : 'por planear') : '—'}</i>
+                  <small>{formatWeekday(date)}</small><b>{String(day).padStart(2, '0')}</b><i>{isArrival ? 'llegada' : day === 2 ? 'salida' : day === 14 ? 'encuentro tentativo' : isPlanning ? (hasAssignment ? 'con plan' : 'por planear') : '—'}</i>
                 </button>
               })}</div>
               <div className="date-board-foot"><span>● Fechas compartidas</span><span>○ {assignedPlaces.length} lugares con día elegido</span><span>Ciudad del encuentro pendiente</span></div>
@@ -241,10 +279,13 @@ export default function TripPlanner() {
 
           <section className="trip-map-wide">
             <div className="section-heading map-heading"><div><span className="tiny-label">RUTAS Y PARADAS · {selectedPlanningDay === null ? 'VISTA COMPLETA' : `${selectedPlanningDay} DIC`}</span><h2>Mapa de cada día</h2></div><button className="text-link" onClick={() => nav('lugares')}>Ver catálogo de lugares <span>↗</span></button></div>
-            <MapView selectedId={selectedMapPlace} onSelect={setSelectedMapPlace} selectedDay={selectedPlanningDay} onDayChange={(day) => { setSelectedPlanningDay(day); if (day !== null && day >= 2 && day <= 14) setSelectedAgendaDay(day) }} dayAssignments={state.dayAssignments} placeSchedule={state.placeSchedule} itineraryOverrides={itineraryOverrides} travelYear={state.travelYear} />
+            <MapView {...mapProps} />
           </section>
 
           <ItineraryTable
+            data={itineraryData}
+            places={places}
+            city={activeCity}
             travelYear={state.travelYear}
             selectedDay={selectedPlanningDay}
             onDaySelect={(day) => { setSelectedPlanningDay(day); if (day !== null) setSelectedAgendaDay(day) }}
@@ -264,7 +305,7 @@ export default function TripPlanner() {
               placeSchedule={state.placeSchedule ?? {}}
               routine={state.dailyRoutine ?? DEFAULT_DAILY_ROUTINE}
               selectedDay={selectedAgendaDay}
-              days={calendar.filter(({ day }) => day >= 2 && day <= 14).map(({ day, date }) => ({ day, weekday: formatWeekday(date) }))}
+              days={calendar.map(({ day, date }) => ({ day, weekday: formatWeekday(date) }))}
               onSelectDay={setSelectedAgendaDay}
               onSavePlaceSchedule={savePlaceSchedule}
               onRemovePlaceSchedule={removePlaceSchedule}
@@ -277,7 +318,7 @@ export default function TripPlanner() {
           </section>
 
           <aside className="side-column">
-            <section className="side-card travel-card"><span className="tiny-label">RESUMEN DEL VIAJE</span><div className="city-title"><span className="city-pin">⌖</span><div><b>São Paulo</b><small>Brasil · etapa 1</small></div></div><div className="summary-stats"><div><b>{atlasPlaces.length}</b><small>referencias Atlas</small></div><div><b>{places.length - atlasPlaces.length}</b><small>complementos</small></div></div><p className="verify-callout">{draftPlaceCount} aparecen como visitables y {draftHistoricCount} como históricos/cerrados <b>en el borrador</b>. Estado actual pendiente de verificar.</p><button className="side-action" onClick={() => nav('lugares')}>Explorar los lugares <span>↗</span></button></section>
+            <section className="side-card travel-card"><span className="tiny-label">RESUMEN DE LA ETAPA</span><div className="city-title"><span className="city-pin">⌖</span><div><b>{city.label}</b><small>Brasil · {city.stage.toLowerCase()}</small></div></div><div className="summary-stats"><div><b>{atlasPlaces.length}</b><small>referencias Atlas</small></div><div><b>{places.length - atlasPlaces.length}</b><small>complementos</small></div></div><p className="verify-callout">{draftPlaceCount} aparecen como visitables y {draftHistoricCount} como históricos/cerrados <b>en el borrador</b>. El acceso actual sigue por verificar.</p><button className="side-action" onClick={() => nav('lugares')}>Explorar los lugares <span>↗</span></button></section>
             <section className="side-card saved-card"><div className="side-title"><span className="tiny-label">TU LISTA</span><span className="favorite-count">{state.favorites.length}</span></div><h3>Lugares guardados</h3>{favorites.length ? <ul className="saved-list">{favorites.slice(0, 4).map((place) => <li key={place.id}><button onClick={() => { setSelectedMapPlace(place.id); nav('lugares') }}>{place.name}<span>↗</span></button></li>)}</ul> : <p>Guarda los sitios que te llamen la atención. Se quedarán en este dispositivo.</p>}<button className="side-action pale" onClick={() => { setShowFavoritesOnly(true); nav('lugares') }}>Ver mi lista <span>→</span></button></section>
             <section className="side-card friends-card"><span className="tiny-label">13 / 14 DICIEMBRE</span><div className="friend-icon">✳</div><h3>Encuentro con amigos</h3><p>La ciudad y el día siguen flexibles. Añade el dato cuando lo tengas; Río queda como opción por desarrollar.</p><button className="quiet-button" onClick={() => nav('documentos')}>Dejar una nota →</button></section>
             <div className="private-note"><span>▣</span><p><b>Tu privacidad</b><br />Los boletos, códigos y archivos personales no se guardan ni publican aquí.</p></div>
@@ -298,12 +339,12 @@ export default function TripPlanner() {
               <div className="place-card-top"><span className="place-number">{String(place.id).padStart(2, '0')}</span><span className="place-zone">{place.zone}</span><button className={state.favorites.includes(place.id) ? 'favorite-button on' : 'favorite-button'} onClick={() => toggleFavorite(place.id)} aria-label={state.favorites.includes(place.id) ? 'Quitar de guardados' : 'Guardar lugar'}>{state.favorites.includes(place.id) ? '♥' : '♡'}</button></div>
               <h2>{place.name}</h2><p className="place-description">{place.descriptionFromDraft}</p>
               <div className="place-facts"><span>⌖ {place.addressFromDraft}</span><span>🚇 {place.nearestTransitFromDraft}</span><span className="verification">◌ Datos del borrador · por confirmar</span></div>
-              <div className="place-card-bottom"><label>Mi estado <select value={savedState} onChange={(event) => setPlaceStatus(place.id, event.target.value as SavedPlaceState)}><option value="pendiente">Pendiente</option><option value="guardado">En mi lista</option><option value="visitado">Visitado</option><option value="descartado">Descartado</option></select></label><label>Mi día <select value={state.dayAssignments[place.id] ?? ''} onChange={(event) => assignPlace(place.id, event.target.value ? Number(event.target.value) : null)}><option value="">Sin asignar</option>{calendar.filter((date) => date.day >= 2 && date.day <= 14).map(({ day, date }) => <option key={day} value={day}>{formatWeekday(date)} {day} dic</option>)}</select></label></div>
-              <div className="place-links"><a href={place.sourceUrl ?? place.atlasUrl} target="_blank" rel="noreferrer">{place.sourceLabel === 'Atlas Obscura' ? 'Ficha Atlas Obscura ↗' : `${place.sourceLabel ?? 'Fuente pública'} ↗`}</a><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.name}, ${place.addressFromDraft}, São Paulo, Brasil}`)}`} target="_blank" rel="noreferrer">Confirmar ubicación ↗</a><button onClick={() => setSelectedMapPlace(place.id)}>Ver en mapa ↓</button>{selectedPlanningDay !== null && <button className="assign-link" onClick={() => { assignPlace(place.id, selectedPlanningDay); setNotice(`${place.name} asignado al ${selectedPlanningDay} de diciembre.`) }}>Asignar al {selectedPlanningDay} dic +</button>}</div>
+              <div className="place-card-bottom"><label>Mi estado <select value={savedState} onChange={(event) => setPlaceStatus(place.id, event.target.value as SavedPlaceState)}><option value="pendiente">Pendiente</option><option value="guardado">En mi lista</option><option value="visitado">Visitado</option><option value="descartado">Descartado</option></select></label><label>Mi día <select value={state.dayAssignments[place.id] ?? ''} onChange={(event) => assignPlace(place.id, event.target.value ? Number(event.target.value) : null)}><option value="">Sin asignar</option>{calendar.map(({ day, date }) => <option key={day} value={day}>{formatWeekday(date)} {day} dic</option>)}</select></label></div>
+              <div className="place-links"><a href={place.sourceUrl ?? place.atlasUrl} target="_blank" rel="noreferrer">{place.sourceLabel === 'Atlas Obscura' ? 'Ficha Atlas Obscura ↗' : `${place.sourceLabel ?? 'Fuente pública'} ↗`}</a><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${place.name}, ${place.addressFromDraft}, ${city.label}, Brasil`)}`} target="_blank" rel="noreferrer">Confirmar ubicación ↗</a><button onClick={() => setSelectedMapPlace(place.id)}>Ver en mapa ↓</button>{selectedPlanningDay !== null && <button className="assign-link" onClick={() => { assignPlace(place.id, selectedPlanningDay); setNotice(`${place.name} asignado al ${selectedPlanningDay} de diciembre.`) }}>Asignar al {selectedPlanningDay} dic +</button>}</div>
               {place.statusFromDraft === 'marcado-cerrado-o-historico' && <span className="historical-tag">EL BORRADOR LO MARCA HISTÓRICO / CERRADO</span>}
             </article>
           })}</div> : <div className="empty-state"><b>No encontramos lugares con esos filtros.</b><button onClick={() => { setQuery(''); setZone('Todas las zonas'); setShowFavoritesOnly(false); setShowHistorical(true) }}>Limpiar búsqueda</button></div>}
-        </div><div className="places-map"><MapView selectedId={selectedMapPlace} onSelect={setSelectedMapPlace} selectedDay={selectedPlanningDay} onDayChange={(day) => { setSelectedPlanningDay(day); if (day !== null) setSelectedAgendaDay(day) }} dayAssignments={state.dayAssignments} placeSchedule={state.placeSchedule} itineraryOverrides={itineraryOverrides} travelYear={state.travelYear} /><p>El mapa muestra el catálogo completo o los puntos del día seleccionado. Confirma accesos y direcciones antes de salir.</p></div></div>
+        </div><div className="places-map"><MapView {...mapProps} /><p>El mapa muestra el catálogo de {city.label} o los puntos del día seleccionado. Confirma accesos y direcciones antes de salir.</p></div></div>
       </section>}
 
       {activeTab === 'documentos' && <section className="page-section documents-page">
@@ -316,7 +357,7 @@ export default function TripPlanner() {
         <div className="source-list"><span className="tiny-label">FUENTES DEL MAPA</span><p><a href="https://www.metro.sp.gov.br/wp-content/uploads/2025/02/mapaderede.pdf" target="_blank" rel="noreferrer">Mapa oficial de transporte metropolitano ↗</a><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap · atribución ↗</a></p></div>
       </section>}
 
-      {activeTab === 'presupuesto' && <BudgetSection onNavigatePlace={navigateToBudgetPlace} />}
+      {activeTab === 'presupuesto' && <BudgetSection city={activeCity} onNavigatePlace={navigateToBudgetPlace} />}
 
       <footer className="footer"><a className="wordmark small-mark" href="#inicio" onClick={(event) => { event.preventDefault(); nav('itinerario') }}><span className="wordmark-icon">✳</span><span><b>mi itinerario</b><small>BRASIL · DICIEMBRE {state.travelYear}</small></span></a><p>Un plan hecho para cambiar de idea.<br /><span>Los datos prácticos se confirman antes de salir.</span></p><div className="footer-tools"><span>CAMBIOS GUARDADOS EN TU NAVEGADOR</span><button onClick={resetLocalData}>Borrar mis cambios</button></div></footer>
       <div className="mobile-nav" aria-label="Navegación móvil">{tabs.map((tab) => <button key={tab.id} className={activeTab === tab.id ? 'active' : ''} onClick={() => nav(tab.id)}><span>{tab.icon}</span>{tab.label}</button>)}</div>

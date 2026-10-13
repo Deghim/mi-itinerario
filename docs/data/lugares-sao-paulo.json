@@ -743,6 +743,25 @@
       "verification": "pendiente",
       "catalogType": "complemento",
       "sourceLabel": "Governo do Estado de São Paulo"
+    },
+    {
+      "id": 40,
+      "name": "LEGO Store Moema",
+      "zone": "Moema",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.605,
+        "lon": -46.666,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "Trayecto en metro/a pie/servicio de traslado por confirmar",
+      "descriptionFromDraft": "Complemento de São Paulo. Preguntar en tienda por sello de pasaporte; no confirmado.",
+      "addressFromDraft": "Rua Gaivota, 1301 · São Paulo",
+      "atlasUrl": "https://www.lego.com/en-us/stores/store/moema",
+      "verification": "pendiente",
+      "catalogType": "complemento",
+      "sourceLabel": "Fuente oficial LEGO"
     }
   ]
 }

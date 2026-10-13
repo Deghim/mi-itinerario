@@ -43,12 +43,12 @@ export function isValidPlaceSchedule(value: unknown): value is PlaceSchedule {
   return true
 }
 
-export function parsePlaceScheduleMap(value: unknown): Record<number, PlaceSchedule> | undefined {
+export function parsePlaceScheduleMap(value: unknown, allowedPlaceIds: number[] = Array.from({ length: 40 }, (_, index) => index + 1)): Record<number, PlaceSchedule> | undefined {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined
   const result: Record<number, PlaceSchedule> = {}
   for (const [id, entry] of Object.entries(value)) {
     const placeId = Number(id)
-    if (Number.isInteger(placeId) && placeId >= 1 && placeId <= 36 && isValidPlaceSchedule(entry)) result[placeId] = entry
+    if (Number.isInteger(placeId) && allowedPlaceIds.includes(placeId) && isValidPlaceSchedule(entry)) result[placeId] = entry
   }
   return result
 }
@@ -81,13 +81,12 @@ export function parseDailyRoutine(value: unknown): DailyRoutine | undefined {
 }
 
 export function sortAssignedPlaces(places: Place[], dayAssignments: Record<number, number>, placeSchedule: Record<number, PlaceSchedule> = {}, day: number): Place[] {
-  return places.filter((place) => dayAssignments[place.id] === day).sort((left, right) => {
+  const assigned = places.filter((place) => dayAssignments[place.id] === day)
+  if (assigned.some((place) => !placeSchedule[place.id]?.startTime)) return assigned
+  return assigned.sort((left, right) => {
     const leftTime = timeToMinutes(placeSchedule[left.id]?.startTime ?? '')
     const rightTime = timeToMinutes(placeSchedule[right.id]?.startTime ?? '')
-    if (leftTime === null && rightTime === null) return left.id - right.id
-    if (leftTime === null) return 1
-    if (rightTime === null) return -1
-    return leftTime - rightTime || left.id - right.id
+    return (leftTime ?? 0) - (rightTime ?? 0)
   })
 }
 
