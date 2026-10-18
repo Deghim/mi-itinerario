@@ -1,8 +1,8 @@
 {
   "title": "Río de Janeiro · propuesta de trabajo",
   "year": 2026,
-  "yearIsAssumption": false,
-  "city": "Río de Janeiro",
+  "yearIsAssumption": true,
+  "city": "rio",
   "rioNightsPreferred": 5,
   "columns": [
     "Fecha",
@@ -10,361 +10,593 @@
     "Lugar",
     "Actividad",
     "Transporte",
-    "Hospedaje",
-    "Costo estimado",
-    "Reserva / boleto",
+    "Costo",
+    "Reserva/boleto",
     "Notas"
   ],
   "rows": [
     {
-      "id": "rio-bus-sp-rio-2026-12-09",
+      "id": "docs-rio-2026-12-09-bus-leito-tiet-novo-rio-0",
       "date": "2026-12-09",
-      "time": "00:05–06:35 · consulta",
-      "status": "propuesta",
-      "placeLabel": "Tietê → Rodoviária Novo Rio",
-      "activity": "Autobús nocturno · leito",
-      "transport": "Bus; presentar boleto y validar terminal/horario",
-      "lodging": "Salida desde São Paulo",
-      "costLabel": "R$198,21 total de referencia · leito + conexiones",
-      "budgetId": "transfer:sp-rio:5:autobus",
-      "reservation": "No reservado",
-      "notes": "Bus leito R$179,91 + Metro SP R$5,40 + VLT R$5,00 + MetrôRio R$7,90. El tramo Novo Rio → Botafogo cuesta R$12,90 y ya está incluido en estas conexiones; no sumarlo aparte. Semi-leito R$129,99 daría R$148,29 total. Salida la noche del 8; equipaje/custodia y traslado a Tietê pendientes.",
-      "sourceLabel": "ClickBus · consulta 8 oct 2026",
-      "sourceUrl": "https://www.clickbus.com.br/onibus/sao-paulo-sp-todos/rio-de-janeiro-rj-todos?departureDate=2026-12-09",
-      "city": "rio"
-    },
-    {
-      "id": "rio-arrival-2026-12-09",
-      "date": "2026-12-09",
-      "time": "06:35–09:30 · margen",
-      "status": "propuesta",
-      "placeLabel": "Rodoviária Novo Rio → Botafogo",
-      "activity": "Llegada, traslado y dejar mochila",
-      "transport": "VLT + MetrôRio como opción; validar conexión y equipaje",
-      "lodging": "Injoy Suítes & Aparts · base propuesta, no reservado",
-      "costLabel": "Traslado terrestre incluido en el escenario",
-      "budgetId": "transfer:sp-rio:5:autobus",
-      "reservation": "Sin reserva registrada",
-      "notes": "Ventana de llegada orientativa; desayuno, espera y traslado pueden variar. Con Río 9–13 (5 noches) y checkout el 14, el escenario conserva 6 noches en São Paulo (3–8). Solo serían 5 (3–7) con checkout el 8 y custodia/traslado nocturno a Tietê confirmados; ahorro condicional, no asumido. Para visitante: VLT con Jaé físico (máquinas BRT/VLT; caução R$5); MetrôRio con bilhete unitário en estación o contactless Visa/Mastercard/Elo. MetrôRio publica que Jaé se acepta en sus estaciones; no asumir medio universal ni extenderlo a trenes. Reconfirmar diciembre. FAQ Jaé: https://jae.com.br/faq/cartao-jae-4/",
-      "sourceLabel": "MetrôRio · Meios e Tarifas / FAQ Jaé",
+      "time": "00:05–06:35",
       "city": "rio",
-      "sourceUrl": "https://www.metrorio.com.br/como-pagar/meios-e-tarifas"
+      "status": "pendiente",
+      "placeLabel": "Bus leito Tiet Novo Rio",
+      "activity": "Viaje nocturno.",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "Por comprar",
+      "notes": "Comprar boleto de SP -> Rio nocturno y sin transbordos:\nlink 1\nlink 2",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Notas": [
+          "https://www.autoviacao1001.com.br/passagem-de-onibus-sao-paulo/para-rio-de-janeiro",
+          "https://www.aguiabranca.com.br/onibus/sao-paulo-sp/rio-de-janeiro-rj"
+        ]
+      },
+      "sourceUrl": "https://www.autoviacao1001.com.br/passagem-de-onibus-sao-paulo/para-rio-de-janeiro",
+      "applyToAgenda": false,
+      "docRowIndex": 39
     },
     {
-      "id": "rio-royal-cabinet-2026-12-09",
+      "id": "docs-rio-2026-12-09-llegada-equipaje-y-desayuno-1",
       "date": "2026-12-09",
-      "time": "11:00–12:00 · propuesta",
+      "time": "06:35–09:30",
+      "city": "rio",
+      "status": "propuesta",
+      "placeLabel": "Llegada, equipaje y desayuno",
+      "activity": "Check-in y desayunar",
+      "transport": "Metro/Uber",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 40
+    },
+    {
+      "id": "docs-rio-2026-12-09-real-gabinete-portugues-de-leitura-2",
+      "date": "2026-12-09",
+      "time": "11:00–12:00",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 101,
-      "activity": "Visita al Real Gabinete Português de Leitura",
-      "transport": "Metro / caminata por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Entrada y traslado local por confirmar",
-      "reservation": "Ver horarios y acceso antes de salir",
-      "notes": "Bloque ligero tras el viaje nocturno; se puede omitir si hace falta descansar.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/the-royal-portuguese-cabinet-of-reading-rio-de-janeiro-brazil",
-      "city": "rio"
+      "placeLabel": "Real Gabinete Português de Leitura",
+      "activity": "Visita breve;",
+      "transport": "Metro + a pie",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": ".",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/8d4txnNbKfwA5DD56"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/8d4txnNbKfwA5DD56",
+      "applyToAgenda": false,
+      "docRowIndex": 41
     },
     {
-      "id": "rio-library-2026-12-09",
+      "id": "docs-rio-2026-12-09-biblioteca-nacional-3",
       "date": "2026-12-09",
-      "time": "14:00–15:00 · propuesta",
-      "status": "condicional",
-      "placeId": 105,
-      "activity": "Biblioteca Nacional · visita guiada por confirmar",
-      "transport": "Caminata / transporte público por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Visita gratuita según fuente; confirmar agenda",
-      "reservation": "Agenda y disponibilidad de diciembre por confirmar",
-      "notes": "La visita interior requiere confirmar la modalidad y el horario publicado.",
-      "sourceLabel": "Biblioteca Nacional",
-      "sourceUrl": "https://www.gov.br/bn/pt-br/acesso-a-informacao-2/acoes-e-programas/atividades-da-bn/visita-orientada",
-      "city": "rio"
-    },
-    {
-      "id": "rio-checkin-2026-12-09",
-      "date": "2026-12-09",
-      "time": "15:30–17:00 · propuesta",
+      "time": "14:00–15:00",
+      "city": "rio",
       "status": "propuesta",
-      "placeLabel": "Injoy Suítes & Aparts · Botafogo",
-      "activity": "Check-in y descanso",
-      "transport": "Traslado local por confirmar",
-      "lodging": "Base propuesta · no reservada",
-      "costLabel": "Ver alojamiento en Presupuesto",
-      "reservation": "Aún por reservar",
-      "notes": "La habitación puede no estar disponible antes del horario de check-in.",
-      "sourceLabel": "Alojamiento · consulta fechada",
-      "sourceUrl": "https://www.booking.com/hotel/br/injoy-hostel-design.pt-br.html?checkin=2026-12-09&checkout=2026-12-14&group_adults=1&no_rooms=1&group_children=0&selected_currency=BRL",
-      "city": "rio"
+      "placeId": 105,
+      "placeLabel": "Biblioteca Nacional",
+      "activity": "",
+      "transport": "Metro",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/RpMcvJd3E2kCt1yh6"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/RpMcvJd3E2kCt1yh6",
+      "applyToAgenda": false,
+      "docRowIndex": 42
     },
     {
-      "id": "rio-christ-2026-12-10",
+      "id": "docs-rio-2026-12-10-cristo-redentor-4",
       "date": "2026-12-10",
-      "time": "08:20–13:00 · propuesta",
-      "status": "condicional",
+      "time": "08:20–13:00",
+      "city": "rio",
+      "status": "pendiente",
       "placeId": 119,
-      "activity": "Cristo Redentor · bloque principal; clima y franja por confirmar",
-      "transport": "Tren desde Cosme Velho o van oficial; elegir una opción",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Tren adulto R$134 de referencia; tarifa a reconfirmar",
-      "reservation": "Franja requerida; aún sin boleto",
-      "notes": "Llegar al check-in del tren con margen. Obras de escaleras anunciadas; reconfirmar condiciones antes de diciembre.",
-      "sourceLabel": "Trem do Corcovado · información oficial",
-      "sourceUrl": "https://www.tremdocorcovado.rio/institucional/informacoes-uteis",
-      "city": "rio"
+      "placeLabel": "Cristo Redentor",
+      "activity": "",
+      "transport": "Metro + tren",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "Por comprar",
+      "notes": "Hacer reserva en: link\nRevisar el punto de embarque para el cristo",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/7fzsuKFkMCs8RpXNA"
+        ],
+        "Notas": [
+          "https://ingressos.paineirascorcovado.com.br/"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/7fzsuKFkMCs8RpXNA",
+      "applyToAgenda": false,
+      "docRowIndex": 43
     },
     {
-      "id": "rio-boticario-2026-12-10",
+      "id": "docs-rio-2026-12-10-largo-do-boticario-5",
       "date": "2026-12-10",
-      "time": "14:00–14:30 · propuesta",
+      "time": "14:00–14:30",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 102,
-      "activity": "Parada exterior en Largo do Boticário",
-      "transport": "Uber / transporte público por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Traslado por confirmar",
-      "reservation": "Sin reserva registrada",
-      "notes": "Plaza y arquitectura; no se presenta como museo ni se afirma acceso interior.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/largo-do-boticario",
-      "city": "rio"
+      "placeLabel": "Largo do Boticário",
+      "activity": "Parada exterior breve para ver la plaza y su arquitectura.",
+      "transport": "Uber",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/tNZnVLoTiqwT1JUD7"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/tNZnVLoTiqwT1JUD7",
+      "applyToAgenda": false,
+      "docRowIndex": 44
     },
     {
-      "id": "rio-cemetery-2026-12-10",
+      "id": "docs-rio-2026-12-10-cemiterio-sao-joao-batista-6",
       "date": "2026-12-10",
-      "time": "15:00–16:00 · condicional",
+      "time": "15:00–16:00",
+      "city": "rio",
       "status": "condicional",
       "placeId": 109,
-      "activity": "Cemitério São João Batista · solo si hay acceso compatible",
-      "transport": "Traslado local por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Acceso por confirmar",
-      "reservation": "Horario / visita por confirmar",
-      "notes": "Mantener flexible; no se da por confirmada una visita guiada.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/cemiterio-sao-joao-batista",
-      "city": "rio"
+      "placeLabel": "Cemitério São João Batista",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "Acceso por confirmar",
+      "notes": "Parada condicional",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/mihynnJLpo1rXQan6"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/mihynnJLpo1rXQan6",
+      "applyToAgenda": false,
+      "docRowIndex": 45
     },
     {
-      "id": "rio-cathedral-2026-12-11",
+      "id": "docs-rio-2026-12-11-catedral-metropolitana-7",
       "date": "2026-12-11",
-      "time": "10:00–10:45 · propuesta",
+      "time": "10:00–10:45",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 104,
-      "activity": "Catedral Metropolitana de São Sebastião",
-      "transport": "Metro / caminata por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Acceso por confirmar",
-      "reservation": "Sin reserva registrada",
-      "notes": "La actividad religiosa puede modificar el acceso interior.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/rio-de-janeiro-cathedral",
-      "city": "rio"
+      "placeLabel": "Catedral Metropolitana",
+      "activity": "",
+      "transport": "Metro",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/wrSGj3jzr8ozWegh7"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/wrSGj3jzr8ozWegh7",
+      "applyToAgenda": false,
+      "docRowIndex": 46
     },
     {
-      "id": "rio-selaron-2026-12-11",
+      "id": "docs-rio-2026-12-11-escadaria-selaron-8",
       "date": "2026-12-11",
-      "time": "11:15–12:00 · propuesta",
+      "time": "11:15–12:00",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 108,
-      "activity": "Recorrido por la Escadaria Selarón",
+      "placeLabel": "Escadaria Selarón",
+      "activity": "",
       "transport": "A pie",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Paseo exterior",
-      "reservation": "Sin reserva registrada",
-      "notes": "Trayecto sujeto al ritmo del día.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/escadaria-selaron-mosaic-steps",
-      "city": "rio"
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/A8tCoQe7M7g3RvuG9"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/A8tCoQe7M7g3RvuG9",
+      "applyToAgenda": false,
+      "docRowIndex": 47
     },
     {
-      "id": "rio-lunch-2026-12-11",
+      "id": "docs-rio-2026-12-11-traslado-al-puerto-y-comida-cerca-del-mural-9",
       "date": "2026-12-11",
-      "time": "12:00–13:15 · margen",
+      "time": "12:00–13:15",
+      "city": "rio",
       "status": "propuesta",
-      "placeLabel": "Centro · restaurante por elegir cerca del mural",
-      "activity": "Traslado al puerto y comida cerca del mural",
-      "transport": "A pie; comer cerca de Etnias para no perder tiempo en traslados",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Importe no informado",
-      "reservation": "Sin reserva registrada",
-      "notes": "El bloque incluye caminar desde Selarón, elegir/comprar comida y comer cerca del Boulevard Olímpico; restaurante no elegido.",
-      "sourceLabel": "Plan de trabajo",
-      "city": "rio"
+      "placeLabel": "Traslado al puerto y comida cerca del mural",
+      "activity": "Comer",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 48
     },
     {
-      "id": "rio-etnias-2026-12-11",
+      "id": "docs-rio-2026-12-11-mural-etnias-eduardo-kobra-10",
       "date": "2026-12-11",
-      "time": "13:15–13:45 · propuesta",
+      "time": "13:15–13:45",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 106,
-      "activity": "Mural Etnias · paseo exterior",
-      "transport": "A pie; aproximación desde comida cercana",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Paseo exterior",
-      "reservation": "Sin reserva registrada",
-      "notes": "El punto es una referencia aproximada en el Boulevard Olímpico; confirma ubicación antes de caminar. Deja margen para trasladarse al embarque de Praça XV y presentarse alrededor de las 14:45.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/largest-street-art-mural-in-the-world",
-      "city": "rio"
+      "placeLabel": "Mural Etnias (Eduardo Kobra)",
+      "activity": "Parada breve para ver el mural.",
+      "transport": "Metro",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/tYHQ4nFPYY2qGcTn9"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/tYHQ4nFPYY2qGcTn9",
+      "applyToAgenda": false,
+      "docRowIndex": 49
     },
     {
-      "id": "rio-ilha-fiscal-2026-12-11",
+      "id": "docs-rio-2026-12-11-ilha-fiscal-11",
       "date": "2026-12-11",
-      "time": "15:30–17:15 · propuesta",
-      "status": "condicional",
+      "time": "15:30–17:15",
+      "city": "rio",
+      "status": "pendiente",
       "placeId": 111,
-      "activity": "Ilha Fiscal · visita con embarque en Praça XV",
-      "transport": "Llegar al Espaço Cultural da Marinha; recorrido en barco",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "R$60 entero de referencia; reconfirmar",
-      "reservation": "Franja y boleto por seleccionar; no reservado",
-      "notes": "Llegar al embarque con margen. La isla no es destino para Uber; el recorrido depende de operación y disponibilidad.",
-      "sourceLabel": "Marinha do Brasil",
-      "sourceUrl": "https://www.marinha.mil.br/dphdm/ilha-fiscal",
-      "city": "rio"
+      "placeLabel": "Ilha Fiscal",
+      "activity": "",
+      "transport": "A pie + barco",
+      "lodging": "",
+      "costLabel": "R$60",
+      "reservation": "Por comprar",
+      "notes": "Hacer reserva ya en: link\n(La reserva contiene la entrada)",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/bnYNPMptTCSqFxpp7"
+        ],
+        "Notas": [
+          "https://www.ingressocomdesconto.com.br/vitrine/produtos.asp?for=978829&grade=1"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/bnYNPMptTCSqFxpp7",
+      "applyToAgenda": false,
+      "docRowIndex": 50
     },
     {
-      "id": "rio-mii-2026-12-12",
+      "id": "docs-rio-2026-12-12-museu-de-imagens-do-inconsciente-mii-12",
       "date": "2026-12-12",
-      "time": "10:30–12:00 · propuesta",
+      "time": "10:30–12:00",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 107,
-      "activity": "Museu de Imagens do Inconsciente (MII)",
-      "transport": "Tren / transporte público por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Visita gratuita según fuente; verificar",
-      "reservation": "Mediación y agenda por confirmar",
-      "notes": "Museo en Engenho de Dentro; no confundir con el Museu da Imigração de São Paulo.",
-      "sourceLabel": "Museu de Imagens do Inconsciente",
-      "sourceUrl": "https://museuimagensdoinconsciente.org.br/",
-      "city": "rio"
+      "placeLabel": "Museu de Imagens do Inconsciente (MII)",
+      "activity": "",
+      "transport": "Metro",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/Wtqsq4qngcvGdZt37"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/Wtqsq4qngcvGdZt37",
+      "applyToAgenda": false,
+      "docRowIndex": 51
     },
     {
-      "id": "rio-lunch-2026-12-12",
+      "id": "docs-rio-2026-12-12-almuerzo-en-tijuca-13",
       "date": "2026-12-12",
-      "time": "12:00–13:00 · margen",
+      "time": "12:00–13:00",
+      "city": "rio",
       "status": "propuesta",
-      "placeLabel": "Zona del MII · lugar por elegir",
-      "activity": "Comida y descanso",
-      "transport": "A pie",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Importe no informado",
-      "reservation": "Sin reserva registrada",
-      "notes": "Sin restaurante elegido.",
-      "sourceLabel": "Plan de trabajo",
-      "city": "rio"
+      "placeLabel": "Almuerzo en Tijuca",
+      "activity": "Comer",
+      "transport": "A pie/Uber",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 52
     },
     {
-      "id": "rio-hans-2026-12-12",
+      "id": "docs-rio-2026-12-12-praca-hans-klussmann-14",
       "date": "2026-12-12",
-      "time": "13:30–14:00 · opcional",
+      "time": "13:30–14:00",
+      "city": "rio",
       "status": "condicional",
       "placeId": 117,
-      "activity": "Praça Hans Klussmann · parada exterior si el traslado lo permite",
-      "transport": "Traslado entre zonas por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Paseo exterior",
-      "reservation": "Acceso y ubicación exacta por confirmar",
-      "notes": "No es una visita interior con horario confirmado.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/hans-klussmann-square",
-      "city": "rio"
+      "placeLabel": "Praça Hans Klussmann",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "Parada condicional",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/TJiPjBUffLiYamGG8"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/TJiPjBUffLiYamGG8",
+      "applyToAgenda": false,
+      "docRowIndex": 53
     },
     {
-      "id": "rio-mast-2026-12-12",
+      "id": "docs-rio-2026-12-12-museu-de-astronomia-e-cincias-afins-mast-15",
       "date": "2026-12-12",
-      "time": "15:00–17:00 · propuesta",
-      "status": "condicional",
+      "time": "15:00–17:00",
+      "city": "rio",
+      "status": "propuesta",
       "placeId": 110,
-      "activity": "Museu de Astronomia e Ciências Afins (MAST)",
-      "transport": "Traslado desde Hans Klussmann por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Entrada gratuita según fuente",
-      "reservation": "Confirmar horario sabatino",
-      "notes": "Horario sabatino publicado difiere de días hábiles; validar antes de planear el traslado.",
-      "sourceLabel": "MAST · servicio oficial",
-      "sourceUrl": "https://www.gov.br/pt-br/servicos/visitar-as-exposicoes-permantentes-e-temporarias-do-mast?id=9706&origem=servico",
-      "city": "rio"
+      "placeLabel": "Museu de Astronomia e Cincias Afins (MAST)",
+      "activity": "Visita al observatorio.",
+      "transport": "Metro",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/sA2fhQzcJeQxSCQC7"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/sA2fhQzcJeQxSCQC7",
+      "applyToAgenda": false,
+      "docRowIndex": 54
     },
     {
-      "id": "rio-parque-lage-2026-12-13",
+      "id": "docs-rio-2026-12-13-parque-lage-16",
       "date": "2026-12-13",
-      "time": "08:30–10:00 · propuesta",
+      "time": "08:30–10:00",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 103,
-      "activity": "Parque Lage",
-      "transport": "Transporte público / caminata por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Acceso por confirmar",
-      "reservation": "Sin reserva registrada",
-      "notes": "Salida matutina; confirma acceso y tiempo de traslado.",
-      "sourceLabel": "Atlas Obscura",
-      "sourceUrl": "https://www.atlasobscura.com/places/parque-lage",
-      "city": "rio"
+      "placeLabel": "Parque Lage",
+      "activity": "Paseo por los jardines.",
+      "transport": "Uber / a pie",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/iHjDBq3dtMnH6nCr6"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/iHjDBq3dtMnH6nCr6",
+      "applyToAgenda": false,
+      "docRowIndex": 55
     },
     {
-      "id": "rio-horto-waterfalls-2026-12-13",
+      "id": "docs-rio-2026-12-13-cachoeiras-do-horto-17",
       "date": "2026-12-13",
-      "time": "10:45–13:15 · propuesta",
-      "status": "condicional",
-      "placeId": 115,
-      "activity": "Cachoeiras do Horto · caminata por el bosque",
-      "transport": "Traslado a la zona de acceso publicada; punto de descenso y sendero por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Acceso por confirmar",
-      "reservation": "Confirmar con el parque el punto de acceso/descenso vigente y las condiciones antes de ir",
-      "notes": "El parque describe aproximación por Rua Pacheco Leão o Estrada Dona Castorina, pero no confirma aquí una entrada exacta ni estacionamiento. Rua Pacheco Leão 915 es solo referencia urbana; confirmar el acceso vigente antes de salir y retirarse si no se valida. Piedras resbalosas. Cascata Diamantina es alternativa, no se suman ambas rutas.",
-      "sourceLabel": "Parque Nacional da Tijuca · información oficial",
-      "sourceUrl": "https://parquenacionaldatijuca.rio/locais/cachoeiras-do-horto/",
-      "city": "rio"
-    },
-    {
-      "id": "rio-lunch-2026-12-13",
-      "date": "2026-12-13",
-      "time": "13:15–14:30 · margen",
+      "time": "10:45–13:15",
+      "city": "rio",
       "status": "propuesta",
-      "placeLabel": "Comida y descanso",
-      "activity": "Comer y trasladarse al centro comercial",
-      "transport": "Traslado por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Importe no informado",
-      "reservation": "Sin reserva registrada",
-      "notes": "Ventana de recuperación después de la caminata.",
-      "sourceLabel": "Plan de trabajo",
-      "city": "rio"
+      "placeId": 115,
+      "placeLabel": "Cachoeiras do Horto",
+      "activity": "Sendero",
+      "transport": "Uber + a pie",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "Entrada de la ruta: aquí",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/rZunvp1oufuh2kWw6"
+        ],
+        "Notas": [
+          "https://maps.app.goo.gl/25e26tazFb467QD89"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/rZunvp1oufuh2kWw6",
+      "applyToAgenda": false,
+      "docRowIndex": 56
     },
     {
-      "id": "rio-lego-leblon-2026-12-13",
+      "id": "docs-rio-2026-12-13-lego-store-18",
       "date": "2026-12-13",
-      "time": "15:00–16:00 · propuesta",
+      "time": "15:00–16:00",
+      "city": "rio",
       "status": "propuesta",
       "placeId": 120,
-      "activity": "LEGO Certified Store · Shopping Leblon",
-      "transport": "Traslado por confirmar",
-      "lodging": "Injoy Botafogo · base propuesta",
-      "costLabel": "Compras no presupuestadas",
-      "reservation": "Preguntar en tienda por sello de pasaporte; no confirmado",
-      "notes": "Tienda oficial complementaria, no ficha de Atlas Obscura.",
-      "sourceLabel": "LEGO · localizador oficial",
-      "sourceUrl": "https://www.lego.com/en-us/stores",
-      "city": "rio"
+      "placeLabel": "LEGO Store",
+      "activity": "Estampar pasaporte",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "R$0",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "cellLinks": {
+        "Lugar": [
+          "https://maps.app.goo.gl/GXAvo8cMPqWLuBp7A"
+        ]
+      },
+      "sourceUrl": "https://maps.app.goo.gl/GXAvo8cMPqWLuBp7A",
+      "applyToAgenda": false,
+      "docRowIndex": 57
     },
     {
-      "id": "rio-friends-flex-2026-12-14",
+      "id": "docs-rio-2026-12-14-encuentro-con-amigo-ciudad-pendiente-19",
       "date": "2026-12-14",
-      "time": "Flexible · tentativo",
-      "status": "tentativo",
-      "placeLabel": "Ciudad por confirmar",
-      "activity": "Encuentro con amigos / traslado",
-      "transport": "Origen, destino y modo pendientes",
-      "lodging": "Por definir",
-      "costLabel": "Importe por confirmar",
-      "reservation": "Sin reserva registrada",
-      "notes": "Curitiba es probable; Belém es alternativa. No es una asignación confirmada.",
-      "sourceLabel": "Dato compartido por el viajero",
-      "city": "rio"
+      "time": "Por definir",
+      "city": "rio",
+      "status": "pendiente",
+      "placeLabel": "Encuentro con amigo; ciudad pendiente",
+      "activity": "Check-out y traslado. Curitiba es probable, no confirmado.",
+      "transport": "Por decidir",
+      "lodging": "",
+      "costLabel": "No incluido",
+      "reservation": "Pendiente de coordinar",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 58
+    },
+    {
+      "id": "docs-rio-2026-12-15-fila-20",
+      "date": "2026-12-15",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 59
+    },
+    {
+      "id": "docs-rio-2026-12-16-fila-21",
+      "date": "2026-12-16",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 60
+    },
+    {
+      "id": "docs-rio-2026-12-17-fila-22",
+      "date": "2026-12-17",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 61
+    },
+    {
+      "id": "docs-rio-2026-12-18-fila-23",
+      "date": "2026-12-18",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 62
+    },
+    {
+      "id": "docs-rio-2026-12-19-fila-24",
+      "date": "2026-12-19",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 63
+    },
+    {
+      "id": "docs-rio-2026-12-20-fila-25",
+      "date": "2026-12-20",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Google Docs · agenda oficial",
+      "origin": "docs",
+      "applyToAgenda": false,
+      "docRowIndex": 64
     }
   ],
   "coverage": [
@@ -460,17 +692,18 @@
     }
   ],
   "mapBase": {
-    "id": "injoy-rio",
-    "name": "Injoy Botafogo · base propuesta",
-    "address": "Botafogo, Rio de Janeiro, RJ · dirección a reconfirmar al reservar",
+    "id": "hospedaria-rio",
+    "name": "Hospedaria Rio · candidata",
+    "address": "Rua Vicente de Sousa, 29 · Botafogo · Rio de Janeiro · CEP 22251-070",
     "coordinates": {
-      "lat": -22.95143,
-      "lon": -43.18647,
-      "confidence": "aproximada-fuente-oficial"
+      "lat": -22.9471365,
+      "lon": -43.1852663,
+      "confidence": "aproximada-geocoder-osm · dirección oficial verificada"
     },
-    "status": "No reservado",
-    "bookingUrl": "https://www.booking.com/hotel/br/injoy-hostel-design.pt-br.html?checkin=2026-12-09&checkout=2026-12-14&group_adults=1&no_rooms=1&group_children=0&selected_currency=BRL",
-    "sourceUrl": "https://www.booking.com/hotel/br/injoy-hostel-design.pt-br.html?checkin=2026-12-09&checkout=2026-12-14&group_adults=1&no_rooms=1&group_children=0&selected_currency=BRL"
+    "status": "No reservado · pendiente de reservar",
+    "bookingUrl": "https://www.hospedariario.com.br/",
+    "sourceUrl": "https://www.hospedariario.com.br/",
+    "note": "Dirección publicada por Hospedaria Rio y geocodificada en OpenStreetMap; confirma la ubicación y disponibilidad antes de reservar."
   },
   "mapDirections": [
     {
@@ -478,12 +711,12 @@
       "legs": [
         {
           "from": "Rodoviária Novo Rio, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Terminal → hostal · transporte público (propuesto)"
         },
         {
-          "from": "Injoy Botafogo, Rio de Janeiro",
+          "from": "Hospedaria Rio, Rio de Janeiro",
           "to": "Real Gabinete Português de Leitura, Centro, Rio de Janeiro",
           "mode": "transit",
           "label": "Hostal → Centro · transporte público (propuesto)"
@@ -496,7 +729,7 @@
         },
         {
           "from": "Biblioteca Nacional do Brasil, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Regreso al hostal · transporte público (propuesto)"
         }
@@ -507,18 +740,6 @@
       "day": 10,
       "legs": [
         {
-          "from": "Injoy Botafogo, Rio de Janeiro",
-          "to": "Trem do Corcovado, 513 Rua Cosme Velho, Rio de Janeiro",
-          "mode": "driving",
-          "label": "Hostal → estación Cosme Velho · Uber propuesto"
-        },
-        {
-          "from": "Trem do Corcovado, 513 Rua Cosme Velho, Rio de Janeiro",
-          "to": "Largo do Boticário, Rio de Janeiro",
-          "mode": "walking",
-          "label": "Estación → Largo do Boticário · a pie (propuesto)"
-        },
-        {
           "from": "Largo do Boticário, Rio de Janeiro",
           "to": "Cemitério São João Batista, Botafogo, Rio de Janeiro",
           "mode": "transit",
@@ -526,18 +747,18 @@
         },
         {
           "from": "Cemitério São João Batista, Botafogo, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Regreso al hostal · transporte público (propuesto)"
         }
       ],
-      "note": "El tren del Cristo termina/regresa a la estación Cosme Velho. La ruta vial dibujada llega a la estación, nunca al monumento; luego se propone caminar al Largo. Cementerio y regreso conservan enlaces por tramo."
+      "note": "El Doc elige el acceso VAN/Paineiras para Cristo y conserva su enlace de mapa en la fila oficial. No se inventa el origen de la van ni se usa Cosme Velho como destino automático; la referencia del tren queda en Opcionales."
     },
     {
       "day": 11,
       "legs": [
         {
-          "from": "Injoy Botafogo, Rio de Janeiro",
+          "from": "Hospedaria Rio, Rio de Janeiro",
           "to": "Catedral Metropolitana de São Sebastião, Rio de Janeiro",
           "mode": "transit",
           "label": "Hostal → Centro · transporte público (propuesto)"
@@ -562,7 +783,7 @@
         },
         {
           "from": "Espaço Cultural da Marinha, Praça XV, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Regreso del embarcadero al hostal · transporte público (propuesto)"
         }
@@ -573,7 +794,7 @@
       "day": 12,
       "legs": [
         {
-          "from": "Injoy Botafogo, Rio de Janeiro",
+          "from": "Hospedaria Rio, Rio de Janeiro",
           "to": "Museu de Imagens do Inconsciente, Engenho de Dentro, Rio de Janeiro",
           "mode": "transit",
           "label": "Hostal → MII · transporte público (propuesto)"
@@ -592,7 +813,7 @@
         },
         {
           "from": "Museu de Astronomia e Ciências Afins, São Cristóvão, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Regreso al hostal · transporte público (propuesto)"
         }
@@ -603,37 +824,19 @@
       "day": 13,
       "legs": [
         {
-          "from": "Injoy Botafogo, Rio de Janeiro",
+          "from": "Hospedaria Rio, Rio de Janeiro",
           "to": "Parque Lage, Rio de Janeiro",
           "mode": "transit",
           "label": "Hostal → Parque Lage · transporte público (propuesto)"
         },
         {
-          "from": "Parque Lage, Rio de Janeiro",
-          "to": "Rua Pacheco Leão 915, Horto, Jardim Botânico, Rio de Janeiro",
-          "mode": "driving",
-          "label": "Parque Lage → referencia urbana Rua Pacheco Leão 915 · no confirma entrada del sendero"
-        },
-        {
-          "from": "Rua Pacheco Leão 915, Horto, Jardim Botânico, Rio de Janeiro",
-          "to": "Cachoeiras do Horto, Rio de Janeiro",
-          "mode": "walking",
-          "label": "Referencia Rua Pacheco Leão 915 → sendero/cascada · acceso y tramo a pie por verificar"
-        },
-        {
-          "from": "Rua Pacheco Leão 915, Horto, Jardim Botânico, Rio de Janeiro",
-          "to": "Shopping Leblon, Rio de Janeiro",
-          "mode": "driving",
-          "label": "Referencia urbana Rua Pacheco Leão 915 → LEGO Shopping Leblon · solo si se confirma acceso y salida"
-        },
-        {
           "from": "Shopping Leblon, Rio de Janeiro",
-          "to": "Injoy Botafogo, Rio de Janeiro",
+          "to": "Hospedaria Rio, Rio de Janeiro",
           "mode": "transit",
           "label": "Regreso al hostal · transporte público (propuesto)"
         }
       ],
-      "note": "El parque publica aproximaciones por Rua Pacheco Leão y Estrada Dona Castorina, pero no se confirma aquí una entrada ni estacionamiento exactos. La línea vial termina en la referencia urbana geocodificada Rua Pacheco Leão 915; no valida el acceso al sendero ni llega a la cascada. Confirmar punto de descenso con el parque antes de salir y retirarse si no se valida. El tramo interior queda por verificar y no se dibuja como carretera."
+      "note": "El Doc conserva el enlace de entrada de Cachoeiras do Horto en Lugar/Notas. Se invalida la referencia web antigua de Rua Pacheco Leão 915 hasta verificar que coincida con esa entrada."
     }
   ],
   "optionalStops": [
@@ -659,31 +862,470 @@
       "status": "condicional"
     }
   ],
-  "mapLandmarks": [
+  "mapLandmarks": [],
+  "mapEndpoints": {},
+  "optionalRows": [
     {
-      "id": "cosme-velho-station",
-      "day": 10,
-      "label": "Estação do Trem do Corcovado · Rua Cosme Velho 513",
-      "coordinates": {
-        "lat": -22.9406446,
-        "lon": -43.1985422,
-        "confidence": "aproximada-geocoder-osm"
-      },
-      "sourceUrl": "https://www.openstreetmap.org/node/4476763090",
-      "note": "Ponto físico de embarque do trem. Esta línea va al pie de la estación; no dibuja carretera hacia el Cristo."
+      "id": "docs-rio-2026-12-15-fila-20",
+      "date": "2026-12-15",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 59,
+      "origin": "web-local"
     },
     {
-      "id": "horto-dropoff-915",
-      "day": 13,
-      "label": "Referencia urbana · Rua Pacheco Leão 915 (acceso por confirmar)",
-      "coordinates": {
-        "lat": -22.9654627,
-        "lon": -43.228118,
-        "confidence": "aproximada-geocoder-osm"
-      },
-      "sourceUrl": "https://parquenacionaldatijuca.rio/locais/cachoeiras-do-horto/",
-      "note": "Punto aproximado derivado de geocodificación OSM de una dirección de calle; no es una entrada oficial confirmada ni confirma estacionamiento. El sitio oficial describe la aproximación por Rua Pacheco Leão o Estrada Dona Castorina, sin fijar aquí el punto exacto de llegada. Confirmar con el parque antes de ir y retirarse si no se valida el acceso. No dirigir el coche a la coordenada de la cascada."
+      "id": "docs-rio-2026-12-16-fila-21",
+      "date": "2026-12-16",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 60,
+      "origin": "web-local"
+    },
+    {
+      "id": "docs-rio-2026-12-17-fila-22",
+      "date": "2026-12-17",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 61,
+      "origin": "web-local"
+    },
+    {
+      "id": "docs-rio-2026-12-18-fila-23",
+      "date": "2026-12-18",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 62,
+      "origin": "web-local"
+    },
+    {
+      "id": "docs-rio-2026-12-19-fila-24",
+      "date": "2026-12-19",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 63,
+      "origin": "web-local"
+    },
+    {
+      "id": "docs-rio-2026-12-20-fila-25",
+      "date": "2026-12-20",
+      "time": "",
+      "city": "rio",
+      "status": "pendiente",
+      "activity": "",
+      "transport": "",
+      "lodging": "",
+      "costLabel": "",
+      "reservation": "",
+      "notes": "",
+      "sourceLabel": "Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Referencia web local · Google Docs · agenda oficial",
+      "applyToAgenda": false,
+      "docRowIndex": 64,
+      "origin": "web-local"
     }
   ],
-  "mapEndpoints": {}
+  "optionalItems": [
+    {
+      "id": "web-option-rio-116-13",
+      "title": "Cascata Diamantina",
+      "detail": "Alternativa de sendero a Cachoeiras do Horto; no sumar ambas caminatas sin confirmar accesos.",
+      "date": "2026-12-13",
+      "placeId": 116,
+      "status": "condicional",
+      "source": "web-local",
+      "sourceLabel": "Catálogo web local",
+      "applyToAgenda": false
+    },
+    {
+      "id": "web-option-rio-112-14",
+      "title": "Dedo de Deus · excursión separada",
+      "detail": "Fuera del circuito urbano; acceso de escalada requiere autorización. Sin fecha ni costo en este plan.",
+      "date": "2026-12-14",
+      "placeId": 112,
+      "status": "pendiente",
+      "source": "web-local",
+      "sourceLabel": "Catálogo web local",
+      "applyToAgenda": false
+    },
+    {
+      "id": "web-option-rio-113-14",
+      "title": "Bangu Statue of Liberty",
+      "detail": "Solo considerar si la salida de Río es tardía y el acceso/transporte están confirmados.",
+      "date": "2026-12-14",
+      "placeId": 113,
+      "status": "condicional",
+      "source": "web-local",
+      "sourceLabel": "Catálogo web local",
+      "applyToAgenda": false
+    },
+    {
+      "id": "web-lodging-injoy-rio",
+      "title": "Injoy Botafogo · base propuesta",
+      "detail": "Botafogo, Rio de Janeiro · dirección a reconfirmar al reservar. Referencia web anterior; no es la base indicada por el Doc actual.",
+      "source": "web-local",
+      "sourceLabel": "Referencia web local anterior",
+      "sourceUrl": "https://www.booking.com/hotel/br/injoy-hostel-design.pt-br.html",
+      "applyToAgenda": false
+    },
+    {
+      "id": "web-landmark-cosme-velho-station",
+      "title": "Estação do Trem do Corcovado · Rua Cosme Velho 513",
+      "detail": "Referencia web local del tren; no es el acceso VAN/Paineiras elegido por el Doc actual.",
+      "source": "web-local",
+      "sourceLabel": "Referencia web local · landmark anterior",
+      "sourceUrl": "https://www.openstreetmap.org/node/4476763090",
+      "applyToAgenda": false
+    },
+    {
+      "id": "docs-note-preamble-1",
+      "title": "Itinerario Brasil",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-preamble-2",
+      "title": "SP - Hacer reservación hostal: hostel vergueiro",
+      "links": [
+        "https://hostelvergueiro.com/localizacao/"
+      ],
+      "sourceUrl": "https://hostelvergueiro.com/localizacao/",
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-preamble-3",
+      "title": "RIO - Hacer reservación hostal: hospedaria rio",
+      "links": [
+        "https://www.hospedariario.com.br/"
+      ],
+      "sourceUrl": "https://www.hospedariario.com.br/",
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-4",
+      "title": "Puntos que no están en el itinerario:",
+      "detail": "Lista de referencias que el Doc deja fuera del itinerario.",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-5",
+      "title": "Walter Galera Garden",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-6",
+      "title": "Castelinho da Rua Apa",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-7",
+      "title": "'The Indian and the Anteater' Sculpture",
+      "links": [
+        "https://www.atlasobscura.com/places/the-indian-and-the-anteater-sculpture"
+      ],
+      "sourceUrl": "https://www.atlasobscura.com/places/the-indian-and-the-anteater-sculpture",
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-8",
+      "title": "Hotel Unique",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-9",
+      "title": "Monumento as Bandeiras",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-10",
+      "title": "Planetário do Ibirapuera - \"Aristóteles Orsini\"",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-11",
+      "title": "Museo de Arte Moderno de São Paulo",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-12",
+      "title": "Casa Bandeirista do Itaim (pasar brevemente, considerar ir a la plaza comercial por comida o algo)",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-13",
+      "title": "Hacer una nota para ver los semáforos de la ciudad. Tener en cuenta eso.",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-14",
+      "title": "Hacer una nota para ver los murales de la ciudad. Tener en cuenta eso.",
+      "links": [],
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-15",
+      "title": "Considerar la visita a la terraza del martinelli:https://edificiomartinelli.com.br/visitacao-guiada/",
+      "links": [
+        "https://edificiomartinelli.com.br/visitacao-guiada/"
+      ],
+      "sourceUrl": "https://edificiomartinelli.com.br/visitacao-guiada/",
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    },
+    {
+      "id": "docs-note-postamble-16",
+      "title": "Regresar al Theatro Municipal: ingresar al Open Doors theater: https://theatromunicipal.org.br/visitas-educativas/",
+      "links": [
+        "https://theatromunicipal.org.br/visitas-educativas/"
+      ],
+      "sourceUrl": "https://theatromunicipal.org.br/visitas-educativas/",
+      "source": "Google Docs",
+      "sourceLabel": "Google Docs · nota fuera de tabla",
+      "applyToAgenda": false,
+      "status": "opcional"
+    }
+  ],
+  "docNotes": [
+    {
+      "section": "preamble",
+      "kind": "title",
+      "text": "Itinerario Brasil",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "preamble",
+      "kind": "lodging",
+      "text": "SP - Hacer reservación hostal: hostel vergueiro",
+      "links": [
+        "https://hostelvergueiro.com/localizacao/"
+      ],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "preamble",
+      "kind": "lodging",
+      "text": "RIO - Hacer reservación hostal: hospedaria rio",
+      "links": [
+        "https://www.hospedariario.com.br/"
+      ],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "heading",
+      "text": "Puntos que no están en el itinerario:",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Walter Galera Garden",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Castelinho da Rua Apa",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "'The Indian and the Anteater' Sculpture",
+      "links": [
+        "https://www.atlasobscura.com/places/the-indian-and-the-anteater-sculpture"
+      ],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Hotel Unique",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Monumento as Bandeiras",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Planetário do Ibirapuera - \"Aristóteles Orsini\"",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Museo de Arte Moderno de São Paulo",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "optional",
+      "text": "Casa Bandeirista do Itaim (pasar brevemente, considerar ir a la plaza comercial por comida o algo)",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "note",
+      "text": "Hacer una nota para ver los semáforos de la ciudad. Tener en cuenta eso.",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "note",
+      "text": "Hacer una nota para ver los murales de la ciudad. Tener en cuenta eso.",
+      "links": [],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "note",
+      "text": "Considerar la visita a la terraza del martinelli:https://edificiomartinelli.com.br/visitacao-guiada/",
+      "links": [
+        "https://edificiomartinelli.com.br/visitacao-guiada/"
+      ],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    },
+    {
+      "section": "postamble",
+      "kind": "note",
+      "text": "Regresar al Theatro Municipal: ingresar al Open Doors theater: https://theatromunicipal.org.br/visitas-educativas/",
+      "links": [
+        "https://theatromunicipal.org.br/visitas-educativas/"
+      ],
+      "applyToAgenda": false,
+      "source": "Google Docs"
+    }
+  ],
+  "sync": {
+    "source": "Google Docs",
+    "syncedAt": "2026-10-18T04:04:15.000Z",
+    "snapshotHash": "e9b5320d3ebf187f4d66a26a8daf697486bcbf85268bc4f4724ee57bb97798f8",
+    "mode": "manual",
+    "sourceUrl": "https://docs.google.com/document/d/10JU5qUXjo-tAuudNIkiYDP7uIBwIQqixE3La01J09BM/edit?tab=t.0"
+  }
 }

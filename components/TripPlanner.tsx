@@ -9,6 +9,7 @@ import type { ItineraryOverrides, ItineraryRowOverride } from '@/types/itinerary
 import BudgetSection from './BudgetSection'
 import DaySchedule from './DaySchedule'
 import ItineraryTable from './ItineraryTable'
+import OptionalSection from './OptionalSection'
 import { DEFAULT_DAILY_ROUTINE } from '@/lib/schedule'
 import type { LocalTripState, SavedPlaceState } from '@/types/place'
 import type { CityId } from '@/types/place'
@@ -224,7 +225,7 @@ export default function TripPlanner() {
           <span aria-hidden="true">{tab.icon}</span>{tab.label}
           {tab.id === 'lugares' && <span className="nav-count">{places.length}</span>}
         </button>)}
-        <span className="trip-period">BRASIL <b>·</b> 02—23 DIC {state.travelYear}</span>
+        <span className="trip-period">BRASIL <b>·</b> 02—23 DIC · mi agenda {state.travelYear}</span>
       </nav>
 
       {notice && <div className="notice" role="status"><span>{notice}</span><button onClick={() => setNotice('')} aria-label="Cerrar aviso">×</button></div>}
@@ -235,7 +236,7 @@ export default function TripPlanner() {
             <div className="eyebrow"><span className="eyebrow-line" /> {city.stage.toUpperCase()} <span>·</span> {city.label.toUpperCase()}</div>
             <h1>{activeCity === 'rio' ? <>Montañas, mar y<br /><em>una ciudad viva.</em></> : <>Una ciudad para<br /><em>perderse bien.</em></>}</h1>
             <p className="hero-description">{activeCity === 'rio' ? 'Cristo Redentor, barrios históricos y días flexibles; entradas y traslados siguen por confirmar.' : 'Lugares curiosos, días por construir y todo lo útil para empezar a recorrer São Paulo.'}</p>
-            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ {city.label} · {city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · propuesta</span><span>✳ Año {state.travelYear}</span></div>
+            <div className="hero-tags"><span>⌖ Brasil</span><span>◷ {city.label} · {city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · propuesta</span><span>✳ Mi agenda {state.travelYear} · Docs {itinerary.year}</span></div>
           </div>
           <div className="hero-stamp" aria-label={`${city.label}, Brasil`}>
             <div className="stamp-ring"><span>{activeCity === 'rio' ? '22°54′ S' : '23°33′ S'}</span><b>{activeCity === 'rio' ? 'RJ' : 'SP'}</b><span>{activeCity === 'rio' ? '43°12′ O' : '46°38′ O'}</span></div>
@@ -245,7 +246,7 @@ export default function TripPlanner() {
         </section>
 
         <section className="trip-strip" aria-label="Fechas del viaje">
-          <div className="strip-intro"><span className="tiny-label">DICIEMBRE · {state.travelYear}</span><b>Tu viaje, a grandes rasgos</b><small>Fechas recibidas; año y planes todavía editables.</small></div>
+          <div className="strip-intro"><span className="tiny-label">DICIEMBRE · MI AGENDA {state.travelYear}</span><b>Tu viaje, a grandes rasgos</b><small>La agenda personal es editable; la fuente Docs conserva el año {itinerary.year}.</small></div>
           <div className="milestone"><span className="milestone-day">02</span><span><b>Vuelos en captura</b><small>Escalas; datos por confirmar</small></span></div>
           <div className="milestone current"><span className="milestone-day">03</span><span><b>Llegada a GRU · 09:10</b><small>Según captura compartida</small></span></div>
           <div className={`milestone ${activeCity === 'sao-paulo' ? 'open' : ''}`}><span className="milestone-day">03—08</span><span><b>São Paulo</b><small>{activeCity === 'sao-paulo' ? 'Etapa seleccionada' : 'Propuesta'}</small></span></div>
@@ -258,7 +259,8 @@ export default function TripPlanner() {
             <div className="section-heading"><div><span className="tiny-label">TU CUADERNO DE RUTA</span><h2>Arma tus días</h2></div><span className="section-mark">PLANEACIÓN</span></div>
             <div className="planning-note"><span>✳</span><p>{activeCity === 'sao-paulo' && <><b>Vuelos internacionales pagados · importe por informar.</b> </>}La tabla reúne horarios compartidos y propuestas de visitas o ventanas; confirma acceso, horarios operativos y reservas antes de salir. Puedes añadir a tu agenda solo lugares que aún no tengan una asignación manual.</p></div>
             <div className="date-board">
-              <div className="date-board-head"><div><b>Etapa {city.label} · propuesta</b><span>{city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · las reservas siguen pendientes</span><small>{tripFile.proposedPlan.pacePreference}</small></div><label className="year-select">AÑO DE AGENDA <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
+              <div className="date-board-head"><div><b>Etapa {city.label} · propuesta</b><span>{city.startDay}–{activeCity === 'rio' ? 13 : 8} dic · las reservas siguen pendientes</span><small>{tripFile.proposedPlan.pacePreference}</small></div><label className="year-select">AÑO DE MI AGENDA <select value={state.travelYear} onChange={(event) => setState((current) => ({ ...current, travelYear: Number(event.target.value) }))}>{supportedTravelYears.map((year) => <option key={year}>{year}</option>)}</select></label></div>
+              <div className="personal-source-note"><b>Capas separadas:</b> tu agenda personal usa {state.travelYear}; la tabla oficial y el mapa de Google Docs usan {itinerary.year}. Cambiar este selector no mueve las fechas oficiales ni sus pines.</div>
               <div className="date-row">{calendar.map(({ day, date }) => {
                 const isArrival = activeCity === 'sao-paulo' && day === 3
                 const isPlanning = day >= city.startDay && day <= city.endDay
@@ -272,7 +274,7 @@ export default function TripPlanner() {
                   <small>{formatWeekday(date)}</small><b>{String(day).padStart(2, '0')}</b><i>{isArrival ? 'llegada' : day === 2 ? 'salida' : day === 14 ? 'encuentro tentativo' : isPlanning ? (hasAssignment ? 'con plan' : 'por planear') : '—'}</i>
                 </button>
               })}</div>
-              <div className="date-board-foot"><span>● Fechas compartidas</span><span>○ {assignedPlaces.length} lugares con día elegido</span><span>Ciudad del encuentro pendiente</span></div>
+              <div className="date-board-foot"><span>● Fechas compartidas · Docs {itinerary.year}</span><span>○ {assignedPlaces.length} lugares con día elegido en mi agenda</span><span>Ciudad del encuentro pendiente</span></div>
             </div>
 
           </section>
@@ -296,6 +298,8 @@ export default function TripPlanner() {
             onNavigatePlace={navigateToBudgetPlace}
             onNavigateBudget={() => nav('presupuesto')}
           />
+
+          <OptionalSection city={activeCity} rows={itinerary.optionalRows ?? []} items={itinerary.optionalItems ?? []} places={places} />
 
           <section className="main-column">
 

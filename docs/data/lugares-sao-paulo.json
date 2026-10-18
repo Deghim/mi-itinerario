@@ -333,9 +333,9 @@
       "statusFromDraft": "marcado-visitables",
       "operationalStatus": "por-confirmar",
       "coordinates": {
-        "lat": -23.59246,
-        "lon": -46.60378,
-        "confidence": "por-confirmar"
+        "lat": -23.5495948,
+        "lon": -46.6127541,
+        "confidence": "aproximada-fuente-oficial"
       },
       "nearestTransitFromDraft": "Bresser-Mooca · línea 3",
       "descriptionFromDraft": "Museo en la antigua Hospedaria de Imigrantes, dedicado a las migraciones y sus historias.",
@@ -762,6 +762,26 @@
       "verification": "pendiente",
       "catalogType": "complemento",
       "sourceLabel": "Fuente oficial LEGO"
+    },
+    {
+      "id": 41,
+      "name": "Farol Santander São Paulo",
+      "zone": "Centro",
+      "statusFromDraft": "marcado-visitables",
+      "operationalStatus": "por-confirmar",
+      "coordinates": {
+        "lat": -23.5458386,
+        "lon": -46.6341588,
+        "confidence": "aproximada-fuente-oficial"
+      },
+      "nearestTransitFromDraft": "São Bento · línea 1",
+      "descriptionFromDraft": "Ficha incorporada desde la fila oficial del Google Docs. La dirección oficial es Rua João Brícola, 24; la coordenada es una aproximación OSM del edificio/entrada y debe confirmarse al llegar.",
+      "addressFromDraft": "Rua João Brícola, 24 · Centro · São Paulo · CEP 01014-900",
+      "atlasUrl": "https://www.farolsantander.com.br/sp",
+      "sourceUrl": "https://www.farolsantander.com.br/sp",
+      "verification": "pendiente",
+      "catalogType": "complemento",
+      "sourceLabel": "Farol Santander · sitio oficial; coordenada aproximada OSM"
     }
   ]
 }

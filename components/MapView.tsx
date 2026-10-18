@@ -6,9 +6,9 @@ import { divIcon } from 'leaflet'
 import type { LatLngBoundsExpression } from 'leaflet'
 import type { ItineraryData, ItineraryOverrides } from '@/types/itinerary'
 import type { CityId, Place, PlaceSchedule } from '@/types/place'
-import { getConfiguredMapDirections, getMapCatalogPlaces, getMapDirections, getMapRouteNeedsReview, getMapStopRows, getMatchingCachedRoutes, getVisibleMapOptions } from '@/lib/map-itinerary'
+import { getConfiguredMapDirections, getMapCatalogPlaces, getMapDirections, getMapPendingRows, getMapRouteNeedsReview, getMapStopRows, getMatchingCachedRoutes, getVisibleMapOptions, isMapAttractionRow } from '@/lib/map-itinerary'
 
-type CachedRoute = { day: number; mode: 'foot' | 'car'; label: string; coordinates: [number, number][]; attribution: string; placeIds: number[]; landmarkIds?: string[]; subroute?: boolean }
+type CachedRoute = { day: number; mode: 'foot' | 'car'; label: string; coordinates: [number, number][]; attribution: string; placeIds: number[]; landmarkIds?: string[]; subroute?: boolean; sourceYear?: number; baseId?: string; routingProfile?: string; segmentTransport?: string; suggested?: boolean }
 type Props = {
   city: CityId
   cityLabel: string
@@ -69,11 +69,12 @@ export default function MapView({ city, cityLabel, places, itinerary: itineraryF
       return [{ place, row }]
     })
   }, [dayRows, places])
+  const pendingMapRows = useMemo(() => getMapPendingRows(rows, selectedDay, dayAssignments, travelYear, itineraryFile.year, placeSchedule).filter(isMapAttractionRow), [dayAssignments, itineraryFile.year, placeSchedule, rows, selectedDay, travelYear])
   const options = useMemo(() => getVisibleMapOptions(itineraryFile.optionalStops ?? [], selectedDay, dayRows)
     .map((item) => ({ ...item, place: places.find((place) => place.id === item.placeId) }))
     .filter((item) => item.place), [dayRows, itineraryFile.optionalStops, places, selectedDay])
   const visiblePlaces = getMapCatalogPlaces(places, selectedDay)
-  const visibleLandmarks = selectedDay !== null && travelYear === itineraryFile.year ? landmarks.filter((landmark) => landmark.day === selectedDay) : []
+  const visibleLandmarks = selectedDay !== null ? landmarks.filter((landmark) => landmark.day === selectedDay) : []
   const isAllPlaces = selectedDay === null
   const points: [number, number][] = [
     ...(hostel ? [[hostel.coordinates.lat, hostel.coordinates.lon] as [number, number]] : []),
@@ -82,10 +83,14 @@ export default function MapView({ city, cityLabel, places, itinerary: itineraryF
     ...(showOptions ? options.flatMap((item) => item.place ? [[item.place.coordinates.lat, item.place.coordinates.lon] as [number, number]] : []) : []),
   ]
   const directionChanged = selectedDay !== null && getMapRouteNeedsReview(rows, itineraryOverrides, dayAssignments, travelYear, itineraryFile.year, selectedDay, placeSchedule)
-  const cachedRoutes = directionChanged ? [] : getMatchingCachedRoutes(routeCache, selectedDay, stops.map(({ place }) => place.id), travelYear, itineraryFile.year, visibleLandmarks.map((landmark) => landmark.id))
+  const cachedRoutes = directionChanged ? [] : getMatchingCachedRoutes(routeCache, selectedDay, stops.map(({ place }) => place.id), travelYear, itineraryFile.year, visibleLandmarks.map((landmark) => landmark.id), { rows, baseId: hostel?.id, planningYear: itineraryFile.year })
   const endpoint = mapEndpoints.cantareira
+  const cantareiraRow = rows.find((row) => row.placeId === 33 && row.date.endsWith('-12-05'))
+  const cantareiraEntryUrl = cantareiraRow?.cellLinks?.Notas?.find((url) => /maps\./i.test(url)) ?? cantareiraRow?.cellLinks?.Notas?.[1]
+  const hortoRow = rows.find((row) => row.placeId === 115 && row.date.endsWith('-12-13'))
+  const hortoEntryUrl = hortoRow?.cellLinks?.Notas?.[0]
   const spRouteLinks = !directionChanged && selectedDay !== null && city === 'sao-paulo'
-    ? getMapDirections(selectedDay, stops.map(({ place }) => ({ id: place.id, label: place.name })), hostel?.name ?? 'Hostel Vergueiro', {
+    ? getMapDirections(selectedDay, [...stops.map(({ place, row }) => ({ id: place.id, label: place.name, transport: row.transport })), ...(selectedDay === 6 ? getMapPendingRows(rows, selectedDay, dayAssignments, travelYear, itineraryFile.year, placeSchedule).filter((row) => !isMapAttractionRow(row) && row.placeLabel === 'Liberdade').map((row) => ({ id: -1, label: row.placeLabel!, transport: row.transport })) : [])], hostel?.name ?? 'Hostel Vergueiro', {
       cantareira: endpoint?.mapQuery ?? 'Portão 1, Rua do Horto 931, São Paulo, Brasil',
       botanicGarden: mapEndpoints.botanicGarden?.mapQuery ?? `${places.find((place) => place.id === 4)?.name ?? 'Jardim Botânico'}, Avenida Miguel Estéfano 3031, São Paulo, Brasil`,
       afroGate: mapEndpoints.afroGate ?? 'Portão 10, Parque Ibirapuera, São Paulo, Brasil',
@@ -94,7 +99,7 @@ export default function MapView({ city, cityLabel, places, itinerary: itineraryF
     : []
   const configuredLinks = !directionChanged && city === 'rio' ? getConfiguredMapDirections(itineraryFile.mapDirections ?? [], selectedDay) : []
   const routeLinks = [...spRouteLinks, ...configuredLinks]
-  const countLabel = selectedDay === null ? `${places.length} referencias del catálogo · sin orden de visita` : stops.length === 0 ? `Día ${selectedDay} · sin paradas locales con mapa` : `${cityLabel} · ${stops.length} paradas propuestas`
+  const countLabel = selectedDay === null ? `${places.length} referencias del catálogo · sin orden de visita` : stops.length === 0 ? `Día ${selectedDay} · sin paradas locales con mapa` : `${cityLabel} · ${stops.length} paradas con coordenada${pendingMapRows.length ? ` · ${pendingMapRows.length} por ubicar` : ''}`
   const dateDays = [...new Set(rows.map((row) => Number(row.date.slice(8, 10))))].sort((a, b) => a - b)
   const fallbackCenter: [number, number] = places.length
     ? [places[0].coordinates.lat, places[0].coordinates.lon]
@@ -110,13 +115,15 @@ export default function MapView({ city, cityLabel, places, itinerary: itineraryF
     {selectedDay === 2 && <p className="map-route-note">El 2 dic es día de vuelos. Este mapa no representa esos tramos aéreos.</p>}
     {city === 'sao-paulo' && selectedDay === 3 && <p className="map-route-note">La llegada a GRU está indicada para las 09:10. El traslado al hostal requiere margen y confirmación; el mapa no dibuja ese tramo aéreo o terrestre.</p>}
     {city === 'sao-paulo' && selectedDay !== null && selectedDay > 8 && <p className="map-route-note">El hostal de São Paulo queda como referencia; no hay un recorrido local planificado en esta etapa.</p>}
-    {selectedDay === 4 && <p className="map-route-note">El tramo vial dibujado cubre Museu da Imigração → Vila Maria Zélia. Las conexiones desde el hostal y hacia el MASP se enlazan como transporte público; no se representan como calles.</p>}
-    {city === 'sao-paulo' && selectedDay === 5 && <p className="map-route-note">El operador indica Rua do Horto 931, Portão 1, para llegar en vehículo; desde ahí continúa a pie hacia Portão 5. La ruta interna de la trilha no está trazada aquí. <a href={endpoint?.trailUrl ?? 'https://guiadeareasprotegidas.sp.gov.br/trilha/trilha-da-pedra-grande/'} target="_blank" rel="noreferrer">Ver información oficial de la trilha ↗</a> · {endpoint?.visitationSourceUrl && <a href={endpoint.visitationSourceUrl} target="_blank" rel="noreferrer">Ficha estatal del parque ↗</a>}</p>}
+    {city === 'sao-paulo' && selectedDay === 4 && <p className="map-route-note">El Doc indica Metro para llegar al Museu y Pie para Museu → Vila → MASP. La línea disponible es solo peatonal para esos tramos; no se dibuja coche ni metro como geometría. Confirma el tiempo real del enlace antes de salir.</p>}
+    {city === 'sao-paulo' && selectedDay === 5 && <p className="map-route-note">El Doc prioriza el enlace de sus Notas: Portão 1 y después caminata hacia Portão 5 — Pedra Grande. La dirección operativa y la ficha estatal pueden referirse a accesos distintos; confirma cuál corresponde al boleto. {cantareiraEntryUrl && <><a href={cantareiraEntryUrl} target="_blank" rel="noreferrer">Abrir entrada indicada en Docs ↗</a> · </>}<a href={endpoint?.trailUrl ?? 'https://guiadeareasprotegidas.sp.gov.br/trilha/trilha-da-pedra-grande/'} target="_blank" rel="noreferrer">Ver información oficial de la trilha ↗</a> · {endpoint?.visitationSourceUrl && <a href={endpoint.visitationSourceUrl} target="_blank" rel="noreferrer">Ficha estatal del parque ↗</a>}</p>}
     {city === 'sao-paulo' && selectedDay === 8 && <p className="map-route-note">Para el Museu Afro Brasil, el enlace vial termina en el Portão 10; desde ahí continúa a pie. No dibujamos una ruta de auto hasta el pabellón.</p>}
     {city === 'rio' && selectedDay !== null && selectedDay !== 14 && <p className="map-route-note">Los tramos viales disponibles muestran geometrías de calles; los trayectos de transporte público, barco y accesos interiores se abren como indicaciones externas. Verifica horarios y accesos antes de salir.</p>}
     {city === 'rio' && selectedDay === 9 && <p className="map-route-note">Pago de conexiones (revisar de nuevo antes de diciembre): el VLT usa Jaé; el Jaézinho físico se compra en máquinas de BRT/VLT con depósito de R$5. En MetrôRio, una persona visitante puede comprar el bilhete unitário en estación o usar contactless Visa, Mastercard o Elo; el operador publica Jaé en todas sus estaciones. No asumir una tarjeta universal ni extenderlo a SuperVia. <a href="https://jae.com.br/faq/cartao-jae-4/" target="_blank" rel="noreferrer">FAQ Jaé ↗</a> · <a href="https://www.metrorio.com.br/como-pagar/meios-e-tarifas" target="_blank" rel="noreferrer">MetrôRio · medios de pago ↗</a></p>}
-    {city === 'rio' && selectedDay === 13 && <p className="map-route-note">Horto: el parque describe aproximaciones por Rua Pacheco Leão o Estrada Dona Castorina, sin fijar aquí una entrada ni estacionamiento exactos. La línea termina en Rua Pacheco Leão 915 solo como referencia urbana geocodificada; no valida el acceso al sendero. Confirma el punto con el parque antes de ir y retírate si no se valida. <a href="https://parquenacionaldatijuca.rio/locais/cachoeiras-do-horto/" target="_blank" rel="noreferrer">Cómo llegar · Parque Nacional da Tijuca ↗</a></p>}
+    {city === 'rio' && selectedDay === 10 && <p className="map-route-note">El Docs menciona tren y enlaza van; confirma opción antes de reservar. Se conserva el texto y el enlace de la fila oficial, sin presentar una estación del tren como ruta confirmada.</p>}
+    {city === 'rio' && selectedDay === 13 && <p className="map-route-note">Horto: el Docs conserva “{hortoRow?.placeLabel ?? 'Cachoeiras do Horto'}” y la nota “{hortoRow?.notes ?? 'Entrada por confirmar'}”. No hay una ruta de calles verificada ni se inventa un destino adicional; usa el enlace de entrada que aparece en las Notas y confirma el acceso con el parque. {hortoEntryUrl && <a href={hortoEntryUrl} target="_blank" rel="noreferrer">Abrir entrada de Notas en Docs ↗</a>} · <a href="https://parquenacionaldatijuca.rio/locais/cachoeiras-do-horto/" target="_blank" rel="noreferrer">Cómo llegar · Parque Nacional da Tijuca ↗</a></p>}
     {directionChanged && <p className="map-route-note">Cambiaste la hora, el día o el transporte de una parada. El recorrido está pendiente de revisar; los pines siguen disponibles para abrir cada lugar en Maps.</p>}
+    {pendingMapRows.length > 0 && <div className="map-pending-stops"><b>Paradas oficiales sin coordenada</b><p>No se dibuja un pin hasta verificar la ubicación; la fila sigue visible en la tabla y fuera de rutas inventadas.</p><ul>{pendingMapRows.map((row) => <li key={row.id}><strong>{row.placeLabel}</strong>{row.time && ` · ${row.time}`}{row.costLabel && ` · ${row.costLabel}`}{row.sourceUrl && <> · <a href={row.sourceUrl} target="_blank" rel="noreferrer">fuente de la fila ↗</a></>}</li>)}</ul></div>}
     {selectedDay !== null && <label className="map-options-toggle"><input type="checkbox" checked={showOptions} onChange={(event) => setShowOptions(event.target.checked)} />Mostrar opciones de este día sin incluirlas en la ruta base</label>}
     <div className="map-frame" aria-label={`Mapa interactivo de ${cityLabel}`}>
       <MapContainer key={city} center={hostel ? [hostel.coordinates.lat, hostel.coordinates.lon] : fallbackCenter} zoom={12} scrollWheelZoom className="trip-map">
@@ -129,8 +136,9 @@ export default function MapView({ city, cityLabel, places, itinerary: itineraryF
           const gate = city === 'sao-paulo' && selectedDay === 5 && place.id === 33 ? endpoint : null
           const position = gate?.coordinates ?? place.coordinates
           const title = gate?.label ?? place.name
-          const address = gate ? 'Rua do Horto, 931 · punto indicado por el operador' : place.addressFromDraft
-          return <Marker key={`${row.id}-${place.id}`} position={[position.lat, position.lon]} icon={numberedIcon(String(index + 1), selectedId === place.id)} eventHandlers={{ click: () => onSelect?.(place.id) }}><Popup><strong>{index + 1}. {title}</strong><br />{row.time || 'Hora por definir'} · {row.status === 'propuesta' ? 'Propuesta' : row.status === 'condicional' ? 'Condicional' : 'Por confirmar'}<br />{address}<br />{gate ? 'Punto de referencia para el acceso; confirma ubicación. Continúa a pie hacia Portão 5.' : place.coordinates.confidence === 'aproximada-fuente-atlas' || place.coordinates.confidence === 'aproximada-fuente-oficial' ? 'Coordenada aproximada; confirma la dirección.' : 'Ubicación por confirmar.'}<br />{gate?.sourceUrl && <><a href={gate.sourceUrl} target="_blank" rel="noreferrer">Operador del parque ↗</a><br /></>}<a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gate?.mapQuery ?? `${place.name}, ${place.addressFromDraft}, ${cityLabel}, Brasil}`)}`} target="_blank" rel="noreferrer">Confirmar en Maps ↗</a></Popup></Marker>
+          const address = gate ? 'Rua do Horto, 931 · punto indicado por el operador' : city === 'rio' && place.id === 115 ? `${row.placeLabel ?? place.name} · ubicación textual del Docs; entrada por confirmar` : place.addressFromDraft
+          const docLinks = [...new Set([...(row.cellLinks?.Lugar ?? []), ...(row.cellLinks?.Notas ?? [])])]
+          return <Marker key={`${row.id}-${place.id}`} position={[position.lat, position.lon]} icon={numberedIcon(String(index + 1), selectedId === place.id)} eventHandlers={{ click: () => onSelect?.(place.id) }}><Popup><strong>{index + 1}. {title}</strong><br />{row.time || 'Hora por definir'} · {row.status === 'propuesta' ? 'Propuesta' : row.status === 'condicional' ? 'Condicional' : 'Por confirmar'}<br />{address}<br />{gate ? 'Punto de referencia para el acceso; confirma ubicación. Continúa a pie hacia Portão 5.' : place.coordinates.confidence === 'aproximada-fuente-atlas' || place.coordinates.confidence === 'aproximada-fuente-oficial' ? 'Coordenada aproximada; confirma la dirección.' : 'Ubicación por confirmar.'}<br />{gate?.sourceUrl && <><a href={gate.sourceUrl} target="_blank" rel="noreferrer">Operador del parque ↗</a><br /></>}<a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gate?.mapQuery ?? `${place.name}, ${place.addressFromDraft}, ${cityLabel}, Brasil}`)}`} target="_blank" rel="noreferrer">Confirmar en Maps ↗</a>{docLinks.map((url) => <span key={url}><br /><a href={url} target="_blank" rel="noreferrer">Enlace de la fila Docs ↗</a></span>)}</Popup></Marker>
         })}
         {visibleLandmarks.map((landmark, index) => <Marker key={landmark.id} position={[landmark.coordinates.lat, landmark.coordinates.lon]} icon={numberedIcon(String(stops.length + index + 1), false)}><Popup><strong>{stops.length + index + 1}. {landmark.label}</strong><br />Parada propuesta · acceso por confirmar.<br />{landmark.note}<br /><a href={landmark.sourceUrl} target="_blank" rel="noreferrer">Fuente pública ↗</a></Popup></Marker>)}
         {showOptions && !isAllPlaces && options.map((item) => item.place && <Marker key={`option-${item.placeId}`} position={[item.place.coordinates.lat, item.place.coordinates.lon]} icon={optionIcon()} eventHandlers={{ click: () => onSelect?.(item.placeId) }}><Popup><strong>Opción · {item.title}</strong><br />{item.reason}<br /><a href={item.place.atlasUrl} target="_blank" rel="noreferrer">{item.place.sourceLabel ?? 'Fuente'} ↗</a></Popup></Marker>)}

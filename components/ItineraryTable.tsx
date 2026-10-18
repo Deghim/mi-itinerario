@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { groupItineraryRows, itineraryDayTone } from '@/lib/itinerary-model'
-import type { ItineraryData, ItineraryOverrides, ItineraryRow, ItineraryRowOverride, ItineraryStatus } from '@/types/itinerary'
+import type { ItineraryColumn, ItineraryData, ItineraryOverrides, ItineraryRow, ItineraryRowOverride, ItineraryStatus } from '@/types/itinerary'
 import type { CityId, LocalTripState, Place } from '@/types/place'
 import { calculateEndTime } from '@/lib/schedule'
 import { buildGoogleDocsTableCopy } from '@/lib/itinerary-copy'
@@ -50,6 +50,19 @@ function displayDate(iso: string) {
 
 function rowPlaceLabel(row: ItineraryRow, places: Place[]) {
   return row.placeLabel ?? (row.placeId ? places.find((place) => place.id === row.placeId)?.name ?? `Lugar ${row.placeId}` : '—')
+}
+
+function hasRowContent(row: ItineraryRow) {
+  return Boolean(row.time || row.placeLabel || row.activity || row.transport || row.costLabel || row.reservation || row.notes)
+}
+
+function CellLinks({ row, column }: { row: ItineraryRow; column: ItineraryColumn }) {
+  const links = row.cellLinks?.[column] ?? []
+  return links.length > 0 ? <span className="itinerary-cell-links">{links.map((url, index) => <a key={url} href={url} target="_blank" rel="noreferrer" aria-label={`Abrir enlace ${index + 1} de ${column}`}>Enlace {index + 1} ↗</a>)}</span> : null
+}
+
+function CellContent({ row, column, value }: { row: ItineraryRow; column: ItineraryColumn; value: string }) {
+  return <>{value && <span>{value}</span>}<CellLinks row={row} column={column} /></>
 }
 
 function effectiveTime(row: ItineraryRow, state: LocalTripState, useOfficialTime: boolean, planningYear: number) {
@@ -108,7 +121,7 @@ export default function ItineraryTable({ city, data: itinerary, places, travelYe
     condicional: visitables.filter((item) => item.state === 'condicional').length,
     pendiente: visitables.filter((item) => item.state === 'pendiente').length,
   }
-  const columnWidths = ['7%', '8%', '12%', '15%', '10%', '9%', '10%', '11%', '18%']
+  const columnWidths = ['8%', '10%', '15%', '18%', '12%', '14%', '10%', '13%']
 
   async function copyCanonicalTable() {
     const copy = buildGoogleDocsTableCopy(itinerary.rows, (id) => places.find((place) => place.id === id)?.name)
@@ -135,7 +148,6 @@ export default function ItineraryTable({ city, data: itinerary, places, travelYe
     const override = syncedSource ? {} : overrides[row.id] ?? {}
     const cell = {
       transport: override.transport ?? row.transport,
-      lodging: override.lodging ?? row.lodging,
       reservation: override.reservation ?? row.reservation,
       notes: override.notes ?? row.notes,
     }
@@ -145,32 +157,31 @@ export default function ItineraryTable({ city, data: itinerary, places, travelYe
     return mobile ? <article className={`itinerary-mobile-card day-tone-${tone}`} key={row.id}>
         <div className="itinerary-mobile-place"><b>{rowPlaceLabel(row, places)}</b><span>{time.value}</span>{time.label !== statuses[row.status] && <small>{time.label}</small>}</div>
         <dl>
-          <div><dt>Actividad</dt><dd>{row.activity} <span className={statusClass(row.status)}>{shortStatuses[row.status]}</span></dd></div>
-          <div><dt>Transporte</dt><dd>{cell.transport}</dd></div>
-          <div><dt>Hospedaje</dt><dd>{cell.lodging}</dd></div>
-          <div><dt>Costo estimado</dt><dd>{row.costLabel}</dd></div>
-          <div><dt>Reserva / boleto</dt><dd>{cell.reservation}</dd></div>
-          <div><dt>Notas</dt><dd>{cell.notes}</dd></div>
-          <div><dt>Fuente</dt><dd>{row.sourceUrl ? <a href={row.sourceUrl} target="_blank" rel="noreferrer">{row.sourceLabel} ↗</a> : row.sourceLabel}</dd></div>
+          <div><dt>Actividad</dt><dd><CellContent row={row} column="Actividad" value={row.activity} />{hasRowContent(row) && <small className={statusClass(row.status)}>{shortStatuses[row.status]}</small>}</dd></div>
+          <div><dt>Transporte</dt><dd><CellContent row={row} column="Transporte" value={cell.transport} /></dd></div>
+          <div><dt>Costo</dt><dd><CellContent row={row} column="Costo" value={row.costLabel} /></dd></div>
+          <div><dt>Reserva / boleto</dt><dd><CellContent row={row} column="Reserva/boleto" value={cell.reservation} /></dd></div>
+          <div><dt>Notas</dt><dd><CellContent row={row} column="Notas" value={cell.notes} /></dd></div>
         </dl>
         <div className="itinerary-row-actions">{row.placeId && <button type="button" onClick={() => onNavigatePlace(row.placeId!)}>Ver lugar {String(row.placeId).padStart(2, '0')}</button>}<button type="button" onClick={onNavigateBudget}>{sharedBudget ? 'Ver vuelos en Presupuesto' : 'Ver Presupuesto'}</button></div>
         {!syncedSource && <RowEditor key={`mobile-${row.id}-${JSON.stringify(override)}`} row={row} value={override} onSave={(value) => onSaveOverride(row.id, value)} />}
       </article> : <tr key={row.id} className={`itinerary-table-row day-tone-${tone}${firstInGroup ? ' day-group-start' : ''}`}>
         {firstInGroup && <th scope="rowgroup" rowSpan={groups.find((group) => group.date === effectiveDate)?.rows.length ?? 1} className={`itinerary-group-date day-tone-${tone}`}>{displayDate(effectiveDate)}</th>}
-        <td>{time.value}{time.label !== statuses[row.status] && <small>{time.label}</small>}</td>
-        <td>{row.placeId ? <button className="itinerary-inline-link" type="button" onClick={() => onNavigatePlace(row.placeId!)}>{rowPlaceLabel(row, places)}</button> : rowPlaceLabel(row, places)}</td>
-        <td>{row.activity}<small><span className={statusClass(row.status)}>{shortStatuses[row.status]}</span></small>{row.sourceUrl && <small><a href={row.sourceUrl} target="_blank" rel="noreferrer">Fuente ↗</a></small>}</td>
-        <td>{cell.transport}</td><td>{cell.lodging}</td>
-        <td>{row.costLabel}<button className="itinerary-budget-link" type="button" onClick={onNavigateBudget}>{sharedBudget ? 'Ver vuelos en Presupuesto ↗' : 'Ver Presupuesto ↗'}</button></td>
-        <td>{cell.reservation}</td><td>{cell.notes}{!syncedSource && <RowEditor key={`desktop-${row.id}-${JSON.stringify(override)}`} row={row} value={override} onSave={(value) => onSaveOverride(row.id, value)} />}</td>
+        <td><CellContent row={row} column="Hora" value={time.value} />{hasRowContent(row) && time.label !== statuses[row.status] && <small>{time.label}</small>}</td>
+        <td>{row.placeId ? <><button className="itinerary-inline-link" type="button" onClick={() => onNavigatePlace(row.placeId!)}>{rowPlaceLabel(row, places)}</button><CellLinks row={row} column="Lugar" /></> : <CellContent row={row} column="Lugar" value={rowPlaceLabel(row, places)} />}</td>
+        <td><CellContent row={row} column="Actividad" value={row.activity} />{hasRowContent(row) && <small><span className={statusClass(row.status)}>{shortStatuses[row.status]}</span></small>}</td>
+        <td><CellContent row={row} column="Transporte" value={cell.transport} /></td>
+        <td><CellContent row={row} column="Costo" value={row.costLabel} />{row.costLabel && <button className="itinerary-budget-link" type="button" onClick={onNavigateBudget}>{sharedBudget ? 'Ver vuelos en Presupuesto ↗' : 'Ver Presupuesto ↗'}</button>}</td>
+        <td><CellContent row={row} column="Reserva/boleto" value={cell.reservation} /></td>
+        <td><CellContent row={row} column="Notas" value={cell.notes} />{!syncedSource && <RowEditor key={`desktop-${row.id}-${JSON.stringify(override)}`} row={row} value={override} onSave={(value) => onSaveOverride(row.id, value)} />}</td>
       </tr>
   }
 
   return <section className={`itinerary-table-section itinerary-${city}`} aria-labelledby="itinerary-table-title">
     <div className="itinerary-table-heading"><div><span className="tiny-label">{syncedSource ? 'FUENTE OFICIAL · GOOGLE DOCS' : 'VISTA DE TRABAJO · FUENTE LOCAL'}</span><h2 id="itinerary-table-title">Itinerario en tabla</h2><p>Fechas de {itinerary.year}{itinerary.yearIsAssumption ? ', todavía provisionales' : ''}. Las horas son las del itinerario; accesos y horarios operativos se verifican por separado.</p></div><label>Ver fecha<select value={selectedDay ?? 'all'} onChange={(event) => onDaySelect(event.target.value === 'all' ? null : Number(event.target.value))}><option value="all">Todo el itinerario</option>{[...new Set([...itinerary.rows.map((row) => Number(row.date.slice(8, 10))), ...(syncedSource ? [] : Object.values(state.dayAssignments))])].sort((a, b) => a - b).map((day) => <option key={day} value={day}>{displayDate(`${itinerary.year}-12-${String(day).padStart(2, '0')}`)} · {itinerary.year}</option>)}</select></label></div>
-    {syncedSource ? <div className="itinerary-table-note"><b>Sincronizado desde Google Docs · Itinerario web.</b> Última actualización: {new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Chihuahua' }).format(new Date(syncedSource.syncedAt))}. Los cambios oficiales se hacen en el documento; tu agenda personal y favoritos de este navegador se conservan aparte. Los costos escritos aquí no se suman automáticamente al presupuesto.</div> : <div className="itinerary-table-note"><b>Fuente local de la página.</b> Google Docs todavía no está sincronizado. Esta tabla no cambia tu documento; tu agenda personal y favoritos se guardan en este navegador.</div>}
+    {syncedSource ? <div className="itinerary-table-note"><b>Fuente: Google Docs · actualizado {new Intl.DateTimeFormat('es-MX', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'America/Chihuahua' }).format(new Date(syncedSource.syncedAt))}.</b> Se sincroniza cuando lo pidas. Los cambios oficiales se hacen en el documento; tu agenda personal, favoritos y gastos de este navegador se conservan aparte. Los costos escritos aquí no se suman automáticamente al presupuesto.</div> : <div className="itinerary-table-note"><b>Fuente local de la página.</b> Google Docs todavía no está sincronizado. Esta tabla no cambia tu documento; tu agenda personal y favoritos se guardan en este navegador.</div>}
     {!syncedSource && <div className="itinerary-proposal-controls"><div><b>{candidates.length} visitas con horario sugerido</b><span>Añade los horarios sugeridos sin cambiar los lugares que ya organizaste.</span></div><button type="button" className="budget-primary-button" disabled={travelYear !== itinerary.year} onClick={onApply}>{travelYear !== itinerary.year ? `Propuesta de ${itinerary.year}; vuelve a ese año para aplicarla` : 'Aplicar propuesta a mi agenda'}</button></div>}
-    <div className="itinerary-copy-controls"><div><b>Copia la tabla completa</b><span>Incluye las nueve columnas y todas las fechas. No copia cambios personales guardados en este navegador ni actualiza Google Docs.</span></div><button type="button" onClick={copyCanonicalTable}>Copiar para pegar en Google Docs</button></div>
+    <div className="itinerary-copy-controls"><div><b>Copia la tabla completa</b><span>Incluye las ocho columnas y todas las fechas. No copia cambios personales guardados en este navegador ni actualiza Google Docs.</span></div><button type="button" onClick={copyCanonicalTable}>Copiar para pegar en Google Docs</button></div>
     <p className="itinerary-copy-status" aria-live="polite">{copyNotice}</p>
     {copyFallback && <label className="itinerary-copy-fallback">Texto de la tabla<textarea ref={fallbackRef} readOnly value={copyFallback} onFocus={(event) => event.currentTarget.select()} /><button type="button" onClick={() => { fallbackRef.current?.focus(); fallbackRef.current?.select() }}>Seleccionar texto</button></label>}
     <p className="itinerary-scroll-note">Desplázate horizontalmente para ver todas las columnas.</p>

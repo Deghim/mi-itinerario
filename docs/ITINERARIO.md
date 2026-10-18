@@ -1,6 +1,6 @@
 # Itinerario de viaje · São Paulo y Río
 
-> Propuesta de trabajo con tabla de nueve columnas. El año 2026 es provisional. Las actividades y horas son propuestas o ventanas condicionales; no confirman reservas, boletos ni horarios operativos.
+> Fuente oficial: snapshot importado manualmente del Google Docs. La tabla tiene ocho columnas; el año 2026 es provisional. Las actividades y horas son las del documento y no confirman reservas, boletos ni horarios operativos.
 
 ## Datos del viaje
 
@@ -37,9 +37,9 @@ En días de exploración, la rutina opcional propuesta es correr 07:15–08:00 y
 
 ## Tabla, agenda y cobertura
 
-La fuente de la tabla es [`docs/data/itinerario.json`](data/itinerario.json). El botón **Aplicar propuesta a mi agenda** añade únicamente visitas con hora sugerida que aún no tengan asignación u horario manual. Las horas se ajustan desde la agenda; los horarios operativos se confirman por separado. Los vuelos internacionales reportados como pagados se resumen en un concepto con importe por informar; eso no confirma que formen un solo boleto o reserva. El tramo doméstico CUU→CDMX permanece con pago e inclusión por confirmar.
+La fuente de la tabla es [`docs/data/itinerario.json`](data/itinerario.json) y su snapshot de Río es [`docs/data/itinerario-rio.json`](data/itinerario-rio.json). La fuente oficial no aplica automáticamente asignaciones, horarios ni ediciones locales. La agenda personal se conserva aparte y se puede organizar desde el catálogo. El documento muestra sus costos como texto; no se suman automáticamente al presupuesto.
 
-Las notas, transporte, hospedaje y texto de reserva que el viajero edite en la tabla se guardan solo en el navegador/dispositivo. Google Docs no está sincronizado con esta página. No se deben pegar localizadores, códigos ni información personal: el sitio se publica en GitHub Pages.
+El encabezado y las notas fuera de tabla del Doc se conservan en **Opcionales** junto con alternativas web, logística previa y regresos 22–23. Todo lo que está allí tiene `applyToAgenda=false`. No se deben pegar localizadores, códigos ni información personal: el sitio se publica en GitHub Pages.
 
 El atlas conserva 36 referencias: 33 marcadas como visitables en el borrador y tres históricas/cerradas. No se promete visitar los 33 puntos en São Paulo entre el 3 y el 8. Casa de Pedra está en Paraisópolis y requiere coordinar un tour; su coordenada es aproximada y enlazada a Atlas. Casa Bandeirista está en Faria Lima/Itaim, separada de Ibirapuera, y su acceso público no está confirmado.
 

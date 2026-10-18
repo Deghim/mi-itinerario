@@ -1,6 +1,6 @@
 import type { ItineraryRow } from '@/types/itinerary'
 
-const headers = ['Fecha', 'Hora', 'Lugar', 'Actividad', 'Transporte', 'Hospedaje', 'Costo estimado', 'Reserva / boleto', 'Notas']
+const headers = ['Fecha', 'Hora', 'Lugar', 'Actividad', 'Transporte', 'Costo', 'Reserva/boleto', 'Notas']
 
 function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;')
@@ -49,7 +49,6 @@ export function buildGoogleDocsTableCopy(rows: ItineraryRow[], placeName: (id: n
         displayPlace(row, placeName),
         row.activity,
         row.transport,
-        row.lodging,
         row.costLabel,
         safeReservationState(row.reservation),
         row.notes,
